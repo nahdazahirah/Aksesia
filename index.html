@@ -3,59 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aksesia - Pendamping Antrean & Layanan Puskesmas</title>
+  <title>GreenSteps - Aksi Hijau Mabar Bareng Squad Kosan</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="theme-wireframe">
+<body class="theme-greensteps">
 
-  <!-- Pengumuman Pembaca Layar (Screen Reader Live Region) -->
+  <!-- Pengumuman Screen Reader Live Region (Pembaruan status secara dinamis) -->
   <div id="a11y-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Indikator Notifikasi Multi-Saluran Visual & Getar -->
+  <div id="visual-toast" class="visual-toast" role="status" aria-hidden="true"></div>
 
   <!-- Pembungkus Tampilan Luar (Desktop Container / Mobile Device Wrapper) -->
   <div class="device-viewport-shell">
 
-    <!-- Bilah Pengalih Cepat Khusus Prototipe (Top Prototype Bar) -->
-    <aside class="prototype-bar" aria-label="Bilah Kontrol Prototipe">
-      <span class="proto-badge">Wireframe Low-Fidelity</span>
-      <div class="proto-actions">
-        <button type="button" id="btn-toggle-role" class="proto-btn" aria-label="Beralih ke Tampilan Petugas Puskesmas">
-          <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-          </svg>
-          <span id="role-text">Lihat Mode Petugas</span>
-        </button>
+    <!-- Bilah Pengalih Cepat Khusus Prototipe Lomba -->
+    <aside class="prototype-bar" aria-label="Bilah Kontrol Prototipe Lomba UI/UX">
+      <div class="proto-badge">
+        <span class="badge-dot" aria-hidden="true"></span>
+        <span>GreenSteps • Prototipe Referensi UI/UX</span>
+      </div>
+      <div class="proto-nav-quick">
+        <span class="proto-label">Lompat Layar:</span>
+        <button type="button" class="proto-screen-btn" data-target="screen-onboarding">1. Onboarding</button>
+        <button type="button" class="proto-screen-btn" data-target="screen-home">2. Beranda</button>
+        <button type="button" class="proto-screen-btn" data-target="screen-missions">3. Misi & Boss</button>
+        <button type="button" class="proto-screen-btn" data-target="screen-share">4. Kartu Cerita</button>
+        <button type="button" class="proto-screen-btn" data-target="screen-impact">5. Dampak Nyata</button>
       </div>
     </aside>
 
-    <!-- Rangka Ponsel 390x844 (Mobile Device 390x844) -->
+    <!-- Rangka Ponsel 390px (Mobile Device Container) -->
     <div class="mobile-frame" id="mobile-app-root">
 
       <!-- Bilah Header Aplikasi (Persistent Universal Accessibility Icon) -->
       <header class="app-header" role="banner">
         <div class="header-left">
-          <button type="button" id="btn-header-back" class="btn-icon-nav sr-hidden" aria-label="Kembali ke layar sebelumnya">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-            </svg>
-            <span class="btn-text-sm">Kembali</span>
-          </button>
-          <span id="header-brand-title" class="brand-title">Aksesia</span>
+          <div class="brand-logo" aria-hidden="true">🌱</div>
+          <div>
+            <h1 class="brand-title">GreenSteps</h1>
+            <p class="brand-subtitle" id="header-squad-name">Kosan Barokah Squad</p>
+          </div>
         </div>
 
         <div class="header-right">
-          <!-- Tombol Bacakan Layar Cepat jika fitur aktif -->
-          <button type="button" id="btn-speak-screen" class="btn-icon-header" title="Bacakan isi layar ini" aria-label="Bacakan isi layar ini dengan suara">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <!-- Tombol Bacakan Layar Cepat (Text-to-Speech) -->
+          <button type="button" id="btn-speak-screen" class="btn-icon-header" title="Bacakan ringkasan layar dengan suara" aria-label="Bacakan ringkasan layar dengan suara">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
             </svg>
             <span class="sr-only">Bacakan Layar</span>
           </button>
 
-          <!-- Ikon Aksesibilitas Universal Persisten (Bukan Kursi Roda: Lambang Aksesibilitas Manusia Universal) -->
-          <button type="button" id="btn-open-a11y" class="btn-icon-header a11y-trigger" title="Buka Pengaturan Aksesibilitas" aria-label="Buka Pengaturan Aksesibilitas dan Kenyamanan Tampilan">
-            <svg class="icon-a11y" viewBox="0 0 24 24" aria-hidden="true">
-              <!-- Universal Accessibility Symbol: circle figure with outstretched arms and legs -->
-              <circle cx="12" cy="4" r="2" />
+          <!-- Ikon Aksesibilitas Universal Persisten (Dapat dibuka kapan saja) -->
+          <button type="button" id="btn-open-a11y" class="btn-icon-header a11y-trigger" title="Buka Pengaturan Aksesibilitas" aria-label="Buka Pengaturan Aksesibilitas dan Kenyamanan Tampilan" aria-haspopup="dialog">
+            <svg class="icon-a11y" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="4" r="2.2" />
               <path d="M19 13v-2c-1.54.02-3.09-.75-4.07-1.83l-1.29-1.43c-.4-.44-1.02-.68-1.64-.68-.62 0-1.24.24-1.64.68L9.07 9.17C8.09 10.25 6.54 11.02 5 11v2c1.78-.02 3.53-.78 4.75-2.02L11 9.7V15l-3.5 5.5 1.7 1 3.8-6 3.8 6 1.7-1L15 15V9.7l1.25 1.28C17.47 12.22 19.22 12.98 21 13v-2l-2 2z"/>
             </svg>
             <span class="badge-label">Aksesibilitas</span>
@@ -63,32 +66,42 @@
         </div>
       </header>
 
-      <!-- Area Konten Utama Layar -->
+      <!-- Area Konten Utama Layar (5 Layar Inti) -->
       <main id="app-main-content" class="app-main" tabindex="-1">
 
         <!-- ============================================== -->
-        <!-- 1. LAYAR ONBOARDING (screen-onboarding)        -->
+        <!-- 1. LAYAR ONBOARDING + PREFERENSI + SQUAD       -->
         <!-- ============================================== -->
         <section id="screen-onboarding" class="screen active" aria-labelledby="title-onboarding">
           <div class="screen-content">
-            <div class="wireframe-box header-banner">
-              <h1 id="title-onboarding" class="text-heading-1">Selamat Datang di Aksesia</h1>
-              <p class="text-body">Aplikasi pendamping kunjungan ke Puskesmas. Bebas cemas mengantre dengan pilihan tampilan yang ramah untuk semua kebutuhan.</p>
+            
+            <div class="hero-card">
+              <div class="hero-badge">Aksi Hijau Mabar Kosan</div>
+              <h2 id="title-onboarding" class="hero-title">Yuk, Mabar Bikin Kosan & Kampus Lebih Asri!</h2>
+              <p class="hero-desc">
+                Tindakan kecilmu terasa bermakna kalau dilakukan bareng squad. Bukan soal sempurna, tapi soal saling dukung tanpa menggurui!
+              </p>
             </div>
 
-            <div class="wireframe-card pref-checklist-card">
-              <h2 class="text-heading-2">Atur tampilan supaya nyaman buatmu</h2>
-              <p class="text-caption">(Pilihan ini dapat diubah kapan saja lewat tombol di pojok kanan atas)</p>
+            <!-- Panel Pengaturan Aksesibilitas Cepat (Bagian Alur Utama) -->
+            <div class="app-card a11y-onboarding-card">
+              <div class="card-header-row">
+                <span class="icon-card" aria-hidden="true">♿</span>
+                <div>
+                  <h3 class="card-title">Kenyamanan Tampilan & Interaksi</h3>
+                  <p class="card-caption">Opsional: sesuaikan kebutuhanmu agar aplikasi ini nyaman digunakan.</p>
+                </div>
+              </div>
 
               <fieldset class="checklist-group">
-                <legend class="sr-only">Daftar preferensi kenyamanan tampilan</legend>
+                <legend class="sr-only">Pilihan preferensi aksesibilitas awal</legend>
 
                 <label class="checkbox-row" for="ob-larger-text">
                   <input type="checkbox" id="ob-larger-text" class="custom-checkbox">
                   <span class="checkbox-indicator" aria-hidden="true"></span>
                   <span class="label-info">
-                    <strong>Teks lebih besar</strong>
-                    <span class="subtext">Memperbesar ukuran tulisan di seluruh layar.</span>
+                    <strong>Teks Lebih Besar (+25%)</strong>
+                    <span class="subtext">Memperbesar huruf di seluruh aplikasi agar mudah dibaca.</span>
                   </span>
                 </label>
 
@@ -96,782 +109,973 @@
                   <input type="checkbox" id="ob-high-contrast" class="custom-checkbox">
                   <span class="checkbox-indicator" aria-hidden="true"></span>
                   <span class="label-info">
-                    <strong>Kontras lebih tinggi</strong>
-                    <span class="subtext">Mempertegas batas kotak dan kepekatan huruf.</span>
+                    <strong>Kontras Tinggi & Batas Jelas</strong>
+                    <span class="subtext">Mempertegas garis kartu dan kepekatan teks (WCAG AAA).</span>
                   </span>
                 </label>
 
-                <label class="checkbox-row" for="ob-screen-reader">
-                  <input type="checkbox" id="ob-screen-reader" class="custom-checkbox">
+                <label class="checkbox-row" for="ob-colorblind">
+                  <input type="checkbox" id="ob-colorblind" class="custom-checkbox">
                   <span class="checkbox-indicator" aria-hidden="true"></span>
                   <span class="label-info">
-                    <strong>Bacakan teks untuk saya</strong>
-                    <span class="subtext">Menyuarakakan teks dan nomor antrean.</span>
+                    <strong>Ramah Buta Warna (Pola & Ikon)</strong>
+                    <span class="subtext">Tambahkan pola garis arsir dan simbol unik pada tiap indikator status.</span>
                   </span>
                 </label>
 
-                <label class="checkbox-row" for="ob-simple-mode">
-                  <input type="checkbox" id="ob-simple-mode" class="custom-checkbox">
+                <label class="checkbox-row" for="ob-focus-mode">
+                  <input type="checkbox" id="ob-focus-mode" class="custom-checkbox">
                   <span class="checkbox-indicator" aria-hidden="true"></span>
                   <span class="label-info">
-                    <strong>Tampilan lebih sederhana</strong>
-                    <span class="subtext">Fokus satu hal per langkah, mengurangi distraksi.</span>
+                    <strong>Mode Fokus (Ramah Kognitif / ADHD)</strong>
+                    <span class="subtext">Kurangi distraksi visual dan tonjolkan satu aksi utama per langkah.</span>
                   </span>
                 </label>
 
-                <label class="checkbox-row" for="ob-vib-flash">
-                  <input type="checkbox" id="ob-vib-flash" class="custom-checkbox">
+                <label class="checkbox-row" for="ob-reduced-motion">
+                  <input type="checkbox" id="ob-reduced-motion" class="custom-checkbox">
                   <span class="checkbox-indicator" aria-hidden="true"></span>
                   <span class="label-info">
-                    <strong>Beri tahu lewat getar dan kedipan</strong>
-                    <span class="subtext">Notifikasi multi-saluran saat nomor dipanggil.</span>
+                    <strong>Kurangi Gerakan & Animasi</strong>
+                    <span class="subtext">Nonaktifkan animasi layar bergerak untuk kenyamanan vestibular.</span>
+                  </span>
+                </label>
+
+                <label class="checkbox-row" for="ob-large-touch">
+                  <input type="checkbox" id="ob-large-touch" class="custom-checkbox">
+                  <span class="checkbox-indicator" aria-hidden="true"></span>
+                  <span class="label-info">
+                    <strong>Area Sentuh Ekstra Lega (Ramah Motorik)</strong>
+                    <span class="subtext">Perbesar tombol (56px) dan berikan jarak longgar antar tombol.</span>
                   </span>
                 </label>
               </fieldset>
             </div>
 
-            <div class="screen-footer-actions">
-              <button type="button" id="btn-onboarding-save" class="btn-primary">
-                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-                </svg>
-                <span>Simpan Pengaturan</span>
-              </button>
+            <!-- Panel Squad Mabar (Gabung / Buat) -->
+            <div class="app-card squad-onboarding-card">
+              <div class="card-header-row">
+                <span class="icon-card" aria-hidden="true">👥</span>
+                <div>
+                  <h3 class="card-title">Gabung atau Buat Squad Mabar</h3>
+                  <p class="card-caption">Misi bareng anak satu kosan, asrama, atau teman sekampus.</p>
+                </div>
+              </div>
 
-              <button type="button" id="btn-onboarding-skip" class="btn-secondary">
-                <span>Lewati (Gunakan Standar)</span>
-              </button>
+              <!-- Pilihan Tab Squad -->
+              <div class="tab-pill-group" role="tablist" aria-label="Pilihan Bergabung Squad">
+                <button type="button" class="tab-pill active" id="tab-join-squad" role="tab" aria-selected="true" aria-controls="panel-join-squad">
+                  Pakai Kode Squad
+                </button>
+                <button type="button" class="tab-pill" id="tab-create-squad" role="tab" aria-selected="false" aria-controls="panel-create-squad">
+                  Buat Squad Baru
+                </button>
+              </div>
+
+              <!-- Konten Gabung Squad -->
+              <div id="panel-join-squad" class="tab-panel active" role="tabpanel" aria-labelledby="tab-join-squad">
+                <label for="input-squad-code" class="form-label">Kode Squad Kosan / Asrama</label>
+                <div class="input-with-button">
+                  <input type="text" id="input-squad-code" class="form-input" value="KOS-BAROKAH-24" placeholder="Contoh: KOS-BAROKAH-24">
+                  <button type="button" id="btn-paste-code" class="btn-secondary-sm">Ganti</button>
+                </div>
+
+                <div class="squad-preview-box" id="squad-preview">
+                  <div class="squad-preview-header">
+                    <span class="squad-avatar-group" aria-hidden="true">🏡</span>
+                    <div>
+                      <strong id="preview-squad-title">Kosan Barokah Asri</strong>
+                      <span class="squad-member-count" id="preview-squad-members">6 Teman Aktif • Kukusan, Depok</span>
+                    </div>
+                  </div>
+                  <p class="squad-preview-desc">
+                    "Kosan bersih, selokan lancar, sampah terpilah. Mabar santai tiap sore!"
+                  </p>
+                </div>
+              </div>
+
+              <!-- Konten Buat Squad Baru -->
+              <div id="panel-create-squad" class="tab-panel" role="tabpanel" aria-labelledby="tab-create-squad" hidden>
+                <label for="input-new-squad-name" class="form-label">Nama Squad Baru</label>
+                <input type="text" id="input-new-squad-name" class="form-input" placeholder="Contoh: Asrama Sakura Hijau">
+                
+                <label for="input-squad-env" class="form-label mt-2">Lingkungan</label>
+                <select id="input-squad-env" class="form-input">
+                  <option value="kos">Lingkungan Kosan</option>
+                  <option value="asrama">Asrama Mahasiswa</option>
+                  <option value="kampus">Fakultas / Kampus</option>
+                  <option value="komplek">Komplek Perumahan</option>
+                </select>
+              </div>
+
+              <!-- Tombol Aksi Onboarding -->
+              <div class="btn-group-vertical">
+                <button type="button" id="btn-submit-onboarding" class="btn-primary">
+                  <span>Mulai Mabar Hijau! 🚀</span>
+                </button>
+                <button type="button" id="btn-skip-onboarding" class="btn-ghost">
+                  <span>Lewati & Gunakan Pengaturan Standar</span>
+                </button>
+              </div>
             </div>
+
           </div>
         </section>
 
         <!-- ============================================== -->
         <!-- 2. LAYAR BERANDA (screen-home)                 -->
         <!-- ============================================== -->
-        <section id="screen-home" class="screen" aria-labelledby="title-home">
+        <section id="screen-home" class="screen" aria-labelledby="title-home" hidden>
           <div class="screen-content">
-            <h1 id="title-home" class="text-heading-1">Beranda Kunjungan</h1>
 
-            <!-- Kartu Status Kunjungan Saat Ini -->
-            <div class="wireframe-card status-card" id="home-status-card">
-              <div class="card-status-header">
-                <span class="status-icon-box" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" class="icon"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
-                </span>
-                <div>
-                  <h2 class="text-heading-2">Status Kunjungan</h2>
-                  <p class="text-caption" id="home-visit-subtitle">Jadwal Pemeriksaan Hari Ini</p>
-                </div>
+            <!-- Banner Sambutan Ramah -->
+            <div class="greeting-banner">
+              <div class="greeting-text">
+                <span class="greeting-sub">Halo Rian! 👋</span>
+                <h2 id="title-home" class="greeting-heading">Mabar Jaga Kosan Hari Ini</h2>
               </div>
+              <div class="streak-badge" title="7 Hari Mabar Berturut-turut">
+                <span class="streak-fire" aria-hidden="true">🔥</span>
+                <span class="streak-count">7 Hari</span>
+              </div>
+            </div>
 
-              <div id="home-visit-details" class="visit-info-box">
-                <div class="info-row">
-                  <span class="info-label">Puskesmas:</span>
-                  <strong class="info-val" id="home-clinic-name">Puskesmas Sukamaju</strong>
-                </div>
-                <div class="info-row">
-                  <span class="info-label">Layanan:</span>
-                  <strong class="info-val" id="home-service-name">Poli Umum</strong>
-                </div>
-                <div class="info-row">
-                  <span class="info-label">Status Antrean:</span>
-                  <span class="status-pill status-ready" id="home-queue-badge">
-                    <svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/></svg>
-                    Siap Berangkat
+            <!-- Widget 1: Ringkasan Progres Squad (Mabar Meter) -->
+            <div class="app-card squad-progress-card">
+              <div class="card-header-row">
+                <span class="icon-card" aria-hidden="true">📊</span>
+                <div class="header-text-flex">
+                  <h3 class="card-title">Mabar Meter Hari Ini</h3>
+                  <span class="status-pill status-pill-success" id="squad-completion-pill">
+                    <span class="pill-pattern" aria-hidden="true">●</span>
+                    <span id="squad-ratio-text">5 dari 6 Selesai</span>
                   </span>
                 </div>
               </div>
 
-              <div class="card-action-bar">
-                <button type="button" id="btn-home-continue-visit" class="btn-primary">
-                  <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                  <span>Buka Tiket & Antrean</span>
+              <!-- Progress Bar Dinamis -->
+              <div class="progress-bar-container" role="progressbar" aria-valuenow="83" aria-valuemin="0" aria-valuemax="100" aria-label="Progres misi squad hari ini">
+                <div class="progress-bar-fill" id="squad-progress-fill" style="width: 83%;"></div>
+              </div>
+              <div class="progress-caption-row">
+                <span class="text-caption">Target: Semua anak kos selesaikan min. 1 aksi</span>
+                <strong class="text-caption-bold" id="squad-progress-pct">83%</strong>
+              </div>
+
+              <!-- Daftar Anggota Squad & Status -->
+              <div class="squad-roster">
+                <h4 class="roster-title">Aktivitas Teman Kosan:</h4>
+                <ul class="roster-list" id="squad-member-list" aria-label="Daftar anggota squad">
+                  <!-- Rendered via JS -->
+                </ul>
+              </div>
+
+              <!-- Tombol Interaksi Mabar: Colek Ramah -->
+              <div class="nudge-box">
+                <p class="nudge-text">Tinggal <strong>Agus</strong> yang belum misi hari ini. Mau colek santai?</p>
+                <button type="button" id="btn-nudge-member" class="btn-secondary-sm">
+                  <span aria-hidden="true">👋</span> Colek Santai Agus
                 </button>
               </div>
             </div>
 
-            <!-- Tombol Besar Daftar Kunjungan Baru -->
-            <div class="wireframe-box register-cta-box">
-              <h2 class="text-heading-2">Mau periksa ke Puskesmas?</h2>
-              <p class="text-body">Daftar sekarang tanpa perlu mengantre lama di loket pendaftaran fisik.</p>
-              <button type="button" id="btn-home-register-new" class="btn-primary btn-large">
-                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                </svg>
-                <span>Daftar Kunjungan Baru</span>
+            <!-- Widget 2: Norma Sosial Positif di Sekitar -->
+            <div class="app-card social-norm-card">
+              <div class="card-header-row">
+                <span class="icon-card" aria-hidden="true">🌍</span>
+                <div>
+                  <h3 class="card-title">Kabar Baik Dari Sekitarmu</h3>
+                  <p class="card-caption">Bukan rasa bersalah, ini bukti kita jalan bareng-bareng!</p>
+                </div>
+              </div>
+
+              <div class="norm-stat-box">
+                <div class="norm-number" aria-hidden="true">72%</div>
+                <div class="norm-statement">
+                  <strong>Anak kos di sekitarmu pakai tumbler hari ini!</strong>
+                  <p class="text-body-sm">
+                    Kemarin ada <strong>340 botol plastik</strong> yang berhasil dicegah di area Kukusan & Bareng. Keren banget, kebiasaan baikmu nular ke tetangga kos!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Widget 3: Boss Raid Mini Banner (Tantangan Mingguan) -->
+            <div class="app-card boss-mini-card">
+              <div class="boss-mini-header">
+                <div class="boss-avatar-frame" aria-hidden="true">👾</div>
+                <div class="boss-info-col">
+                  <div class="badge-tag">Boss Raid Mingguan</div>
+                  <h3 class="boss-title">Raksasa Kresek Kosan</h3>
+                  <p class="boss-sub">HP tersisa: <strong id="home-boss-hp-text">380 / 1.000 HP</strong></p>
+                </div>
+              </div>
+              <div class="progress-bar-container boss-hp-bar" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100" aria-label="Health bar boss monster kresek">
+                <div class="progress-bar-fill fill-boss" id="home-boss-hp-fill" style="width: 38%;"></div>
+              </div>
+              <button type="button" class="btn-primary-sm full-width mt-2 btn-goto-missions" data-target="screen-missions">
+                <span>Serang Boss di Misi Bersama ⚔️</span>
               </button>
             </div>
 
-            <!-- Panduan Bantuan Singkat -->
-            <div class="wireframe-card guide-box">
-              <h3 class="text-heading-3">Bantuan & Informasi Layanan</h3>
-              <ul class="simple-list">
-                <li>Jam pendaftaran: 07.30 - 11.30 WIB</li>
-                <li>Bawa KTP/KK dan kartu BPJS jika ada</li>
-                <li>Staf siap membantu jika butuh bantuan khusus</li>
-              </ul>
+            <!-- Widget 4: Akses Cepat Misi Harian -->
+            <div class="app-card quick-missions-card">
+              <div class="card-header-row">
+                <span class="icon-card" aria-hidden="true">🎯</span>
+                <div>
+                  <h3 class="card-title">Misi Cepat Hari Ini</h3>
+                  <p class="card-caption">Cuma butuh 5-10 menit untuk kasih dampak nyata.</p>
+                </div>
+              </div>
+
+              <div class="quick-mission-item">
+                <div class="mission-icon" aria-hidden="true">🥤</div>
+                <div class="mission-details">
+                  <strong>Bawa Tumbler Pas Kuliah</strong>
+                  <span class="mission-impact-tag">+1 Botol Plastik Hemat</span>
+                </div>
+                <span class="status-check-done" aria-label="Sudah selesai">✅ Selesai</span>
+              </div>
+
+              <div class="quick-mission-item">
+                <div class="mission-icon" aria-hidden="true">🔍</div>
+                <div class="mission-details">
+                  <strong>Amankan Monster Sampah Terdekat</strong>
+                  <span class="mission-impact-tag">Item Harian Tersedia</span>
+                </div>
+                <button type="button" class="btn-secondary-sm btn-goto-missions" data-target="screen-missions">
+                  Buka
+                </button>
+              </div>
+
+              <button type="button" class="btn-primary full-width mt-3 btn-goto-missions" data-target="screen-missions">
+                <span>Lihat Semua Misi & Item Harian 📋</span>
+              </button>
             </div>
+
           </div>
         </section>
 
         <!-- ============================================== -->
-        <!-- 3. LAYAR DAFTAR KUNJUNGAN (screen-register)    -->
+        <!-- 3. LAYAR MISI HARIAN + BOSS + ADAPTIF          -->
         <!-- ============================================== -->
-        <section id="screen-register" class="screen" aria-labelledby="title-register">
+        <section id="screen-missions" class="screen" aria-labelledby="title-missions" hidden>
           <div class="screen-content">
-            <h1 id="title-register" class="text-heading-1">Daftar Kunjungan</h1>
-            <p class="text-body">Pilih puskesmas dan jadwal kedatangan Anda secara bertahap.</p>
 
-            <form id="form-register-visit" class="form-flow" onsubmit="return false;">
-              <!-- Langkah 1: Pilih Puskesmas -->
-              <div class="form-step-block wireframe-card">
-                <label for="select-clinic" class="form-label">
-                  <span class="step-num">1</span>
-                  <strong>Pilih Puskesmas Terdekat:</strong>
-                </label>
-                <select id="select-clinic" class="custom-select" required>
-                  <option value="Puskesmas Sukamaju" selected>Puskesmas Sukamaju (500 meter)</option>
-                  <option value="Puskesmas Melati">Puskesmas Melati (1.2 km)</option>
-                  <option value="Puskesmas Sejahtera Indah">Puskesmas Sejahtera Indah (2.0 km)</option>
-                </select>
-              </div>
+            <!-- Section Header -->
+            <div class="section-title-box">
+              <h2 id="title-missions" class="screen-title">Misi & Item Harian</h2>
+              <p class="screen-desc">Kalahkan boss monster kresek bersama squad melalui tindakan nyata.</p>
+            </div>
 
-              <!-- Langkah 2: Pilih Poli / Layanan -->
-              <div class="form-step-block wireframe-card">
-                <label for="select-service" class="form-label">
-                  <span class="step-num">2</span>
-                  <strong>Pilih Poli / Layanan Pemeriksaan:</strong>
-                </label>
-                <select id="select-service" class="custom-select" required>
-                  <option value="Poli Umum" selected>Poli Umum (Batuk, Demam, Sakit Kepala, dll)</option>
-                  <option value="Poli Lansia & Prioritas">Poli Lansia & Akses Prioritas</option>
-                  <option value="Poli Gigi & Mulut">Poli Gigi & Mulut</option>
-                  <option value="Poli Kesehatan Ibu & Anak (KIA)">Poli Ibu & Anak (KIA)</option>
-                </select>
-              </div>
-
-              <!-- Langkah 3: Pilih Sesi Waktu -->
-              <div class="form-step-block wireframe-card">
-                <fieldset class="fieldset-clean">
-                  <legend class="form-label">
-                    <span class="step-num">3</span>
-                    <strong>Pilih Waktu Kedatangan:</strong>
-                  </legend>
+            <!-- BAGIAN 1: BOSS RAID MINGGUAN -->
+            <div class="app-card boss-battle-card">
+              <div class="boss-battle-header">
+                <div class="boss-monster-graphic" aria-hidden="true">
+                  <span class="boss-emoji" id="boss-emoji-state">👾</span>
+                  <span class="boss-level-tag">Lv. 3 Boss Kosan</span>
+                </div>
+                <div class="boss-details">
+                  <h3 class="boss-name">Raksasa Kresek Kosan</h3>
+                  <p class="boss-lore">Menghantui tempat sampah dapur & selokan kosan kalau kita lengah!</p>
                   
-                  <div class="time-radio-group">
-                    <label class="radio-card" for="slot-morning">
-                      <input type="radio" id="slot-morning" name="time-slot" value="Pagi (08.00 - 10.00)" checked>
-                      <span class="radio-indicator" aria-hidden="true"></span>
-                      <span class="radio-text">
-                        <strong>Pagi (08.00 - 10.00 WIB)</strong>
-                        <span class="subtext">Estimasi antrean: 5-8 orang</span>
-                      </span>
-                    </label>
-
-                    <label class="radio-card" for="slot-noon">
-                      <input type="radio" id="slot-noon" name="time-slot" value="Siang (10.00 - 12.00)">
-                      <span class="radio-indicator" aria-hidden="true"></span>
-                      <span class="radio-text">
-                        <strong>Siang (10.00 - 12.00 WIB)</strong>
-                        <span class="subtext">Estimasi antrean: 2-4 orang</span>
-                      </span>
-                    </label>
+                  <div class="hp-info-row">
+                    <span class="hp-label">Darah Boss:</span>
+                    <strong class="hp-value" id="battle-boss-hp-text">380 / 1.000 HP</strong>
                   </div>
-                </fieldset>
-              </div>
-
-              <div class="screen-footer-actions">
-                <button type="button" id="btn-register-next" class="btn-primary">
-                  <span>Lanjut: Pengaturan Akses</span>
-                  <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                </button>
-                <button type="button" id="btn-register-cancel" class="btn-secondary">
-                  <span>Batal</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 4. LAYAR BAGIKAN PREFERENSI (screen-share-pref) -->
-        <!-- ============================================== -->
-        <section id="screen-share-pref" class="screen" aria-labelledby="title-share-pref">
-          <div class="screen-content">
-            <h1 id="title-share-pref" class="text-heading-1">Preferensi Layanan di Loket</h1>
-            <p class="text-body">Anda bisa memberitahukan staf loket agar menyiapkan bantuan yang Anda butuhkan sebelum Anda tiba.</p>
-
-            <!-- Kartu Sakelar Utama: Bagikan atau Tidak -->
-            <div class="wireframe-card share-toggle-card">
-              <div class="switch-row">
-                <label for="toggle-share-active" class="switch-label-block">
-                  <strong>Bagikan preferensi aksesku ke puskesmas supaya mereka bisa bersiap</strong>
-                  <span class="subtext">Bebas memilih. Standar: MATI (Tidak dikirim jika tidak dicentang).</span>
-                </label>
-                <input type="checkbox" id="toggle-share-active" class="custom-toggle" aria-describedby="share-preview-details">
-              </div>
-            </div>
-
-            <!-- Pratinjau Terbuka Mengenai Apa yang Dibagikan -->
-            <div class="wireframe-box preview-box" id="share-preview-container">
-              <h2 class="text-heading-2">Pratinjau Informasi yang Akan Dilihat Staf:</h2>
-              <p class="text-caption">Hanya kebutuhan komunikasi dan layanan berikut yang dibagikan. Tidak ada riwayat penyakit atau diagnosis pribadi:</p>
-
-              <div class="shared-tags-preview" id="shared-tags-list">
-                <!-- Tag dinamis diisi oleh script -->
-                <span class="tag-item">Tolong bicara pelan dan jelas</span>
-                <span class="tag-item">Perlu bantuan mengisi formulir / menulis</span>
-                <span class="tag-item">Nomor antrean visual (tidak mengandalkan pengeras suara)</span>
-              </div>
-
-              <!-- Pilihan Bantuan Tambahan di Loket -->
-              <div class="additional-needs-box">
-                <p class="form-subheading"><strong>Sesuaikan kebutuhan Anda di loket:</strong></p>
-
-                <label class="checkbox-row" for="pref-need-slow-talk">
-                  <input type="checkbox" id="pref-need-slow-talk" class="custom-checkbox" checked>
-                  <span class="checkbox-indicator" aria-hidden="true"></span>
-                  <span class="label-info">Tolong bicara lebih pelan dan menghadap ke saya</span>
-                </label>
-
-                <label class="checkbox-row" for="pref-need-writing">
-                  <input type="checkbox" id="pref-need-writing" class="custom-checkbox" checked>
-                  <span class="checkbox-indicator" aria-hidden="true"></span>
-                  <span class="label-info">Butuh bantuan mencatat / menulis berkas</span>
-                </label>
-
-                <label class="checkbox-row" for="pref-need-sign-lang">
-                  <input type="checkbox" id="pref-need-sign-lang" class="custom-checkbox">
-                  <span class="checkbox-indicator" aria-hidden="true"></span>
-                  <span class="label-info">Butuh pendamping juru bahasa isyarat jika tersedia</span>
-                </label>
-
-                <label class="checkbox-row" for="pref-need-wheelchair-access">
-                  <input type="checkbox" id="pref-need-wheelchair-access" class="custom-checkbox">
-                  <span class="checkbox-indicator" aria-hidden="true"></span>
-                  <span class="label-info">Akses jalur landai / kursi roda saat menunggu</span>
-                </label>
-              </div>
-
-              <div class="privacy-note">
-                <svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-                <span>Privasi aman: Hanya dibagikan untuk sesi kunjungan ini.</span>
-              </div>
-            </div>
-
-            <div class="screen-footer-actions">
-              <button type="button" id="btn-share-confirm" class="btn-primary">
-                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                <span>Konfirmasi & Ambil Nomor Antrean</span>
-              </button>
-              <button type="button" id="btn-share-back" class="btn-secondary">
-                <span>Ubah Data Kunjungan</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 5. LAYAR TIKET & CHECK-IN (screen-checkin)    -->
-        <!-- ============================================== -->
-        <section id="screen-checkin" class="screen" aria-labelledby="title-checkin">
-          <div class="screen-content">
-            <h1 id="title-checkin" class="text-heading-1">Tiket Kunjungan</h1>
-
-            <div class="wireframe-card ticket-card">
-              <div class="ticket-header">
-                <span class="location-badge">
-                  <svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                  <span id="ticket-clinic-display">Puskesmas Sukamaju</span>
-                </span>
-                <span class="poly-badge" id="ticket-service-display">Poli Umum</span>
-              </div>
-
-              <div class="queue-giant-box">
-                <span class="queue-caption">Nomor Antrean Anda:</span>
-                <div class="queue-number" id="ticket-queue-number" aria-label="Nomor antrean A nol satu empat">A-014</div>
-                <div class="queue-time-info" id="ticket-time-display">Sesi Pagi: 08.00 - 10.00 WIB</div>
-              </div>
-
-              <!-- Status Check-In -->
-              <div class="status-summary-box">
-                <div class="status-indicator-row">
-                  <svg class="icon status-icon-warning" id="checkin-status-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                  </svg>
-                  <div>
-                    <strong id="checkin-status-text">Belum Check-In di Lokasi</strong>
-                    <p class="text-caption" id="checkin-status-subtext">Tekan tombol di bawah jika Anda sudah tiba di Puskesmas.</p>
+                  <div class="progress-bar-container boss-hp-bar" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100" aria-label="Sisa HP Boss Raksasa Kresek">
+                    <div class="progress-bar-fill fill-boss" id="battle-boss-hp-fill" style="width: 38%;"></div>
                   </div>
+                  <span class="text-caption mt-1">Tiap misi yang kamu atau squad selesaikan mengurangi HP boss!</span>
                 </div>
               </div>
             </div>
 
-            <div class="screen-footer-actions">
-              <button type="button" id="btn-do-checkin" class="btn-primary btn-large">
-                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-                <span>Saya Sudah Tiba (Check-In)</span>
-              </button>
-
-              <button type="button" id="btn-checkin-cancel" class="btn-secondary">
-                <span>Batal / Pulang</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 6. LAYAR MENUNGGU (screen-waiting)            -->
-        <!-- ============================================== -->
-        <section id="screen-waiting" class="screen" aria-labelledby="title-waiting">
-          <div class="screen-content">
-            <h1 id="title-waiting" class="text-heading-1">Ruang Tunggu</h1>
-
-            <div class="wireframe-card waiting-status-card">
-              <div class="status-badge-live">
-                <span class="live-dot" aria-hidden="true"></span>
-                <span>Antrean Berjalan</span>
-              </div>
-
-              <div class="waiting-highlight-box">
-                <p class="text-status-lead" id="waiting-lead-text">Sebentar lagi giliran Anda</p>
-                <div class="remaining-counter">
-                  <span class="counter-number" id="waiting-remaining-count">3</span>
-                  <span class="counter-text">orang lagi di depan Anda</span>
-                </div>
-              </div>
-
-              <!-- Posisi Loket -->
-              <div class="counter-comparison-grid">
-                <div class="comp-col">
-                  <span class="comp-label">Sedang Dilayani:</span>
-                  <span class="comp-val" id="waiting-current-serving">A-011</span>
-                  <span class="comp-sub">Loket 2</span>
-                </div>
-                <div class="comp-divider" aria-hidden="true"></div>
-                <div class="comp-col">
-                  <span class="comp-label">Nomor Anda:</span>
-                  <span class="comp-val my-num" id="waiting-my-number">A-014</span>
-                  <span class="comp-sub">Poli Umum</span>
-                </div>
-              </div>
-
-              <div class="comfort-notice">
-                <svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-                <span>Anda tidak perlu khawatir ketinggalan suara panggilan. Layar akan bergetar dan berkedip saat nomor Anda dipanggil.</span>
-              </div>
-            </div>
-
-            <!-- Tombol Simulasi untuk Pengujian Prototipe -->
-            <div class="wireframe-box demo-box">
-              <p class="demo-caption"><strong>Uji Alur Prototipe:</strong></p>
-              <button type="button" id="btn-simulate-call" class="btn-primary">
-                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-                <span>Simulasikan Giliran Dipanggil</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 7. LAYAR DIPANGGIL (screen-called)             -->
-        <!-- ============================================== -->
-        <section id="screen-called" class="screen" aria-labelledby="title-called">
-          <div class="screen-content">
-            <!-- Spanduk Peringatan Multi-Saluran (Visual Flash Banner) -->
-            <div class="alert-banner-flashing" id="called-flash-banner" role="alert">
-              <div class="alert-icon-ring" aria-hidden="true">
-                <svg viewBox="0 0 24 24" class="icon-huge"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-              </div>
-              <h1 id="title-called" class="text-call-title">GILIRAN ANDA!</h1>
-              <p class="text-call-instruction">Silakan Menuju ke:</p>
-              <div class="counter-target-box">
-                <span class="counter-name">LOKET 2</span>
-                <span class="counter-sub">Pemeriksaan Poli Umum</span>
-              </div>
-              <div class="ticket-call-number" aria-label="Nomor Anda A-014">Nomor Anda: <strong>A-014</strong></div>
-            </div>
-
-            <!-- Petunjuk Aksesibilitas di Layar Panggilan -->
-            <div class="wireframe-card guide-after-call">
-              <h2 class="text-heading-2">Petunjuk saat di Loket:</h2>
-              <ul class="simple-list">
-                <li>Bawa kartu identitas / BPJS.</li>
-                <li>Tunjukkan layar ponsel jika ingin menggunakan <strong>Kartu Komunikasi</strong>.</li>
-                <li>Staf Loket 2 sudah menerima catatan preferensi Anda.</li>
-              </ul>
-            </div>
-
-            <div class="screen-footer-actions">
-              <button type="button" id="btn-go-to-counter" class="btn-primary btn-large">
-                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
-                <span>Saya Menuju Loket (Buka Kartu Komunikasi)</span>
-              </button>
-
-              <button type="button" id="btn-re-announce" class="btn-secondary">
-                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-                <span>Ulangi Panggilan Suara & Getar</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 8. LAYAR DI LOKET (screen-counter)             -->
-        <!-- ============================================== -->
-        <section id="screen-counter" class="screen" aria-labelledby="title-counter">
-          <div class="screen-content">
-            <h1 id="title-counter" class="text-heading-1">Di Loket Pelayanan</h1>
-            <p class="text-body">Ketuk kartu di bawah untuk memperbesar dan menunjukkannya kepada petugas, atau ketik pesan Anda.</p>
-
-            <!-- Bagian 1: Kartu Komunikasi Bergambar & Teks -->
-            <div class="wireframe-card comm-cards-section">
-              <h2 class="text-heading-2">Kartu Komunikasi Cepat</h2>
-              <p class="text-caption">Ketuk kartu untuk menampilkan ke ukuran layar penuh bagi staf:</p>
-
-              <div class="comm-grid" role="list">
-                <!-- Kartu 1: Nyeri Hebat -->
-                <button type="button" class="comm-card" data-title="Saya Merasakan Nyeri Hebat" data-desc="Tingkat rasa sakit sangat tinggi di bagian tubuh tertentu." aria-label="Tunjukkan kartu: Nyeri Hebat">
-                  <span class="comm-icon-box" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" class="icon"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                  </span>
-                  <strong class="comm-title">Nyeri Hebat</strong>
-                  <span class="comm-hint">Ketuk untuk tampilkan</span>
-                </button>
-
-                <!-- Kartu 2: Demam Tinggi -->
-                <button type="button" class="comm-card" data-title="Saya Sedang Demam & Panas Dingin" data-desc="Suhu tubuh terasa sangat panas sejak beberapa hari." aria-label="Tunjukkan kartu: Demam Tinggi">
-                  <span class="comm-icon-box" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" class="icon"><path d="M15 13V5c0-1.66-1.34-3-3-3S9 3.34 9 5v8c-1.21.91-2 2.37-2 4 0 2.76 2.24 5 5 5s5-2.24 5-5c0-1.63-.79-3.09-2-4zm-4-8c0-.55.45-1 1-1s1 .45 1 1h-2z"/></svg>
-                  </span>
-                  <strong class="comm-title">Demam Tinggi</strong>
-                  <span class="comm-hint">Ketuk untuk tampilkan</span>
-                </button>
-
-                <!-- Kartu 3: Butuh Juru Bahasa Isyarat -->
-                <button type="button" class="comm-card" data-title="Saya Membutuhkan Juru Bahasa Isyarat" data-desc="Saya berkomunikasi menggunakan bahasa isyarat / tulisan." aria-label="Tunjukkan kartu: Butuh Juru Bahasa Isyarat">
-                  <span class="comm-icon-box" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" class="icon"><path d="M9 11.24V7.5a2.5 2.5 0 0 1 5 0v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zM18.84 15.25l-4.59-4.59c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l3.29 3.29H6c-.55 0-1 .45-1 1s.45 1 1 1h7.59l-2.29 2.29c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l4.59-4.59c.78-.78.78-2.04 0-2.82z"/></svg>
-                  </span>
-                  <strong class="comm-title">Butuh Bahasa Isyarat</strong>
-                  <span class="comm-hint">Ketuk untuk tampilkan</span>
-                </button>
-
-                <!-- Kartu 4: Tolong Bicara Pelan -->
-                <button type="button" class="comm-card" data-title="Tolong Bicara Lebih Pelan & Jelas" data-desc="Mohon berbicara perlahan dan tatap saya secara langsung." aria-label="Tunjukkan kartu: Tolong Bicara Pelan">
-                  <span class="comm-icon-box" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" class="icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V6h2v6z"/></svg>
-                  </span>
-                  <strong class="comm-title">Tolong Bicara Pelan</strong>
-                  <span class="comm-hint">Ketuk untuk tampilkan</span>
-                </button>
-
-                <!-- Kartu 5: Butuh Bantuan Menulis -->
-                <button type="button" class="comm-card" data-title="Saya Membutuhkan Bantuan Menulis" data-desc="Tolong bantu saya mengisi formulir pendaftaran / resep." aria-label="Tunjukkan kartu: Butuh Bantuan Menulis">
-                  <span class="comm-icon-box" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" class="icon"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                  </span>
-                  <strong class="comm-title">Bantuan Menulis</strong>
-                  <span class="comm-hint">Ketuk untuk tampilkan</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Bagian 2: Kotak Ketik lalu Ucapkan (Type-then-speak) -->
-            <div class="wireframe-card type-speak-section">
-              <h2 class="text-heading-2">Ketik lalu Ucapkan</h2>
-              <p class="text-caption">Untuk Anda yang lebih nyaman mengetik daripada berbicara:</p>
-
-              <label for="input-speech-text" class="sr-only">Ketik kalimat yang ingin diucapkan ke petugas</label>
-              <textarea id="input-speech-text" class="custom-textarea" rows="2" placeholder="Contoh: Tenggorokan saya sakit sejak kemarin..."></textarea>
-
-              <div class="tts-action-row">
-                <button type="button" id="btn-speak-now" class="btn-primary">
-                  <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-                  <span>Ucapkan dengan Suara</span>
-                </button>
-                <button type="button" id="btn-show-large-text" class="btn-secondary" title="Tampilkan tulisan besar di layar">
-                  <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-                  <span>Tampilkan Teks Besar</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="screen-footer-actions">
-              <button type="button" id="btn-finish-counter" class="btn-primary btn-large">
-                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                <span>Selesai Konsultasi / Pemeriksaan</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 9. LAYAR SELESAI KUNJUNGAN (screen-after-visit) -->
-        <!-- ============================================== -->
-        <section id="screen-after-visit" class="screen" aria-labelledby="title-after-visit">
-          <div class="screen-content">
-            <div class="wireframe-box success-banner">
-              <div class="success-icon-box" aria-hidden="true">
-                <svg viewBox="0 0 24 24" class="icon-huge"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-              </div>
-              <h1 id="title-after-visit" class="text-heading-1">Kunjungan Selesai</h1>
-              <p class="text-body">Pemeriksaan Anda di Loket 2 telah dicatat oleh dokter/perawat.</p>
-            </div>
-
-            <!-- Ringkasan Langkah Selanjutnya -->
-            <div class="wireframe-card next-steps-card">
-              <h2 class="text-heading-2">Langkah Selanjutnya:</h2>
-              <div class="step-guide-item">
-                <span class="step-guide-num">1</span>
+            <!-- BAGIAN 2: MISI ADAPTIF (WAJIB ADA & INKLUSIF) -->
+            <div class="app-card adaptive-mission-card">
+              <div class="card-header-row">
+                <span class="icon-card" aria-hidden="true">⭐</span>
                 <div>
-                  <strong>Pengambilan Obat di Apotek</strong>
-                  <p class="text-body-sm">Silakan menuju Loket Farmasi di sebelah kanan pintu keluar. Tunggu nomor antrean obat Anda dipanggil.</p>
+                  <div class="badge-tag-adaptive">Misi Adaptif Inklusif</div>
+                  <h3 class="card-title">Operasi Tangkap Sampah Kosan</h3>
+                  <p class="card-caption">Pilih cara yang paling sesuai kemampuanmu. Semua varian bernilai setara!</p>
                 </div>
               </div>
 
-              <div class="step-guide-item">
-                <span class="step-guide-num">2</span>
+              <!-- Penjelasan Nilai Setara -->
+              <div class="equity-banner" role="note">
+                <span class="equity-icon" aria-hidden="true">⚖️</span>
+                <p>
+                  <strong>Dampak Setara:</strong> Varian mana pun yang kamu pilih akan menyumbang <strong>+1 Misi Squad</strong> dan memberikan <strong>-120 Kerusakan HP Boss</strong> secara adil.
+                </p>
+              </div>
+
+              <!-- Pilihan Varian Adaptif (Tab / Selector) -->
+              <fieldset class="variant-selection-group">
+                <legend class="variant-legend">Pilih Varian Pelaksanaan Misi:</legend>
+
+                <!-- Varian A: Eksplorasi / Lapangan -->
+                <label class="variant-card-option" for="variant-a">
+                  <input type="radio" name="adaptive-variant" id="variant-a" value="A" checked>
+                  <span class="variant-custom-radio" aria-hidden="true"></span>
+                  <div class="variant-body">
+                    <div class="variant-header">
+                      <strong class="variant-name">Varian A: Aksi Lorong & Pekarangan</strong>
+                      <span class="variant-tag tag-outdoor">Mobilitas Penuh</span>
+                    </div>
+                    <p class="variant-text">
+                      Jalan 50 langkah di lorong atau pekarangan kosan, ambil 2 sampah plastik kemasan yang tercecer lalu masukkan ke tempat sampah.
+                    </p>
+                    <span class="variant-time">⏱️ Estimasi: 5-8 menit</span>
+                  </div>
+                </label>
+
+                <!-- Varian B: Ramah Mobilitas / Motorik Sederhana -->
+                <label class="variant-card-option" for="variant-b">
+                  <input type="radio" name="adaptive-variant" id="variant-b" value="B">
+                  <span class="variant-custom-radio" aria-hidden="true"></span>
+                  <div class="variant-body">
+                    <div class="variant-header">
+                      <strong class="variant-name">Varian B: Sortir Meja / Kamar Sendiri</strong>
+                      <span class="variant-tag tag-mobility">Ramah Mobilitas</span>
+                    </div>
+                    <p class="variant-text">
+                      Cukup pilah 1 sampah plastik atau botol minuman di mejamu sendiri tanpa harus jalan berkeliling. Pisahkan tutup botol dan labelnya.
+                    </p>
+                    <span class="variant-time">⏱️ Estimasi: 3 menit • Tanpa mobilitas jauh</span>
+                  </div>
+                </label>
+
+                <!-- Varian C: Ramah Sensorik / Netra / Teks & Audio -->
+                <label class="variant-card-option" for="variant-c">
+                  <input type="radio" name="adaptive-variant" id="variant-c" value="C">
+                  <span class="variant-custom-radio" aria-hidden="true"></span>
+                  <div class="variant-body">
+                    <div class="variant-header">
+                      <strong class="variant-name">Varian C: Audit Sampah Teks & Audio</strong>
+                      <span class="variant-tag tag-sensory">Ramah Sensorik & Netra</span>
+                    </div>
+                    <p class="variant-text">
+                      Dengarkan petunjuk suara atau baca deskripsi simbol daur ulang nomor 1 (PET) dan 2 (HDPE), lalu periksa 1 barang belanjaan hari ini.
+                    </p>
+                    <div class="audio-guide-action mt-2">
+                      <button type="button" id="btn-play-variant-audio" class="btn-secondary-xs" aria-label="Putar panduan audio audit sampah">
+                        <span aria-hidden="true">🔊</span> Putar Panduan Suara
+                      </button>
+                    </div>
+                    <span class="variant-time">⏱️ Estimasi: 4 menit • Panduan audio lengkap</span>
+                  </div>
+                </label>
+              </fieldset>
+
+              <!-- Tombol Selesaikan Misi Adaptif -->
+              <div class="mission-action-row">
+                <button type="button" id="btn-complete-adaptive" class="btn-primary full-width">
+                  <span>Selesaikan Varian Terpilih & Serang Boss! 💥</span>
+                </button>
+                <div id="adaptive-success-msg" class="success-banner" hidden>
+                  🎉 <strong>Keren banget!</strong> Kamu menyumbang 1 misi untuk squad dan memotong -120 HP Boss!
+                </div>
+              </div>
+            </div>
+
+            <!-- BAGIAN 3: MISI HARIAN RUTIN -->
+            <div class="app-card regular-missions-card">
+              <div class="card-header-row">
+                <span class="icon-card" aria-hidden="true">📋</span>
                 <div>
-                  <strong>Jadwal Kontrol Berikutnya</strong>
-                  <p class="text-body-sm">Puskesmas menyarankan kontrol kembali pada: <strong>Kamis, 25 Oktober 2026</strong> jika keluhan belum mereda.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Kotak Umpan Balik Akses -->
-            <div class="wireframe-card feedback-box">
-              <h3 class="text-heading-3">Bagaimana kenyamanan kunjungan Anda hari ini?</h3>
-              <p class="text-caption">Preferensi Anda membantu puskesmas meningkatkan aksesibilitas pelayanan.</p>
-              <div class="simple-rating-row">
-                <button type="button" class="rating-btn" aria-label="Sangat Nyaman">😊 Sangat Nyaman</button>
-                <button type="button" class="rating-btn" aria-label="Cukup Baik">😐 Cukup Baik</button>
-                <button type="button" class="rating-btn" aria-label="Perlu Perbaikan">🙁 Perlu Perbaikan</button>
-              </div>
-            </div>
-
-            <div class="screen-footer-actions">
-              <button type="button" id="btn-back-to-home" class="btn-primary">
-                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                <span>Kembali ke Beranda</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 10. MODAL PENGATURAN AKSESIBILITAS (screen-settings) -->
-        <!-- ============================================== -->
-        <section id="screen-settings" class="modal-screen" aria-modal="true" role="dialog" aria-labelledby="title-settings" hidden>
-          <div class="modal-dialog">
-            <div class="modal-header">
-              <h1 id="title-settings" class="text-heading-1">
-                <svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4" r="2" /><path d="M19 13v-2c-1.54.02-3.09-.75-4.07-1.83l-1.29-1.43c-.4-.44-1.02-.68-1.64-.68-.62 0-1.24.24-1.64.68L9.07 9.17C8.09 10.25 6.54 11.02 5 11v2c1.78-.02 3.53-.78 4.75-2.02L11 9.7V15l-3.5 5.5 1.7 1 3.8-6 3.8 6 1.7-1L15 15V9.7l1.25 1.28C17.47 12.22 19.22 12.98 21 13v-2l-2 2z"/></svg>
-                Pengaturan Aksesibilitas
-              </h1>
-              <button type="button" id="btn-close-settings" class="btn-close-modal" aria-label="Tutup Pengaturan">
-                <svg viewBox="0 0 24 24" class="icon"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-              </button>
-            </div>
-
-            <div class="modal-body">
-              <p class="text-body-sm">Sesuaikan kenyamanan membaca dan interaksi Anda. Semua perubahan tersimpan otomatis di perangkat ini.</p>
-
-              <!-- Live Preview Box -->
-              <div class="live-preview-box" id="preview-box">
-                <span class="preview-tag">Pratinjau Langsung:</span>
-                <p class="preview-sample-title">Nomor Antrean: A-014</p>
-                <p class="preview-sample-text">Ini adalah contoh ukuran teks dan kontras tombol di layar Anda.</p>
-                <div class="preview-sample-btn">Tombol Contoh</div>
-              </div>
-
-              <!-- Slider Ukuran Teks (100% - 200%) -->
-              <div class="setting-item-block">
-                <div class="slider-header">
-                  <label for="slider-text-size" class="setting-label">
-                    <strong>Ukuran Teks</strong>
-                  </label>
-                  <span id="label-text-size-val" class="slider-val-badge">100%</span>
-                </div>
-                <div class="slider-control-row">
-                  <span class="slider-bound" aria-hidden="true">A</span>
-                  <input type="range" id="slider-text-size" min="100" max="200" step="10" value="100" class="custom-range" aria-valuemin="100" aria-valuemax="200" aria-valuenow="100" aria-label="Geser untuk memperbesar atau memperkecil teks aplikasi">
-                  <span class="slider-bound font-large" aria-hidden="true">A</span>
+                  <h3 class="card-title">Misi Rutin Hari Ini</h3>
+                  <p class="card-caption">Aksi kecil 5 menit untuk menjaga bumi tetap hijau.</p>
                 </div>
               </div>
 
-              <!-- Sakelar Mode Kontras Tinggi -->
-              <div class="setting-toggle-row">
-                <div class="toggle-text">
-                  <label for="toggle-high-contrast" class="setting-label">
-                    <strong>Mode Kontras Tinggi</strong>
-                  </label>
-                  <span class="subtext">Warna pekat, garis tebal untuk kemudahan baca maksimal.</span>
-                </div>
-                <input type="checkbox" id="toggle-high-contrast" class="custom-toggle">
-              </div>
-
-              <!-- Sakelar Palet Ramah Buta Warna -->
-              <div class="setting-toggle-row">
-                <div class="toggle-text">
-                  <label for="toggle-colorblind-safe" class="setting-label">
-                    <strong>Palet Ramah Buta Warna</strong>
-                  </label>
-                  <span class="subtext">Pola arsir visual & kontras monokrom tanpa mengandalkan warna.</span>
-                </div>
-                <input type="checkbox" id="toggle-colorblind-safe" class="custom-toggle">
-              </div>
-
-              <!-- Sakelar Pembaca Layar Web (Text-to-Speech) -->
-              <div class="setting-toggle-row">
-                <div class="toggle-text">
-                  <label for="toggle-screen-reader" class="setting-label">
-                    <strong>Bacakan Layar (Suara Bawaan)</strong>
-                  </label>
-                  <span class="subtext">Membacakan tombol dan teks secara otomatis lewat audio.</span>
-                </div>
-                <input type="checkbox" id="toggle-screen-reader" class="custom-toggle">
-              </div>
-
-              <!-- Sakelar Mode Sederhana -->
-              <div class="setting-toggle-row">
-                <div class="toggle-text">
-                  <label for="toggle-simple-mode" class="setting-label">
-                    <strong>Tampilan Sederhana (Fokus Satu Hal)</strong>
-                  </label>
-                  <span class="subtext">Menyembunyikan informasi sekunder agar tidak membingungkan.</span>
-                </div>
-                <input type="checkbox" id="toggle-simple-mode" class="custom-toggle">
-              </div>
-
-              <!-- Sakelar Notifikasi Getar & Kedip Layar -->
-              <div class="setting-toggle-row">
-                <div class="toggle-text">
-                  <label for="toggle-vib-flash" class="setting-label">
-                    <strong>Notifikasi Getar & Layar Berkedip</strong>
-                  </label>
-                  <span class="subtext">Peringatan fisik dan kedipan visual saat giliran dipanggil.</span>
-                </div>
-                <input type="checkbox" id="toggle-vib-flash" class="custom-toggle" checked>
-              </div>
-
-              <!-- Sakelar Kurangi Gerakan Animasi -->
-              <div class="setting-toggle-row">
-                <div class="toggle-text">
-                  <label for="toggle-reduce-motion" class="setting-label">
-                    <strong>Kurangi Gerakan & Animasi</strong>
-                  </label>
-                  <span class="subtext">Menghilangkan efek kedip cepat dan transisi gerak.</span>
-                </div>
-                <input type="checkbox" id="toggle-reduce-motion" class="custom-toggle">
-              </div>
-            </div>
-
-            <div class="modal-footer">
-              <button type="button" id="btn-save-settings" class="btn-primary">
-                <span>Terapkan & Simpan</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 11. LAYAR TAMPILAN PETUGAS / STAFF VIEW (screen-staff) -->
-        <!-- ============================================== -->
-        <section id="screen-staff" class="screen" aria-labelledby="title-staff">
-          <div class="screen-content">
-            <div class="wireframe-box staff-header-box">
-              <span class="staff-tag">Simulasi Tampilan Petugas Puskesmas</span>
-              <h1 id="title-staff" class="text-heading-1">Loket 2 - Poli Umum</h1>
-              <p class="text-body-sm">Daftar pasien yang mengantre beserta kebutuhan akses yang telah dibagikan sebelum kedatangan.</p>
-            </div>
-
-            <div class="staff-queue-card wireframe-card">
-              <h2 class="text-heading-2">Daftar Pasien Menunggu</h2>
-
-              <div class="staff-patient-list" role="list">
-                <!-- Pasien 1: Sudah Selesai -->
-                <div class="staff-patient-item done" role="listitem">
-                  <div class="patient-id-col">
-                    <span class="patient-num">A-013</span>
-                    <span class="patient-status-done">Selesai</span>
-                  </div>
-                  <div class="patient-details">
-                    <strong>Ibu Ratna (62 th)</strong>
-                    <span class="patient-pref-badge">Standar</span>
-                  </div>
-                </div>
-
-                <!-- Pasien 2: Pengguna Prototipe Ini (A-014) -->
-                <div class="staff-patient-item active-target" id="staff-active-patient-card" role="listitem">
-                  <div class="patient-id-col">
-                    <span class="patient-num highlight">A-014</span>
-                    <span class="status-pill status-ready" id="staff-patient-status-pill">Siap Dilayani</span>
-                  </div>
-                  <div class="patient-details">
-                    <strong id="staff-patient-name">Budi Santoso (Pengguna Ini)</strong>
-                    <div class="staff-shared-box" id="staff-shared-details">
-                      <span class="staff-pref-title">Preferensi Akses Dibagikan:</span>
-                      <ul class="staff-pref-tags" id="staff-pref-tag-list">
-                        <li>🔊 Tolong bicara pelan & menghadap ke pasien</li>
-                        <li>✍️ Butuh bantuan mencatat / menulis</li>
-                        <li>📳 Peringatan visual (tidak mengandalkan suara)</li>
-                      </ul>
-                      <p class="staff-instruction">Catatan Petugas: Siapkan formulir dan bicara perlahan saat melayani.</p>
+              <!-- Misi 1 -->
+              <div class="mission-card-item" id="card-mission-1">
+                <div class="mission-item-header">
+                  <div class="mission-icon-large" aria-hidden="true">🧃</div>
+                  <div class="mission-text-col">
+                    <strong class="mission-title">Bawa Tumbler Sendiri</strong>
+                    <p class="mission-desc">Gunakan botol minum isi ulang saat ke kampus atau nongkrong di warkop.</p>
+                    <div class="mission-meta">
+                      <span class="meta-tag">💧 Hemat 1 Botol</span>
+                      <span class="meta-tag">-50 HP Boss</span>
                     </div>
                   </div>
                 </div>
-
-                <!-- Pasien 3: Menunggu -->
-                <div class="staff-patient-item" role="listitem">
-                  <div class="patient-id-col">
-                    <span class="patient-num">A-015</span>
-                    <span class="patient-status-wait">Menunggu</span>
-                  </div>
-                  <div class="patient-details">
-                    <strong>Ahmad Fauzi (28 th)</strong>
-                    <span class="patient-pref-badge">Standar</span>
-                  </div>
-                </div>
+                <button type="button" class="btn-secondary-sm btn-action-mission" data-mission-id="1">
+                  <span>Tandai Selesai ✅</span>
+                </button>
               </div>
 
-              <div class="staff-actions-bar">
-                <button type="button" id="btn-staff-call-patient" class="btn-primary">
-                  <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-                  <span>Panggil A-014 Sekarang</span>
+              <!-- Misi 2 -->
+              <div class="mission-card-item" id="card-mission-2">
+                <div class="mission-item-header">
+                  <div class="mission-icon-large" aria-hidden="true">🥤</div>
+                  <div class="mission-text-col">
+                    <strong class="mission-title">Tolak Sedotan Plastik</strong>
+                    <p class="mission-desc">Minta minuman tanpa sedotan sekali pakai saat jajan es teh atau jus.</p>
+                    <div class="mission-meta">
+                      <span class="meta-tag">🚯 Tolak 1 Plastik</span>
+                      <span class="meta-tag">-50 HP Boss</span>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn-secondary-sm btn-action-mission" data-mission-id="2">
+                  <span>Tandai Selesai ✅</span>
+                </button>
+              </div>
+
+              <!-- Misi 3 -->
+              <div class="mission-card-item" id="card-mission-3">
+                <div class="mission-item-header">
+                  <div class="mission-icon-large" aria-hidden="true">🔌</div>
+                  <div class="mission-text-col">
+                    <strong class="mission-title">Cabut Colokan Tak Terpakai</strong>
+                    <p class="mission-desc">Cabut charger laptop dan kipas angin sebelum meninggalkan kamar kos.</p>
+                    <div class="mission-meta">
+                      <span class="meta-tag">⚡ Hemat Energi</span>
+                      <span class="meta-tag">-50 HP Boss</span>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn-secondary-sm btn-action-mission" data-mission-id="3">
+                  <span>Tandai Selesai ✅</span>
                 </button>
               </div>
             </div>
 
-            <div class="screen-footer-actions">
-              <button type="button" id="btn-staff-return-patient" class="btn-secondary">
-                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 19l-7-7 7-7v4h8v6h-8v4z"/></svg>
-                <span>Kembali ke Mode Pasien</span>
+            <!-- BAGIAN 4: ITEM HARIAN ALA POKEMON (MONSTER SAMPAH) -->
+            <div class="app-card daily-items-card">
+              <div class="card-header-row">
+                <span class="icon-card" aria-hidden="true">📦</span>
+                <div>
+                  <h3 class="card-title">Monster Sampah Sekitar Kosan</h3>
+                  <p class="card-caption">Item harian yang muncul di lingkungan bersama. Tangkap & bereskan!</p>
+                </div>
+              </div>
+
+              <div class="item-grid" id="daily-items-list">
+                <!-- Item 1 -->
+                <div class="trash-monster-card" id="item-trash-1">
+                  <div class="monster-avatar" aria-hidden="true">☕</div>
+                  <div class="monster-info">
+                    <strong class="monster-name">Gelas Boba Nyasar</strong>
+                    <span class="monster-loc">📍 Terdeteksi di tangga lantai 2</span>
+                    <span class="monster-reward">+1 Daur Ulang • -30 HP Boss</span>
+                  </div>
+                  <button type="button" class="btn-secondary-xs btn-capture-item" data-item-id="1">
+                    Bereskan! 🧹
+                  </button>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="trash-monster-card" id="item-trash-2">
+                  <div class="monster-avatar" aria-hidden="true">📦</div>
+                  <div class="monster-info">
+                    <strong class="monster-name">Kardus Paket Menumpuk</strong>
+                    <span class="monster-loc">📍 Terdeteksi di depan pintu masuk</span>
+                    <span class="monster-reward">+1 Kardus Pilah • -30 HP Boss</span>
+                  </div>
+                  <button type="button" class="btn-secondary-xs btn-capture-item" data-item-id="2">
+                    Lipat & Simpan! 📦
+                  </button>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="trash-monster-card" id="item-trash-3">
+                  <div class="monster-avatar" aria-hidden="true">🛍️</div>
+                  <div class="monster-info">
+                    <strong class="monster-name">Kresek Mini Belanjaan</strong>
+                    <span class="monster-loc">📍 Terdeteksi di meja makan bersama</span>
+                    <span class="monster-reward">+1 Guna Ulang • -30 HP Boss</span>
+                  </div>
+                  <button type="button" class="btn-secondary-xs btn-capture-item" data-item-id="3">
+                    Gunakan Ulang! ♻️
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- 4. LAYAR KARTU HASIL / BAGIKAN (screen-share)  -->
+        <!-- ============================================== -->
+        <section id="screen-share" class="screen" aria-labelledby="title-share" hidden>
+          <div class="screen-content">
+
+            <!-- Section Title -->
+            <div class="section-title-box">
+              <h2 id="title-share" class="screen-title">Kartu Pencapaian Mabar</h2>
+              <p class="screen-desc">Bagikan aksimu ke Instagram Story atau WhatsApp untuk tularkan semangat hijau!</p>
+            </div>
+
+            <!-- Kartu Cerita Berformat Story (Rasio 9:16 Vertikal Estetik) -->
+            <div class="story-card-wrapper">
+              <article class="story-card theme-story-green" id="story-card-preview" aria-label="Pratinjau Kartu Hasil Aksi Hijau">
+                <!-- Header Kartu -->
+                <div class="story-header">
+                  <div class="story-brand">
+                    <span class="story-logo-icon" aria-hidden="true">🌱</span>
+                    <span class="story-brand-name">GreenSteps</span>
+                  </div>
+                  <span class="story-badge-today">Aksi Hari Ini</span>
+                </div>
+
+                <!-- Avatar & Identitas Pengguna -->
+                <div class="story-user-badge">
+                  <div class="story-avatar" aria-hidden="true">🧑‍🌾</div>
+                  <div>
+                    <h3 class="story-user-name" id="story-user-name">Rian</h3>
+                    <p class="story-squad-name" id="story-squad-tag">Kosan Barokah Squad • Kukusan</p>
+                  </div>
+                </div>
+
+                <!-- Pesan Aksi Utama -->
+                <div class="story-headline-box">
+                  <p class="story-kicker">MABAR HIJAU HARI INI</p>
+                  <h4 class="story-headline" id="story-headline-text">
+                    "Hari ini aku menyelamatkan 5 botol plastik & 3 kresek bareng anak kos!"
+                  </h4>
+                </div>
+
+                <!-- Metrik Nyata Story -->
+                <div class="story-stats-grid">
+                  <div class="story-stat-tile">
+                    <span class="stat-icon-sm" aria-hidden="true">🍾</span>
+                    <span class="stat-number-sm" id="story-stat-bottles">5 Botol</span>
+                    <span class="stat-label-sm">Diselamatkan</span>
+                  </div>
+                  <div class="story-stat-tile">
+                    <span class="stat-icon-sm" aria-hidden="true">🔥</span>
+                    <span class="stat-number-sm" id="story-stat-streak">7 Hari</span>
+                    <span class="stat-label-sm">Streak Mabar</span>
+                  </div>
+                  <div class="story-stat-tile">
+                    <span class="stat-icon-sm" aria-hidden="true">☁️</span>
+                    <span class="stat-number-sm" id="story-stat-co2">250g CO2</span>
+                    <span class="stat-label-sm">Dicegah</span>
+                  </div>
+                  <div class="story-stat-tile">
+                    <span class="stat-icon-sm" aria-hidden="true">👾</span>
+                    <span class="stat-number-sm" id="story-stat-damage">-380 HP</span>
+                    <span class="stat-label-sm">Boss Kresek</span>
+                  </div>
+                </div>
+
+                <!-- Footer Kartu: CTA Mabar -->
+                <div class="story-footer">
+                  <div class="story-footer-text">
+                    <small>Mau mabar hijau di kosanmu?</small>
+                    <strong>Gabung: #BAROKAH-ECO</strong>
+                  </div>
+                  <div class="story-qr-box" aria-hidden="true">
+                    <span>📱 SCAN</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <!-- Kontrol Kustomisasi Kartu -->
+            <div class="app-card story-controls-card">
+              <h3 class="card-title">Pilih Tema Kartu Story:</h3>
+              <div class="story-theme-selector" role="radiogroup" aria-label="Pilihan tema warna kartu story">
+                <button type="button" class="btn-theme-swatch active" data-theme="theme-story-green" aria-label="Tema Daun Hijau Segar">
+                  <span class="swatch-circle swatch-green" aria-hidden="true"></span>
+                  <span>Daun Hijau</span>
+                </button>
+                <button type="button" class="btn-theme-swatch" data-theme="theme-story-sunset" aria-label="Tema Senja Sore">
+                  <span class="swatch-circle swatch-sunset" aria-hidden="true"></span>
+                  <span>Senja Hangat</span>
+                </button>
+                <button type="button" class="btn-theme-swatch" data-theme="theme-story-midnight" aria-label="Tema Malam Kosan">
+                  <span class="swatch-circle swatch-midnight" aria-hidden="true"></span>
+                  <span>Midnight Eco</span>
+                </button>
+              </div>
+
+              <!-- Tombol Aksi Bagikan -->
+              <div class="btn-group-vertical mt-3">
+                <button type="button" id="btn-share-instagram" class="btn-primary">
+                  <span aria-hidden="true">📸</span>
+                  <span>Bagikan ke Instagram Story / Status</span>
+                </button>
+                <button type="button" id="btn-copy-story-text" class="btn-secondary">
+                  <span aria-hidden="true">📋</span>
+                  <span>Salin Teks Ringkasan Aksi</span>
+                </button>
+                <button type="button" id="btn-download-story-mock" class="btn-ghost">
+                  <span aria-hidden="true">💾</span>
+                  <span>Simpan Kartu Gambar (Simulasi)</span>
+                </button>
+              </div>
+
+              <div id="share-feedback" class="success-banner" hidden>
+                ✅ Teks berhasil disalin ke clipboard! Siap diposting ke status WhatsApp atau Instagram.
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- 5. LAYAR PROGRES DAMPAK NYATA (screen-impact)  -->
+        <!-- ============================================== -->
+        <section id="screen-impact" class="screen" aria-labelledby="title-impact" hidden>
+          <div class="screen-content">
+
+            <!-- Section Title -->
+            <div class="section-title-box">
+              <h2 id="title-impact" class="screen-title">Laporan Dampak Nyata</h2>
+              <p class="screen-desc">Bukan cuma angka poin di game, ini hasil nyata aksi kamu & squad untuk bumi.</p>
+            </div>
+
+            <!-- Tab Switcher: Dampak Pribadiku vs Dampak Squad -->
+            <div class="tab-pill-group" role="tablist" aria-label="Pilihan Sudut Pandang Dampak">
+              <button type="button" class="tab-pill active" id="tab-impact-personal" role="tab" aria-selected="true" aria-controls="panel-impact-personal">
+                Dampak Pribadiku 🧑‍🌾
+              </button>
+              <button type="button" class="tab-pill" id="tab-impact-squad" role="tab" aria-selected="false" aria-controls="panel-impact-squad">
+                Dampak Seluruh Squad 👥
               </button>
             </div>
+
+            <!-- Panel 1: Dampak Pribadiku -->
+            <div id="panel-impact-personal" class="tab-panel active" role="tabpanel" aria-labelledby="tab-impact-personal">
+              
+              <!-- Grid Metrik Nyata -->
+              <div class="impact-metrics-grid">
+                
+                <div class="impact-metric-card">
+                  <div class="metric-icon-bubble" aria-hidden="true">🍾</div>
+                  <strong class="metric-value">42 Botol</strong>
+                  <span class="metric-label">Plastik Diselamatkan</span>
+                  <p class="metric-analogy">
+                    💡 <em>Setara mencegah 1 karung plastik menumpuk di TPA Cipayung.</em>
+                  </p>
+                </div>
+
+                <div class="impact-metric-card">
+                  <div class="metric-icon-bubble" aria-hidden="true">🛍️</div>
+                  <strong class="metric-value">38 Kantong</strong>
+                  <span class="metric-label">Kresek Ditolak</span>
+                  <p class="metric-analogy">
+                    💡 <em>Setara mencegah 2 saluran got kosan tersumbat saat hujan lebat.</em>
+                  </p>
+                </div>
+
+                <div class="impact-metric-card">
+                  <div class="metric-icon-bubble" aria-hidden="true">☁️</div>
+                  <strong class="metric-value">26.5 kg</strong>
+                  <span class="metric-label">Emisi CO2 Dicegah</span>
+                  <p class="metric-analogy">
+                    💡 <em>Setara mematikan 6 lampu kamar kosan non-stop selama 1 minggu.</em>
+                  </p>
+                </div>
+
+                <div class="impact-metric-card">
+                  <div class="metric-icon-bubble" aria-hidden="true">📦</div>
+                  <strong class="metric-value">14.8 kg</strong>
+                  <span class="metric-label">Kardus & Kertas Terpilah</span>
+                  <p class="metric-analogy">
+                    💡 <em>Siap disetor ke Bank Sampah Kampus akhir bulan ini.</em>
+                  </p>
+                </div>
+
+              </div>
+
+              <!-- Streak & Konsistensi -->
+              <div class="app-card streak-summary-card">
+                <div class="card-header-row">
+                  <span class="icon-card" aria-hidden="true">🔥</span>
+                  <div>
+                    <h3 class="card-title">Streak & Konsistensi Kebiasaan</h3>
+                    <p class="card-caption">7 hari berturut-turut melakukan min. 1 aksi hijau.</p>
+                  </div>
+                </div>
+
+                <div class="week-streak-row" aria-label="Riwayat 7 hari terakhir">
+                  <div class="day-dot active" title="Senin: Selesai"><span>Sen</span><span class="check" aria-hidden="true">✓</span></div>
+                  <div class="day-dot active" title="Selasa: Selesai"><span>Sel</span><span class="check" aria-hidden="true">✓</span></div>
+                  <div class="day-dot active" title="Rabu: Selesai"><span>Rab</span><span class="check" aria-hidden="true">✓</span></div>
+                  <div class="day-dot active" title="Kamis: Selesai"><span>Kam</span><span class="check" aria-hidden="true">✓</span></div>
+                  <div class="day-dot active" title="Jumat: Selesai"><span>Jum</span><span class="check" aria-hidden="true">✓</span></div>
+                  <div class="day-dot active" title="Sabtu: Selesai"><span>Sab</span><span class="check" aria-hidden="true">✓</span></div>
+                  <div class="day-dot today-active" title="Minggu (Hari ini): Selesai"><span>Min</span><span class="check" aria-hidden="true">★</span></div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Panel 2: Dampak Seluruh Squad -->
+            <div id="panel-impact-squad" class="tab-panel" role="tabpanel" aria-labelledby="tab-impact-squad" hidden>
+              
+              <!-- Squad Total Stats -->
+              <div class="app-card squad-total-card">
+                <div class="squad-total-header">
+                  <div class="squad-badge-large" aria-hidden="true">🏡</div>
+                  <div>
+                    <h3 class="card-title">Kosan Barokah Asri</h3>
+                    <p class="card-caption">Total gabungan aksi 6 anggota squad bulan ini.</p>
+                  </div>
+                </div>
+
+                <div class="squad-stats-tally">
+                  <div class="tally-item">
+                    <strong class="tally-num">210</strong>
+                    <span class="tally-lbl">Botol Plastik Dicegah</span>
+                  </div>
+                  <div class="tally-item">
+                    <strong class="tally-num">184</strong>
+                    <span class="tally-lbl">Kresek Ditolak</span>
+                  </div>
+                  <div class="tally-item">
+                    <strong class="tally-num">132 kg</strong>
+                    <span class="tally-lbl">CO2 Berhasil Dicegah</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Target Bersama: Setor ke Bank Sampah -->
+              <div class="app-card milestone-goal-card">
+                <div class="card-header-row">
+                  <span class="icon-card" aria-hidden="true">🎯</span>
+                  <div>
+                    <h3 class="card-title">Target Mabar: Setor ke Bank Sampah Kampus</h3>
+                    <p class="card-caption">Kumpulkan 250 botol & kardus untuk ditukar saldo e-wallet bareng-bareng.</p>
+                  </div>
+                </div>
+
+                <div class="progress-bar-container" role="progressbar" aria-valuenow="84" aria-valuemin="0" aria-valuemax="100" aria-label="Progres target bank sampah">
+                  <div class="progress-bar-fill fill-milestone" style="width: 84%;"></div>
+                </div>
+                <div class="progress-caption-row">
+                  <span class="text-caption">210 / 250 Item Terkumpul</span>
+                  <strong class="text-caption-bold">Kurang 40 Lagi!</strong>
+                </div>
+
+                <div class="milestone-reward-box">
+                  <span class="reward-icon" aria-hidden="true">🎁</span>
+                  <p class="reward-text">
+                    Reward Squad: Traktir es teh bareng satu kosan dari hasil tabungan bank sampah!
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Tombol Bagikan Dampak -->
+            <div class="btn-group-vertical mt-3">
+              <button type="button" class="btn-primary btn-goto-share" data-target="screen-share">
+                <span>Pamerkan Dampak di Story Instagram 🌟</span>
+              </button>
+            </div>
+
           </div>
         </section>
 
       </main>
 
-      <!-- Modal Full-Screen untuk Kartu Komunikasi & Teks Besar -->
-      <div id="modal-card-zoom" class="zoom-modal" aria-modal="true" role="dialog" aria-labelledby="zoom-card-title" hidden>
-        <div class="zoom-card-content">
-          <button type="button" id="btn-close-zoom" class="btn-close-zoom" aria-label="Tutup Tampilan Kartu">
-            <svg viewBox="0 0 24 24" class="icon"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-            <span>Tutup (X)</span>
-          </button>
-          <div class="zoom-card-body">
-            <h1 id="zoom-card-title" class="zoom-title">Nyeri Hebat</h1>
-            <p id="zoom-card-desc" class="zoom-desc">Tingkat rasa sakit sangat tinggi di bagian tubuh tertentu.</p>
+      <!-- Bilah Navigasi Bawah 5 Layar (Bottom Tab Bar Mobile) -->
+      <nav class="bottom-nav-bar" aria-label="Navigasi Utama Aplikasi GreenSteps">
+        <button type="button" class="nav-item active" data-screen="screen-onboarding" aria-label="Layar 1: Onboarding dan Squad">
+          <span class="nav-icon" aria-hidden="true">🚪</span>
+          <span class="nav-label">Onboarding</span>
+        </button>
+        <button type="button" class="nav-item" data-screen="screen-home" aria-label="Layar 2: Beranda">
+          <span class="nav-icon" aria-hidden="true">🏠</span>
+          <span class="nav-label">Beranda</span>
+        </button>
+        <button type="button" class="nav-item" data-screen="screen-missions" aria-label="Layar 3: Misi dan Item Harian">
+          <span class="nav-icon" aria-hidden="true">⚔️</span>
+          <span class="nav-label">Misi & Boss</span>
+        </button>
+        <button type="button" class="nav-item" data-screen="screen-share" aria-label="Layar 4: Kartu Hasil Cerita">
+          <span class="nav-icon" aria-hidden="true">🌟</span>
+          <span class="nav-label">Bagikan</span>
+        </button>
+        <button type="button" class="nav-item" data-screen="screen-impact" aria-label="Layar 5: Progres Dampak Nyata">
+          <span class="nav-icon" aria-hidden="true">📊</span>
+          <span class="nav-label">Dampak</span>
+        </button>
+      </nav>
+
+    </div><!-- /mobile-frame -->
+
+  </div><!-- /device-viewport-shell -->
+
+  <!-- ======================================================== -->
+  <!-- MODAL / DRAWER PENGATURAN AKSESIBILITAS UNIVERSAL        -->
+  <!-- Dapat dibuka kapan saja lewat ikon universal di pojok    -->
+  <!-- ======================================================== -->
+  <div id="modal-a11y-settings" class="a11y-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-a11y-title" hidden>
+    <div class="a11y-modal-container">
+      
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon" aria-hidden="true">♿</span>
+          <div>
+            <h2 id="modal-a11y-title" class="modal-title">Pengaturan Aksesibilitas</h2>
+            <p class="modal-subtitle">Tampilan langsung berubah secara instan untuk kemudahan demonstrasi.</p>
           </div>
         </div>
+        <button type="button" id="btn-close-a11y" class="btn-close-modal" aria-label="Tutup Pengaturan Aksesibilitas">
+          <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
       </div>
 
-    </div> <!-- Akhir mobile-frame -->
-  </div> <!-- Akhir device-viewport-shell -->
+      <div class="modal-scroll-body">
+        
+        <!-- Live Preview Sample Card -->
+        <div class="sample-preview-box" aria-hidden="true">
+          <span class="sample-label">Pratinjau Langsung:</span>
+          <div class="sample-card">
+            <div class="sample-card-header">
+              <span class="sample-avatar">🌱</span>
+              <div>
+                <strong>Misi Mabar Kosan</strong>
+                <span class="status-pill status-pill-success">● 5 dari 6 Selesai</span>
+              </div>
+            </div>
+            <p class="sample-text">Contoh tulisan dan tombol di aplikasi GreenSteps.</p>
+            <button type="button" class="btn-primary-xs">Tombol Contoh</button>
+          </div>
+        </div>
+
+        <!-- 1. PENGATURAN PENGLIHATAN / NETRA / BUTA WARNA -->
+        <div class="setting-category">
+          <h3 class="category-heading">👁️ Penglihatan & Warna</h3>
+
+          <!-- Ukuran Font -->
+          <div class="setting-item">
+            <div class="setting-label-col">
+              <label for="font-scale-slider" class="setting-title">Ukuran Teks / Huruf</label>
+              <span class="setting-desc">Perbesar teks hingga 150% tanpa merusak tata letak.</span>
+            </div>
+            <div class="font-scale-controls">
+              <button type="button" class="btn-scale-step" id="btn-font-normal" aria-label="Ukuran teks normal 100%">100%</button>
+              <button type="button" class="btn-scale-step" id="btn-font-large" aria-label="Ukuran teks besar 125%">125%</button>
+              <button type="button" class="btn-scale-step" id="btn-font-xlarge" aria-label="Ukuran teks sangat besar 150%">150%</button>
+            </div>
+          </div>
+
+          <!-- Mode Kontras Tinggi -->
+          <div class="setting-item">
+            <div class="setting-label-col">
+              <span class="setting-title" id="lbl-high-contrast">Kontras Tinggi (WCAG AAA)</span>
+              <span class="setting-desc">Garis tepi tebal hitam pekat, kontras teks maksimal.</span>
+            </div>
+            <label class="toggle-switch" for="toggle-high-contrast">
+              <input type="checkbox" id="toggle-high-contrast" aria-labelledby="lbl-high-contrast">
+              <span class="switch-slider" aria-hidden="true"></span>
+            </label>
+          </div>
+
+          <!-- Mode Ramah Buta Warna -->
+          <div class="setting-item">
+            <div class="setting-label-col">
+              <span class="setting-title" id="lbl-colorblind">Ramah Buta Warna (Pola & Ikon)</span>
+              <span class="setting-desc">Tidak hanya warna: tambahkan garis arsir & ikon pembeda.</span>
+            </div>
+            <label class="toggle-switch" for="toggle-colorblind">
+              <input type="checkbox" id="toggle-colorblind" aria-labelledby="lbl-colorblind">
+              <span class="switch-slider" aria-hidden="true"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 2. PENGATURAN MOTORIK & SENTUHAN -->
+        <div class="setting-category">
+          <h3 class="category-heading">🖐️ Motorik & Sentuhan</h3>
+
+          <!-- Area Sentuh Ekstra Lega -->
+          <div class="setting-item">
+            <div class="setting-label-col">
+              <span class="setting-title" id="lbl-large-touch">Area Sentuh Ekstra Lega (56px)</span>
+              <span class="setting-desc">Tombol lebih besar dan jarak antar tombol lebih longgar.</span>
+            </div>
+            <label class="toggle-switch" for="toggle-large-touch">
+              <input type="checkbox" id="toggle-large-touch" aria-labelledby="lbl-large-touch">
+              <span class="switch-slider" aria-hidden="true"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 3. PENGATURAN KOGNITIF & ADHD -->
+        <div class="setting-category">
+          <h3 class="category-heading">🧠 Kognitif, ADHD & Lansia</h3>
+
+          <!-- Mode Fokus -->
+          <div class="setting-item">
+            <div class="setting-label-col">
+              <span class="setting-title" id="lbl-focus-mode">Mode Fokus (Satu Langkah Utama)</span>
+              <span class="setting-desc">Sembunyikan elemen sekunder yang membuat pusing.</span>
+            </div>
+            <label class="toggle-switch" for="toggle-focus-mode">
+              <input type="checkbox" id="toggle-focus-mode" aria-labelledby="lbl-focus-mode">
+              <span class="switch-slider" aria-hidden="true"></span>
+            </label>
+          </div>
+
+          <!-- Kurangi Gerakan -->
+          <div class="setting-item">
+            <div class="setting-label-col">
+              <span class="setting-title" id="lbl-reduced-motion">Kurangi Gerakan (Reduced Motion)</span>
+              <span class="setting-desc">Matikan animasi dan efek visual bergerak.</span>
+            </div>
+            <label class="toggle-switch" for="toggle-reduced-motion">
+              <input type="checkbox" id="toggle-reduced-motion" aria-labelledby="lbl-reduced-motion">
+              <span class="switch-slider" aria-hidden="true"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 4. PENGATURAN PENDENGARAN & SUARA (RUNGU) -->
+        <div class="setting-category">
+          <h3 class="category-heading">👂 Pendengaran & Multi-Saluran</h3>
+
+          <!-- Pembaca Teks Suara (TTS) -->
+          <div class="setting-item">
+            <div class="setting-label-col">
+              <span class="setting-title" id="lbl-tts-auto">Bacakan Layar Otomatis (Suara Web)</span>
+              <span class="setting-desc">Bacakan informasi utama saat berpindah layar.</span>
+            </div>
+            <label class="toggle-switch" for="toggle-tts-auto">
+              <input type="checkbox" id="toggle-tts-auto" aria-labelledby="lbl-tts-auto">
+              <span class="switch-slider" aria-hidden="true"></span>
+            </label>
+          </div>
+
+          <!-- Notifikasi Getar & Visual Kedip Lembut -->
+          <div class="setting-item">
+            <div class="setting-label-col">
+              <span class="setting-title" id="lbl-haptic-visual">Notifikasi Getar & Indikator Visual</span>
+              <span class="setting-desc">Ramah teman tuli: umpan balik berupa getaran dan banner teks.</span>
+            </div>
+            <label class="toggle-switch" for="toggle-haptic-visual">
+              <input type="checkbox" id="toggle-haptic-visual" checked aria-labelledby="lbl-haptic-visual">
+              <span class="switch-slider" aria-hidden="true"></span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer Modal -->
+      <div class="modal-footer">
+        <button type="button" id="btn-reset-a11y" class="btn-ghost">
+          Reset ke Standar
+        </button>
+        <button type="button" id="btn-save-a11y" class="btn-primary">
+          Simpan & Terapkan
+        </button>
+      </div>
+
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>
