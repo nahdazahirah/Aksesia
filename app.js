@@ -1,861 +1,1019 @@
 /**
- * AKSESIA - JavaScript Prototipe Alur Antrean & Layanan Inklusif Puskesmas
- * Menerapkan prinsip WCAG 2.2 AA, Web Speech API, Vibration API, dan ARIA Live Region.
+ * GREENSTEPS - PROTOTIPE REFERENSI UI/UX
+ * Logika Interaksi, Navigasi 5 Layar, Preferensi Aksesibilitas,
+ * Misi Adaptif, Boss Raid, dan Kartu Cerita
  */
 
 (function () {
   'use strict';
 
-  // ========================================================
-  // 1. STATE MANAGEMENT (Penyimpanan Lokal di Perangkat)
-  // ========================================================
-  const STORAGE_KEY_PREFS = 'aksesia_a11y_prefs_v1';
-  const STORAGE_KEY_VISIT = 'aksesia_visit_data_v1';
+  // ==========================================
+  // STATE APLIKASI (Disimpan di localStorage)
+  // ==========================================
+  const STORAGE_KEY = 'greensteps_state_v1';
 
-  // Pengaturan default aksesibilitas (Layer opsional MATI secara default)
-  const defaultSettings = {
-    textSize: 100,             // 100% - 200%
-    highContrast: false,       // Kontras standar sudah memenuhi WCAG AA 4.5:1
-    colorBlindSafe: false,     // Pola arsir khusus
-    screenReader: false,       // Text-to-speech otomatis
-    simpleMode: false,         // Fokus satu langkah per layar
-    vibFlash: true,            // Peringatan multi-saluran
-    reduceMotion: false        // Pengurangan animasi
-  };
+  const defaultState = {
+    // Profil & Squad
+    userName: 'Rian',
+    squadName: 'Kosan Barokah Asri',
+    squadCode: 'KOS-BAROKAH-24',
+    squadEnvironment: 'kos',
+    squadMembers: [
+      { id: 'm1', name: 'Rian (Kamu)', avatar: '🧑‍🌾', done: true, role: 'Tumbler Warrior', action: 'Bawa Tumbler Sendiri' },
+      { id: 'm2', name: 'Fajar', avatar: '⚡', done: true, role: 'Trash Hunter', action: 'Sortir Meja Kosan' },
+      { id: 'm3', name: 'Dita', avatar: '🌻', done: true, role: 'Zero Waste', action: 'Tolak Sedotan Es Teh' },
+      { id: 'm4', name: 'Bima', avatar: '🚲', done: true, role: 'Eco Patrol', action: 'Amankan Gelas Boba' },
+      { id: 'm5', name: 'Siti', avatar: '✨', done: true, role: 'Energy Saver', action: 'Cabut Colokan Kamar' },
+      { id: 'm6', name: 'Agus', avatar: '🧤', done: false, role: 'Pending Mabar', action: 'Belum ada misi hari ini' }
+    ],
 
-  // Data kunjungan dummy
-  const defaultVisit = {
-    clinic: 'Puskesmas Sukamaju',
-    service: 'Poli Umum',
-    timeSlot: 'Pagi (08.00 - 10.00)',
-    queueNumber: 'A-014',
-    isCheckedIn: false,
-    sharePreferences: false,
-    needs: {
-      slowTalk: true,
-      writing: true,
-      signLang: false,
-      wheelchair: false
+    // Boss Raid State
+    bossMaxHp: 1000,
+    bossCurrentHp: 380,
+    bossDefeated: false,
+
+    // Misi Adaptif
+    adaptiveVariantSelected: 'A',
+    adaptiveCompleted: false,
+
+    // Misi Harian Rutin (id -> boolean)
+    missionsDone: {
+      1: true,   // Bawa Tumbler
+      2: false,  // Tolak Sedotan
+      3: false   // Cabut Colokan
     },
-    status: 'ready' // 'ready' | 'waiting' | 'called' | 'counter' | 'finished'
+
+    // Item Sampah Sekitar (id -> boolean)
+    itemsCaptured: {
+      1: false, // Gelas Boba
+      2: false, // Kardus Paket
+      3: false  // Kresek Mini
+    },
+
+    // Statistik Dampak Nyata
+    impact: {
+      bottlesSaved: 5,
+      plasticBagsAvoided: 3,
+      co2GramsPrevented: 250,
+      streakDays: 7,
+      totalMissionsDone: 14
+    },
+
+    // Tema Story Card
+    storyTheme: 'theme-story-green',
+
+    // Preferensi Aksesibilitas
+    a11y: {
+      fontScale: 1.0,          // 1.0, 1.25, 1.5
+      highContrast: false,
+      colorblindMode: false,
+      focusMode: false,
+      reducedMotion: false,
+      spaciousTouch: false,
+      ttsAuto: false,
+      hapticVisual: true
+    }
   };
 
-  let settings = loadFromStorage(STORAGE_KEY_PREFS, defaultSettings);
-  let visit = loadFromStorage(STORAGE_KEY_VISIT, defaultVisit);
+  let state = loadState();
 
-  // Riwayat navigasi layar
-  let currentScreenId = 'screen-onboarding';
-  let previousScreenId = 'screen-home';
-  let isStaffViewActive = false;
-
-  // ========================================================
-  // 2. HELPER STORAGE & UTILITAS
-  // ========================================================
-  function loadFromStorage(key, fallback) {
+  function loadState() {
     try {
-      const data = localStorage.getItem(key);
-      return data ? JSON.parse(data) : Object.assign({}, fallback);
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        return Object.assign({}, defaultState, JSON.parse(saved));
+      }
     } catch (e) {
-      return Object.assign({}, fallback);
+      console.warn('Gagal membaca localStorage, gunakan state default', e);
+    }
+    return JSON.parse(JSON.stringify(defaultState));
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.warn('Gagal menyimpan ke localStorage', e);
     }
   }
 
-  function saveToStorage(key, val) {
-    try {
-      localStorage.setItem(key, JSON.stringify(val));
-    } catch (e) {
-      console.warn('Storage gagal:', e);
-    }
-  }
+  // ==========================================
+  // ELEMEN DOM UTAMA
+  // ==========================================
+  const DOM = {
+    announcer: document.getElementById('a11y-announcer'),
+    visualToast: document.getElementById('visual-toast'),
+    screens: document.querySelectorAll('.screen'),
+    navItems: document.querySelectorAll('.bottom-nav-bar .nav-item'),
+    protoBtns: document.querySelectorAll('.proto-screen-btn'),
+    headerSquadName: document.getElementById('header-squad-name'),
+    btnOpenA11y: document.getElementById('btn-open-a11y'),
+    btnCloseA11y: document.getElementById('btn-close-a11y'),
+    modalA11y: document.getElementById('modal-a11y-settings'),
+    btnSpeakScreen: document.getElementById('btn-speak-screen'),
 
-  // ========================================================
-  // 3. PENGUMUMAN AKSESIBILITAS (ARIA Live Region & Web Speech)
-  // ========================================================
-  const announcerEl = document.getElementById('a11y-announcer');
+    // Onboarding Elements
+    obLargerText: document.getElementById('ob-larger-text'),
+    obHighContrast: document.getElementById('ob-high-contrast'),
+    obColorblind: document.getElementById('ob-colorblind'),
+    obFocusMode: document.getElementById('ob-focus-mode'),
+    obReducedMotion: document.getElementById('ob-reduced-motion'),
+    obLargeTouch: document.getElementById('ob-large-touch'),
+    tabJoinSquad: document.getElementById('tab-join-squad'),
+    tabCreateSquad: document.getElementById('tab-create-squad'),
+    panelJoinSquad: document.getElementById('panel-join-squad'),
+    panelCreateSquad: document.getElementById('panel-create-squad'),
+    inputSquadCode: document.getElementById('input-squad-code'),
+    btnPasteCode: document.getElementById('btn-paste-code'),
+    inputNewSquadName: document.getElementById('input-new-squad-name'),
+    inputSquadEnv: document.getElementById('input-squad-env'),
+    btnSubmitOnboarding: document.getElementById('btn-submit-onboarding'),
+    btnSkipOnboarding: document.getElementById('btn-skip-onboarding'),
 
-  function announce(text, forceSpeech = false) {
-    if (!text) return;
+    // Beranda Elements
+    squadCompletionPill: document.getElementById('squad-completion-pill'),
+    squadRatioText: document.getElementById('squad-ratio-text'),
+    squadProgressFill: document.getElementById('squad-progress-fill'),
+    squadProgressPct: document.getElementById('squad-progress-pct'),
+    squadMemberList: document.getElementById('squad-member-list'),
+    btnNudgeMember: document.getElementById('btn-nudge-member'),
+    homeBossHpText: document.getElementById('home-boss-hp-text'),
+    homeBossHpFill: document.getElementById('home-boss-hp-fill'),
 
-    // 1. Perbarui ARIA Live Region untuk pembaca layar native (NVDA, TalkBack, JAWS, VoiceOver)
-    if (announcerEl) {
-      announcerEl.textContent = '';
+    // Misi Elements
+    bossEmojiState: document.getElementById('boss-emoji-state'),
+    battleBossHpText: document.getElementById('battle-boss-hp-text'),
+    battleBossHpFill: document.getElementById('battle-boss-hp-fill'),
+    btnCompleteAdaptive: document.getElementById('btn-complete-adaptive'),
+    adaptiveSuccessMsg: document.getElementById('adaptive-success-msg'),
+    btnPlayVariantAudio: document.getElementById('btn-play-variant-audio'),
+    dailyItemsList: document.getElementById('daily-items-list'),
+
+    // Story Elements
+    storyCardPreview: document.getElementById('story-card-preview'),
+    storyHeadlineText: document.getElementById('story-headline-text'),
+    storyStatBottles: document.getElementById('story-stat-bottles'),
+    storyStatDamage: document.getElementById('story-stat-damage'),
+    themeSwatches: document.querySelectorAll('.btn-theme-swatch'),
+    btnShareInstagram: document.getElementById('btn-share-instagram'),
+    btnCopyStoryText: document.getElementById('btn-copy-story-text'),
+    btnDownloadStoryMock: document.getElementById('btn-download-story-mock'),
+    shareFeedback: document.getElementById('share-feedback'),
+
+    // Dampak Elements
+    tabImpactPersonal: document.getElementById('tab-impact-personal'),
+    tabImpactSquad: document.getElementById('tab-impact-squad'),
+    panelImpactPersonal: document.getElementById('panel-impact-personal'),
+    panelImpactSquad: document.getElementById('panel-impact-squad'),
+
+    // Modal A11y Elements
+    btnFontNormal: document.getElementById('btn-font-normal'),
+    btnFontLarge: document.getElementById('btn-font-large'),
+    btnFontXlarge: document.getElementById('btn-font-xlarge'),
+    toggleHighContrast: document.getElementById('toggle-high-contrast'),
+    toggleColorblind: document.getElementById('toggle-colorblind'),
+    toggleLargeTouch: document.getElementById('toggle-large-touch'),
+    toggleFocusMode: document.getElementById('toggle-focus-mode'),
+    toggleReducedMotion: document.getElementById('toggle-reduced-motion'),
+    toggleTtsAuto: document.getElementById('toggle-tts-auto'),
+    toggleHapticVisual: document.getElementById('toggle-haptic-visual'),
+    btnResetA11y: document.getElementById('btn-reset-a11y'),
+    btnSaveA11y: document.getElementById('btn-save-a11y')
+  };
+
+  // ==========================================
+  // SISTEM PENGUMUMAN AKSESIBILITAS & MULTI-SALURAN
+  // ==========================================
+
+  /**
+   * Mengumumkan teks untuk Screen Reader (aria-live)
+   */
+  function announce(text) {
+    if (DOM.announcer) {
+      DOM.announcer.textContent = '';
       setTimeout(() => {
-        announcerEl.textContent = text;
+        DOM.announcer.textContent = text;
       }, 50);
     }
-
-    // 2. Jika fitur "Bacakan Teks" aktif atau dipaksa via tombol TTS
-    if ((settings.screenReader || forceSpeech) && 'speechSynthesis' in window) {
-      try {
-        window.speechSynthesis.cancel(); // Hentikan ucapan sebelumnya
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'id-ID';
-        utterance.rate = 0.95; // Kecepatan sedikit ramah dan jelas
-        window.speechSynthesis.speak(utterance);
-      } catch (err) {
-        console.log('TTS tidak didukung atau dibatasi:', err);
-      }
-    }
   }
 
-  // Pemicu Getar (Vibration API)
-  function triggerVibration(pattern) {
-    if (settings.vibFlash && 'vibrate' in navigator) {
+  /**
+   * Menampilkan toast visual + getaran (haptic feedback) untuk rungu/tuli
+   */
+  function notifyMultiChannel(message, duration = 3000) {
+    // 1. Getar haptic bila didukung
+    if (state.a11y.hapticVisual && 'vibrate' in navigator) {
       try {
-        navigator.vibrate(pattern || [300, 150, 300, 150, 500]);
+        navigator.vibrate([60, 40, 60]);
       } catch (e) {
-        // Abaikan jika tidak didukung oleh browser desktop
+        // Abaikan jika tidak diizinkan browser
       }
     }
-  }
 
-  // ========================================================
-  // 4. APLIKASI TAMPILAN & PENGATURAN AKSESIBILITAS KE DOM
-  // ========================================================
-  function applyAccessibilityStyles() {
-    const root = document.documentElement;
-    const body = document.body;
+    // 2. Banner toast visual
+    if (DOM.visualToast) {
+      DOM.visualToast.textContent = message;
+      DOM.visualToast.classList.add('show');
+      DOM.visualToast.setAttribute('aria-hidden', 'false');
 
-    // 1. Skala Teks
-    const scale = (settings.textSize || 100) / 100;
-    root.style.setProperty('--text-scale', scale.toString());
-
-    // 2. Mode Kontras Tinggi
-    if (settings.highContrast) {
-      body.classList.add('high-contrast-mode');
-    } else {
-      body.classList.remove('high-contrast-mode');
+      setTimeout(() => {
+        DOM.visualToast.classList.remove('show');
+        DOM.visualToast.setAttribute('aria-hidden', 'true');
+      }, duration);
     }
 
-    // 3. Palet Ramah Buta Warna
-    if (settings.colorBlindSafe) {
-      body.classList.add('colorblind-safe-mode');
-    } else {
-      body.classList.remove('colorblind-safe-mode');
-    }
-
-    // 4. Mode Sederhana
-    if (settings.simpleMode) {
-      body.classList.add('simple-mode');
-    } else {
-      body.classList.remove('simple-mode');
-    }
-
-    // 5. Kurangi Gerakan
-    if (settings.reduceMotion) {
-      body.classList.add('reduced-motion-mode');
-    } else {
-      body.classList.remove('reduced-motion-mode');
-    }
-
-    // Update kontrol di modal pengaturan
-    updateSettingsModalControls();
+    // 3. Screen reader announcement
+    announce(message);
   }
 
-  function updateSettingsModalControls() {
-    const slider = document.getElementById('slider-text-size');
-    const labelVal = document.getElementById('label-text-size-val');
-    const hcToggle = document.getElementById('toggle-high-contrast');
-    const cbToggle = document.getElementById('toggle-colorblind-safe');
-    const srToggle = document.getElementById('toggle-screen-reader');
-    const smToggle = document.getElementById('toggle-simple-mode');
-    const vfToggle = document.getElementById('toggle-vib-flash');
-    const rmToggle = document.getElementById('toggle-reduce-motion');
-
-    if (slider) {
-      slider.value = settings.textSize;
-      if (labelVal) labelVal.textContent = settings.textSize + '%';
-    }
-    if (hcToggle) hcToggle.checked = !!settings.highContrast;
-    if (cbToggle) cbToggle.checked = !!settings.colorBlindSafe;
-    if (srToggle) srToggle.checked = !!settings.screenReader;
-    if (smToggle) smToggle.checked = !!settings.simpleMode;
-    if (vfToggle) vfToggle.checked = !!settings.vibFlash;
-    if (rmToggle) rmToggle.checked = !!settings.reduceMotion;
-  }
-
-  // ========================================================
-  // 5. NAVIGASI LAYAR (Screen Routing)
-  // ========================================================
-  const screens = document.querySelectorAll('.screen');
-  const btnBack = document.getElementById('btn-header-back');
-  const mainContent = document.getElementById('app-main-content');
-  const settingsModal = document.getElementById('screen-settings');
-
-  function navigateTo(targetScreenId, announceTitle = true) {
-    if (!targetScreenId) return;
-
-    const targetEl = document.getElementById(targetScreenId);
-    if (!targetEl) return;
-
-    if (currentScreenId !== targetScreenId && currentScreenId !== 'screen-staff') {
-      previousScreenId = currentScreenId;
-    }
-
-    screens.forEach(s => {
-      s.classList.remove('active');
-    });
-
-    targetEl.classList.add('active');
-    currentScreenId = targetScreenId;
-
-    // Kelola visibilitas tombol kembali
-    if (currentScreenId === 'screen-home' || currentScreenId === 'screen-onboarding') {
-      btnBack.classList.add('sr-hidden');
-    } else {
-      btnBack.classList.remove('sr-hidden');
-    }
-
-    // Scroll ke atas dan arahkan fokus
-    if (mainContent) mainContent.scrollTop = 0;
-    
-    // Beri fokus ke heading pertama pada layar target
-    setTimeout(() => {
-      const heading = targetEl.querySelector('h1, h2');
-      if (heading) {
-        heading.setAttribute('tabindex', '-1');
-        heading.focus();
-        if (announceTitle) {
-          announce('Layar ' + heading.textContent);
-        }
-      }
-    }, 100);
-
-    // Jalankan pemicu aksi khusus layar jika ada
-    onScreenEntered(targetScreenId);
-  }
-
-  function onScreenEntered(screenId) {
-    if (screenId === 'screen-home') {
-      updateHomeScreen();
-    } else if (screenId === 'screen-share-pref') {
-      updateSharePrefScreen();
-    } else if (screenId === 'screen-checkin') {
-      updateCheckinScreen();
-    } else if (screenId === 'screen-waiting') {
-      updateWaitingScreen();
-    } else if (screenId === 'screen-called') {
-      triggerCalledAlert();
-    } else if (screenId === 'screen-staff') {
-      updateStaffViewScreen();
-    }
-  }
-
-  // ========================================================
-  // 6. LOGIKA SETIAP LAYAR
-  // ========================================================
-
-  // --- LAYAR 1: ONBOARDING ---
-  const btnObSave = document.getElementById('btn-onboarding-save');
-  const btnObSkip = document.getElementById('btn-onboarding-skip');
-
-  if (btnObSave) {
-    btnObSave.addEventListener('click', () => {
-      const obLarger = document.getElementById('ob-larger-text');
-      const obHc = document.getElementById('ob-high-contrast');
-      const obSr = document.getElementById('ob-screen-reader');
-      const obSm = document.getElementById('ob-simple-mode');
-      const obVf = document.getElementById('ob-vib-flash');
-
-      if (obLarger && obLarger.checked) settings.textSize = 130;
-      if (obHc) settings.highContrast = obHc.checked;
-      if (obSr) settings.screenReader = obSr.checked;
-      if (obSm) settings.simpleMode = obSm.checked;
-      if (obVf) settings.vibFlash = obVf.checked;
-
-      saveToStorage(STORAGE_KEY_PREFS, settings);
-      applyAccessibilityStyles();
-      announce('Pengaturan tampilan berhasil disimpan.');
-      navigateTo('screen-home');
-    });
-  }
-
-  if (btnObSkip) {
-    btnObSkip.addEventListener('click', () => {
-      announce('Menggunakan pengaturan standar.');
-      navigateTo('screen-home');
-    });
-  }
-
-  // --- LAYAR 2: BERANDA ---
-  const btnHomeRegister = document.getElementById('btn-home-register-new');
-  const btnHomeContinue = document.getElementById('btn-home-continue-visit');
-
-  if (btnHomeRegister) {
-    btnHomeRegister.addEventListener('click', () => {
-      navigateTo('screen-register');
-    });
-  }
-
-  if (btnHomeContinue) {
-    btnHomeContinue.addEventListener('click', () => {
-      if (visit.isCheckedIn) {
-        if (visit.status === 'called') {
-          navigateTo('screen-called');
-        } else if (visit.status === 'counter') {
-          navigateTo('screen-counter');
-        } else {
-          navigateTo('screen-waiting');
-        }
-      } else {
-        navigateTo('screen-checkin');
-      }
-    });
-  }
-
-  function updateHomeScreen() {
-    const clinicName = document.getElementById('home-clinic-name');
-    const serviceName = document.getElementById('home-service-name');
-    const badge = document.getElementById('home-queue-badge');
-    const subtitle = document.getElementById('home-visit-subtitle');
-
-    if (clinicName) clinicName.textContent = visit.clinic;
-    if (serviceName) serviceName.textContent = visit.service;
-
-    if (badge) {
-      if (visit.status === 'finished') {
-        badge.innerHTML = '✔️ Selesai';
-        subtitle.textContent = 'Kunjungan terakhir selesai.';
-      } else if (visit.isCheckedIn) {
-        badge.innerHTML = '🕒 Sedang Mengantre (A-014)';
-        subtitle.textContent = 'Anda sudah check-in di Puskesmas.';
-      } else {
-        badge.innerHTML = '🎟️ Siap Berangkat';
-        subtitle.textContent = 'Jadwal Hari Ini: ' + visit.timeSlot;
-      }
-    }
-  }
-
-  // --- LAYAR 3: PENDAFTARAN KUNJUNGAN ---
-  const btnRegNext = document.getElementById('btn-register-next');
-  const btnRegCancel = document.getElementById('btn-register-cancel');
-
-  if (btnRegNext) {
-    btnRegNext.addEventListener('click', () => {
-      const clinicSelect = document.getElementById('select-clinic');
-      const serviceSelect = document.getElementById('select-service');
-      const slotRadio = document.querySelector('input[name="time-slot"]:checked');
-
-      if (clinicSelect) visit.clinic = clinicSelect.value;
-      if (serviceSelect) visit.service = serviceSelect.value;
-      if (slotRadio) visit.timeSlot = slotRadio.value;
-
-      saveToStorage(STORAGE_KEY_VISIT, visit);
-      navigateTo('screen-share-pref');
-    });
-  }
-
-  if (btnRegCancel) {
-    btnRegCancel.addEventListener('click', () => {
-      navigateTo('screen-home');
-    });
-  }
-
-  // --- LAYAR 4: BAGIKAN PREFERENSI AKSES ---
-  const toggleShare = document.getElementById('toggle-share-active');
-  const sharePreviewBox = document.getElementById('share-preview-container');
-  const btnShareConfirm = document.getElementById('btn-share-confirm');
-  const btnShareBack = document.getElementById('btn-share-back');
-
-  const prefSlowTalk = document.getElementById('pref-need-slow-talk');
-  const prefWriting = document.getElementById('pref-need-writing');
-  const prefSignLang = document.getElementById('pref-need-sign-lang');
-  const prefWheelchair = document.getElementById('pref-need-wheelchair-access');
-
-  if (toggleShare) {
-    toggleShare.addEventListener('change', () => {
-      visit.sharePreferences = toggleShare.checked;
-      renderSharedTagsList();
-      announce(visit.sharePreferences 
-        ? 'Preferensi akses akan dibagikan ke staf puskesmas.' 
-        : 'Berbagi preferensi dimatikan. Data tidak dibagikan.');
-    });
-  }
-
-  [prefSlowTalk, prefWriting, prefSignLang, prefWheelchair].forEach(chk => {
-    if (chk) {
-      chk.addEventListener('change', () => {
-        readCheckboxesToState();
-        renderSharedTagsList();
-      });
-    }
-  });
-
-  function readCheckboxesToState() {
-    visit.needs = {
-      slowTalk: prefSlowTalk ? prefSlowTalk.checked : false,
-      writing: prefWriting ? prefWriting.checked : false,
-      signLang: prefSignLang ? prefSignLang.checked : false,
-      wheelchair: prefWheelchair ? prefWheelchair.checked : false
-    };
-  }
-
-  function renderSharedTagsList() {
-    const list = document.getElementById('shared-tags-list');
-    if (!list) return;
-
-    if (!visit.sharePreferences) {
-      list.innerHTML = '<span class="tag-item" style="font-style: italic;">(Tidak ada informasi yang dibagikan ke staf)</span>';
+  /**
+   * Web Speech Text-to-Speech (TTS)
+   */
+  function speakText(text) {
+    if (!('speechSynthesis' in window)) {
+      notifyMultiChannel('Perangkat tidak mendukung suara Web Speech API.');
       return;
     }
 
-    const tags = [];
-    if (visit.needs.slowTalk) tags.push('Bicara pelan & menghadap pasien');
-    if (visit.needs.writing) tags.push('Bantuan menulis / berkas');
-    if (visit.needs.signLang) tags.push('Butuh juru bahasa isyarat');
-    if (visit.needs.wheelchair) tags.push('Akses kursi roda');
-
-    if (settings.textSize > 120) tags.push('Teks besar aktif');
-
-    if (tags.length === 0) {
-      list.innerHTML = '<span class="tag-item">Layanan standar tanpa catatan khusus</span>';
-    } else {
-      list.innerHTML = tags.map(t => `<span class="tag-item">✓ ${t}</span>`).join('');
-    }
+    window.speechSynthesis.cancel(); // Hentikan yang sedang berjalan
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'id-ID';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    window.speechSynthesis.speak(utterance);
   }
 
-  function updateSharePrefScreen() {
-    if (toggleShare) toggleShare.checked = !!visit.sharePreferences;
-    if (prefSlowTalk) prefSlowTalk.checked = !!visit.needs.slowTalk;
-    if (prefWriting) prefWriting.checked = !!visit.needs.writing;
-    if (prefSignLang) prefSignLang.checked = !!visit.needs.signLang;
-    if (prefWheelchair) prefWheelchair.checked = !!visit.needs.wheelchair;
-    renderSharedTagsList();
-  }
+  // ==========================================
+  // MANAJEMEN NAVIGASI 5 LAYAR
+  // ==========================================
+  let currentScreenId = 'screen-onboarding';
 
-  if (btnShareConfirm) {
-    btnShareConfirm.addEventListener('click', () => {
-      readCheckboxesToState();
-      visit.sharePreferences = toggleShare ? toggleShare.checked : false;
-      saveToStorage(STORAGE_KEY_VISIT, visit);
-      announce('Data kunjungan dikonfirmasi. Nomor antrean Anda A-014.');
-      navigateTo('screen-checkin');
+  function navigateTo(targetScreenId) {
+    const target = document.getElementById(targetScreenId);
+    if (!target) return;
+
+    currentScreenId = targetScreenId;
+
+    // Sembunyikan semua layar
+    DOM.screens.forEach(s => {
+      s.classList.remove('active');
+      s.hidden = true;
+      s.setAttribute('aria-hidden', 'true');
     });
-  }
 
-  if (btnShareBack) {
-    btnShareBack.addEventListener('click', () => {
-      navigateTo('screen-register');
-    });
-  }
+    // Tampilkan layar target
+    target.classList.remove('active');
+    void target.offsetWidth; // Trigger reflow untuk animasi
+    target.classList.add('active');
+    target.hidden = false;
+    target.removeAttribute('aria-hidden');
 
-  // --- LAYAR 5: TIKET & CHECK-IN ---
-  const btnDoCheckin = document.getElementById('btn-do-checkin');
-  const btnCheckinCancel = document.getElementById('btn-checkin-cancel');
-
-  if (btnDoCheckin) {
-    btnDoCheckin.addEventListener('click', () => {
-      visit.isCheckedIn = true;
-      visit.status = 'waiting';
-      saveToStorage(STORAGE_KEY_VISIT, visit);
-      announce('Berhasil check-in di Puskesmas. Anda memasuki ruang tunggu antrean.');
-      navigateTo('screen-waiting');
-    });
-  }
-
-  if (btnCheckinCancel) {
-    btnCheckinCancel.addEventListener('click', () => {
-      navigateTo('screen-home');
-    });
-  }
-
-  function updateCheckinScreen() {
-    const clinicDisp = document.getElementById('ticket-clinic-display');
-    const serviceDisp = document.getElementById('ticket-service-display');
-    const timeDisp = document.getElementById('ticket-time-display');
-    const statusText = document.getElementById('checkin-status-text');
-    const statusSub = document.getElementById('checkin-status-subtext');
-
-    if (clinicDisp) clinicDisp.textContent = visit.clinic;
-    if (serviceDisp) serviceDisp.textContent = visit.service;
-    if (timeDisp) timeDisp.textContent = 'Sesi: ' + visit.timeSlot;
-
-    if (visit.isCheckedIn) {
-      if (statusText) statusText.textContent = 'Sudah Check-In di Lokasi';
-      if (statusSub) statusSub.textContent = 'Silakan duduk di ruang tunggu Poli Umum.';
-      if (btnDoCheckin) {
-        btnDoCheckin.innerHTML = '<span>Lanjut ke Ruang Tunggu</span>';
-      }
-    } else {
-      if (statusText) statusText.textContent = 'Belum Check-In di Lokasi';
-      if (statusSub) statusSub.textContent = 'Tekan tombol di bawah jika Anda sudah tiba di Puskesmas.';
-      if (btnDoCheckin) {
-        btnDoCheckin.innerHTML = `
-          <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-          <span>Saya Sudah Tiba (Check-In)</span>`;
-      }
-    }
-  }
-
-  // --- LAYAR 6: RUANG TUNGGU ---
-  const btnSimulateCall = document.getElementById('btn-simulate-call');
-
-  if (btnSimulateCall) {
-    btnSimulateCall.addEventListener('click', () => {
-      visit.status = 'called';
-      saveToStorage(STORAGE_KEY_VISIT, visit);
-      navigateTo('screen-called');
-    });
-  }
-
-  function updateWaitingScreen() {
-    // Memberikan ketenangan dengan pembaruan status
-    announce('Ruang tunggu. Sisa 3 orang lagi di depan Anda. Sedang melayani A-011 di Loket 2.');
-  }
-
-  // --- LAYAR 7: PERINGATAN DIPANGGIL (Multi-Channel) ---
-  const btnGoToCounter = document.getElementById('btn-go-to-counter');
-  const btnReAnnounce = document.getElementById('btn-re-announce');
-
-  function triggerCalledAlert() {
-    // 1. Getaran (Vibration API)
-    triggerVibration([300, 150, 300, 150, 600]);
-
-    // 2. Audio Suara (Text-to-Speech)
-    const callText = 'Giliran Anda! Nomor antrean A nol satu empat. Silakan menuju Loket 2.';
-    announce(callText, true); // Paksa ucapkan untuk simulasi panggilan
-  }
-
-  if (btnGoToCounter) {
-    btnGoToCounter.addEventListener('click', () => {
-      visit.status = 'counter';
-      saveToStorage(STORAGE_KEY_VISIT, visit);
-      navigateTo('screen-counter');
-    });
-  }
-
-  if (btnReAnnounce) {
-    btnReAnnounce.addEventListener('click', () => {
-      triggerCalledAlert();
-    });
-  }
-
-  // --- LAYAR 8: DI LOKET (Kartu Komunikasi & Ketik-Ucapkan) ---
-  const commCards = document.querySelectorAll('.comm-card');
-  const modalZoom = document.getElementById('modal-card-zoom');
-  const zoomTitle = document.getElementById('zoom-card-title');
-  const zoomDesc = document.getElementById('zoom-card-desc');
-  const btnCloseZoom = document.getElementById('btn-close-zoom');
-
-  commCards.forEach(card => {
-    card.addEventListener('click', () => {
-      const title = card.getAttribute('data-title');
-      const desc = card.getAttribute('data-desc');
-
-      if (zoomTitle) zoomTitle.textContent = title;
-      if (zoomDesc) zoomDesc.textContent = desc;
-
-      if (modalZoom) {
-        modalZoom.removeAttribute('hidden');
-        if (btnCloseZoom) btnCloseZoom.focus();
-        announce('Kartu komunikasi ditampilkan layar penuh: ' + title);
-      }
-    });
-  });
-
-  if (btnCloseZoom && modalZoom) {
-    btnCloseZoom.addEventListener('click', () => {
-      modalZoom.setAttribute('hidden', '');
-      announce('Tampilan kartu ditutup.');
-    });
-  }
-
-  // Ketik lalu Ucapkan (TTS Box)
-  const inputSpeech = document.getElementById('input-speech-text');
-  const btnSpeakNow = document.getElementById('btn-speak-now');
-  const btnShowLargeText = document.getElementById('btn-show-large-text');
-  const btnFinishCounter = document.getElementById('btn-finish-counter');
-
-  if (btnSpeakNow) {
-    btnSpeakNow.addEventListener('click', () => {
-      const text = inputSpeech ? inputSpeech.value.trim() : '';
-      if (!text) {
-        announce('Ketikkan kalimat terlebih dahulu sebelum menekan ucapkan.');
-        if (inputSpeech) inputSpeech.focus();
-        return;
-      }
-      announce(text, true); // Paksa ucapkan via TTS
-    });
-  }
-
-  if (btnShowLargeText) {
-    btnShowLargeText.addEventListener('click', () => {
-      const text = inputSpeech ? inputSpeech.value.trim() : '';
-      if (!text) {
-        announce('Ketikkan kalimat terlebih dahulu sebelum menampilkan teks besar.');
-        if (inputSpeech) inputSpeech.focus();
-        return;
-      }
-
-      if (zoomTitle) zoomTitle.textContent = 'Pesan untuk Petugas:';
-      if (zoomDesc) zoomDesc.textContent = text;
-
-      if (modalZoom) {
-        modalZoom.removeAttribute('hidden');
-        if (btnCloseZoom) btnCloseZoom.focus();
-        announce('Pesan Anda ditampilkan dalam huruf besar di layar penuh.');
-      }
-    });
-  }
-
-  if (btnFinishCounter) {
-    btnFinishCounter.addEventListener('click', () => {
-      visit.status = 'finished';
-      visit.isCheckedIn = false;
-      saveToStorage(STORAGE_KEY_VISIT, visit);
-      navigateTo('screen-after-visit');
-    });
-  }
-
-  // --- LAYAR 9: SETELAH KUNJUNGAN ---
-  const btnBackHome = document.getElementById('btn-back-to-home');
-  const ratingBtns = document.querySelectorAll('.rating-btn');
-
-  if (btnBackHome) {
-    btnBackHome.addEventListener('click', () => {
-      navigateTo('screen-home');
-    });
-  }
-
-  ratingBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      ratingBtns.forEach(b => b.style.fontWeight = 'normal');
-      btn.style.fontWeight = 'bold';
-      btn.style.borderWidth = '2px';
-      announce('Terima kasih atas penilaian Anda: ' + btn.textContent);
-    });
-  });
-
-  // --- LAYAR 10: MODAL PENGATURAN AKSESIBILITAS PERSISTEN ---
-  const btnOpenA11y = document.getElementById('btn-open-a11y');
-  const btnCloseSettings = document.getElementById('btn-close-settings');
-  const btnSaveSettings = document.getElementById('btn-save-settings');
-
-  const sliderText = document.getElementById('slider-text-size');
-  const labelTextSizeVal = document.getElementById('label-text-size-val');
-  const hcToggle = document.getElementById('toggle-high-contrast');
-  const cbToggle = document.getElementById('toggle-colorblind-safe');
-  const srToggle = document.getElementById('toggle-screen-reader');
-  const smToggle = document.getElementById('toggle-simple-mode');
-  const vfToggle = document.getElementById('toggle-vib-flash');
-  const rmToggle = document.getElementById('toggle-reduce-motion');
-
-  if (btnOpenA11y && settingsModal) {
-    btnOpenA11y.addEventListener('click', () => {
-      updateSettingsModalControls();
-      settingsModal.removeAttribute('hidden');
-      if (btnCloseSettings) btnCloseSettings.focus();
-      announce('Panel pengaturan aksesibilitas dibuka.');
-    });
-  }
-
-  function closeA11yModal() {
-    if (settingsModal) {
-      settingsModal.setAttribute('hidden', '');
-      if (btnOpenA11y) btnOpenA11y.focus();
-      announce('Pengaturan aksesibilitas ditutup.');
-    }
-  }
-
-  if (btnCloseSettings) {
-    btnCloseSettings.addEventListener('click', closeA11yModal);
-  }
-
-  if (btnSaveSettings) {
-    btnSaveSettings.addEventListener('click', () => {
-      saveToStorage(STORAGE_KEY_PREFS, settings);
-      closeA11yModal();
-      announce('Perubahan aksesibilitas berhasil diterapkan.');
-    });
-  }
-
-  // Interaktivitas langsung (Live Preview) saat kontrol diubah
-  if (sliderText) {
-    sliderText.addEventListener('input', (e) => {
-      settings.textSize = parseInt(e.target.value, 10);
-      if (labelTextSizeVal) labelTextSizeVal.textContent = settings.textSize + '%';
-      applyAccessibilityStyles();
-    });
-  }
-
-  if (hcToggle) {
-    hcToggle.addEventListener('change', (e) => {
-      settings.highContrast = e.target.checked;
-      applyAccessibilityStyles();
-    });
-  }
-
-  if (cbToggle) {
-    cbToggle.addEventListener('change', (e) => {
-      settings.colorBlindSafe = e.target.checked;
-      applyAccessibilityStyles();
-    });
-  }
-
-  if (srToggle) {
-    srToggle.addEventListener('change', (e) => {
-      settings.screenReader = e.target.checked;
-      announce(settings.screenReader ? 'Fitur pembaca layar diaktifkan.' : 'Fitur pembaca layar dimatikan.');
-    });
-  }
-
-  if (smToggle) {
-    smToggle.addEventListener('change', (e) => {
-      settings.simpleMode = e.target.checked;
-      applyAccessibilityStyles();
-    });
-  }
-
-  if (vfToggle) {
-    vfToggle.addEventListener('change', (e) => {
-      settings.vibFlash = e.target.checked;
-    });
-  }
-
-  if (rmToggle) {
-    rmToggle.addEventListener('change', (e) => {
-      settings.reduceMotion = e.target.checked;
-      applyAccessibilityStyles();
-    });
-  }
-
-  // --- LAYAR 11: MODE PETUGAS (STAFF VIEW) ---
-  const btnToggleRole = document.getElementById('btn-toggle-role');
-  const roleText = document.getElementById('role-text');
-  const btnStaffCall = document.getElementById('btn-staff-call-patient');
-  const btnStaffReturn = document.getElementById('btn-staff-return-patient');
-
-  if (btnToggleRole) {
-    btnToggleRole.addEventListener('click', () => {
-      if (isStaffViewActive) {
-        exitStaffView();
+    // Update bottom navigation bar
+    DOM.navItems.forEach(item => {
+      const isCurrent = item.getAttribute('data-screen') === targetScreenId;
+      item.classList.toggle('active', isCurrent);
+      if (isCurrent) {
+        item.setAttribute('aria-current', 'page');
       } else {
-        enterStaffView();
+        item.removeAttribute('aria-current');
       }
     });
-  }
 
-  function enterStaffView() {
-    isStaffViewActive = true;
-    if (roleText) roleText.textContent = 'Kembali ke Pasien';
-    navigateTo('screen-staff');
-    announce('Beralih ke tampilan petugas loket Puskesmas.');
-  }
-
-  function exitStaffView() {
-    isStaffViewActive = false;
-    if (roleText) roleText.textContent = 'Lihat Mode Petugas';
-    navigateTo(previousScreenId || 'screen-home');
-    announce('Kembali ke tampilan pasien.');
-  }
-
-  if (btnStaffReturn) {
-    btnStaffReturn.addEventListener('click', exitStaffView);
-  }
-
-  if (btnStaffCall) {
-    btnStaffCall.addEventListener('click', () => {
-      visit.status = 'called';
-      saveToStorage(STORAGE_KEY_VISIT, visit);
-      exitStaffView();
-      navigateTo('screen-called');
-      announce('Petugas telah memanggil nomor antrean Anda!');
+    // Update proto top buttons
+    DOM.protoBtns.forEach(btn => {
+      const isCurrent = btn.getAttribute('data-target') === targetScreenId;
+      btn.style.backgroundColor = isCurrent ? '#52b788' : '';
+      btn.style.color = isCurrent ? '#14281d' : '';
+      btn.style.fontWeight = isCurrent ? '800' : '';
     });
+
+    // Scroll ke atas
+    const main = document.getElementById('app-main-content');
+    if (main) main.scrollTop = 0;
+
+    // Dapatkan judul layar untuk screen reader
+    const titleEl = target.querySelector('h1, h2');
+    const screenTitle = titleEl ? titleEl.textContent : targetScreenId;
+    announce(`Beralih ke ${screenTitle}`);
+
+    // Jika TTS Auto aktif, bacakan ringkasan layar
+    if (state.a11y.ttsAuto) {
+      setTimeout(() => {
+        speakScreenSummary(targetScreenId);
+      }, 400);
+    }
   }
 
-  function updateStaffViewScreen() {
-    const sharedBox = document.getElementById('staff-shared-details');
-    const tagList = document.getElementById('staff-pref-tag-list');
-    const statusPill = document.getElementById('staff-patient-status-pill');
+  function speakScreenSummary(screenId) {
+    let summary = '';
+    switch (screenId) {
+      case 'screen-onboarding':
+        summary = 'Layar Onboarding GreenSteps. Atur preferensi aksesibilitas dan gabung squad kosan.';
+        break;
+      case 'screen-home':
+        summary = `Beranda GreenSteps. Lima dari enam anggota ${state.squadName} sudah menyelesaikan misi hari ini. Tujuh puluh dua persen anak kos di sekitarmu pakai tumbler hari ini.`;
+        break;
+      case 'screen-missions':
+        summary = `Layar Misi dan Boss Raid. Darah Boss Raksasa Kresek tersisa ${state.bossCurrentHp} HP. Tersedia misi adaptif inklusif dengan nilai setara.`;
+        break;
+      case 'screen-share':
+        summary = `Layar Kartu Pencapaian. Hari ini kamu menyelamatkan ${state.impact.bottlesSaved} botol plastik dan mempertahankan 7 hari streak mabar. Siap dibagikan ke media sosial.`;
+        break;
+      case 'screen-impact':
+        summary = `Layar Laporan Dampak Nyata. Kamu telah menyelamatkan ${state.impact.bottlesSaved} botol plastik dan mencegah ${state.impact.co2GramsPrevented} gram karbon dioksida.`;
+        break;
+      default:
+        summary = 'Aplikasi GreenSteps aksi hijau bersama.';
+    }
+    speakText(summary);
+  }
 
-    if (sharedBox && tagList) {
-      if (visit.sharePreferences) {
-        sharedBox.style.display = 'block';
-        const tags = [];
-        if (visit.needs.slowTalk) tags.push('🔊 Tolong bicara pelan & menghadap ke pasien');
-        if (visit.needs.writing) tags.push('✍️ Butuh bantuan mencatat / menulis');
-        if (visit.needs.signLang) tags.push('🤟 Membutuhkan juru bahasa isyarat');
-        if (visit.needs.wheelchair) tags.push('♿ Perlu akses kursi roda');
+  // ==========================================
+  // SISTEM PREFERENSI AKSESIBILITAS TERAPKAN LANGSUNG
+  // ==========================================
+  function applyAccessibilitySettings() {
+    const { fontScale, highContrast, colorblindMode, focusMode, reducedMotion, spaciousTouch } = state.a11y;
 
-        if (tags.length === 0) {
-          tagList.innerHTML = '<li>Layanan standar</li>';
-        } else {
-          tagList.innerHTML = tags.map(t => `<li>${t}</li>`).join('');
+    // 1. Skala Font
+    document.documentElement.style.setProperty('--font-scale', fontScale);
+
+    // Update active state tombol skala font di modal
+    if (DOM.btnFontNormal && DOM.btnFontLarge && DOM.btnFontXlarge) {
+      DOM.btnFontNormal.classList.toggle('active', fontScale === 1.0);
+      DOM.btnFontLarge.classList.toggle('active', fontScale === 1.25);
+      DOM.btnFontXlarge.classList.toggle('active', fontScale === 1.5);
+    }
+
+    // 2. High Contrast
+    document.body.classList.toggle('high-contrast-mode', !!highContrast);
+    if (DOM.toggleHighContrast) DOM.toggleHighContrast.checked = !!highContrast;
+    if (DOM.obHighContrast) DOM.obHighContrast.checked = !!highContrast;
+
+    // 3. Colorblind Safe Mode
+    document.body.classList.toggle('colorblind-mode', !!colorblindMode);
+    if (DOM.toggleColorblind) DOM.toggleColorblind.checked = !!colorblindMode;
+    if (DOM.obColorblind) DOM.obColorblind.checked = !!colorblindMode;
+
+    // 4. Focus Mode (ADHD / Cognitive)
+    document.body.classList.toggle('focus-mode', !!focusMode);
+    if (DOM.toggleFocusMode) DOM.toggleFocusMode.checked = !!focusMode;
+    if (DOM.obFocusMode) DOM.obFocusMode.checked = !!focusMode;
+
+    // 5. Reduced Motion
+    document.body.classList.toggle('reduced-motion-mode', !!reducedMotion);
+    if (DOM.toggleReducedMotion) DOM.toggleReducedMotion.checked = !!reducedMotion;
+    if (DOM.obReducedMotion) DOM.obReducedMotion.checked = !!reducedMotion;
+
+    // 6. Spacious Touch (Motorik)
+    document.body.classList.toggle('spacious-touch-mode', !!spaciousTouch);
+    if (DOM.toggleLargeTouch) DOM.toggleLargeTouch.checked = !!spaciousTouch;
+    if (DOM.obLargeTouch) DOM.obLargeTouch.checked = !!spaciousTouch;
+
+    // 7. Checkbox teks lebih besar di onboarding
+    if (DOM.obLargerText) DOM.obLargerText.checked = fontScale > 1.0;
+
+    // 8. Toggles lainnya
+    if (DOM.toggleTtsAuto) DOM.toggleTtsAuto.checked = !!state.a11y.ttsAuto;
+    if (DOM.toggleHapticVisual) DOM.toggleHapticVisual.checked = !!state.a11y.hapticVisual;
+
+    saveState();
+  }
+
+  // ==========================================
+  // RENDER BERANDA & SQUAD
+  // ==========================================
+  function renderSquadAndHome() {
+    if (DOM.headerSquadName) {
+      DOM.headerSquadName.textContent = state.squadName;
+    }
+
+    // Hitung berapa yang sudah selesai
+    const totalMembers = state.squadMembers.length;
+    const doneMembers = state.squadMembers.filter(m => m.done).length;
+    const pct = Math.round((doneMembers / totalMembers) * 100);
+
+    if (DOM.squadRatioText) {
+      DOM.squadRatioText.textContent = `${doneMembers} dari ${totalMembers} Selesai`;
+    }
+    if (DOM.squadProgressFill) {
+      DOM.squadProgressFill.style.width = `${pct}%`;
+    }
+    if (DOM.squadProgressPct) {
+      DOM.squadProgressPct.textContent = `${pct}%`;
+    }
+
+    // Render Squad Roster
+    if (DOM.squadMemberList) {
+      DOM.squadMemberList.innerHTML = '';
+      state.squadMembers.forEach(m => {
+        const li = document.createElement('li');
+        li.className = 'roster-item';
+
+        li.innerHTML = `
+          <div class="roster-user-info">
+            <span class="roster-avatar" aria-hidden="true">${m.avatar}</span>
+            <div>
+              <strong>${m.name}</strong>
+              <small class="roster-role" style="display:block; font-size:11px; opacity:0.8;">${m.action}</small>
+            </div>
+          </div>
+          <span class="roster-status ${m.done ? 'done' : 'pending'}" aria-label="${m.done ? 'Sudah selesai' : 'Belum selesai'}">
+            ${m.done ? '✅ Selesai' : '⏳ Belum'}
+          </span>
+        `;
+        DOM.squadMemberList.appendChild(li);
+      });
+    }
+
+    // Boss Mini HP di Home
+    const bossPct = Math.max(0, Math.round((state.bossCurrentHp / state.bossMaxHp) * 100));
+    if (DOM.homeBossHpText) {
+      DOM.homeBossHpText.textContent = `${state.bossCurrentHp} / ${state.bossMaxHp} HP`;
+    }
+    if (DOM.homeBossHpFill) {
+      DOM.homeBossHpFill.style.width = `${bossPct}%`;
+    }
+
+    // Battle Boss HP di Misi
+    if (DOM.battleBossHpText) {
+      DOM.battleBossHpText.textContent = `${state.bossCurrentHp} / ${state.bossMaxHp} HP`;
+    }
+    if (DOM.battleBossHpFill) {
+      DOM.battleBossHpFill.style.width = `${bossPct}%`;
+    }
+
+    // Boss Emoji State
+    if (DOM.bossEmojiState) {
+      if (state.bossCurrentHp <= 0) {
+        DOM.bossEmojiState.textContent = '💀';
+      } else if (state.bossCurrentHp < 300) {
+        DOM.bossEmojiState.textContent = '🤕';
+      } else {
+        DOM.bossEmojiState.textContent = '👾';
+      }
+    }
+  }
+
+  // ==========================================
+  // RENDER MISI HARIAN & ITEM HARIAN
+  // ==========================================
+  function renderMissionsAndItems() {
+    // 1. Misi Rutin
+    [1, 2, 3].forEach(id => {
+      const card = document.getElementById(`card-mission-${id}`);
+      if (!card) return;
+      const btn = card.querySelector('.btn-action-mission');
+      const isDone = !!state.missionsDone[id];
+
+      if (isDone) {
+        card.style.opacity = '0.75';
+        if (btn) {
+          btn.innerHTML = '<span>Tuntas ✅</span>';
+          btn.disabled = true;
+          btn.style.backgroundColor = 'var(--c-success-soft)';
+          btn.style.color = 'var(--c-success)';
+          btn.style.borderColor = 'var(--c-accent-mint)';
         }
       } else {
-        // Jika pasien memilih TIDAK membagikan preferensi
-        sharedBox.style.display = 'block';
-        tagList.innerHTML = '<li><em>Pasien tidak membagikan preferensi akses khusus (Layanan Standar).</em></li>';
-      }
-    }
-
-    if (statusPill) {
-      if (visit.status === 'called') {
-        statusPill.textContent = 'Sedang Dipanggil';
-      } else if (visit.status === 'counter') {
-        statusPill.textContent = 'Sedang Dilayani';
-      } else if (visit.status === 'finished') {
-        statusPill.textContent = 'Pemeriksaan Selesai';
-      } else {
-        statusPill.textContent = 'Siap Dilayani';
-      }
-    }
-  }
-
-  // --- TOMBOL HEADER KEMBALI & BACAKAN LAYAR ---
-  if (btnBack) {
-    btnBack.addEventListener('click', () => {
-      if (currentScreenId === 'screen-staff') {
-        exitStaffView();
-      } else {
-        const flowOrder = [
-          'screen-onboarding',
-          'screen-home',
-          'screen-register',
-          'screen-share-pref',
-          'screen-checkin',
-          'screen-waiting',
-          'screen-called',
-          'screen-counter',
-          'screen-after-visit'
-        ];
-        const idx = flowOrder.indexOf(currentScreenId);
-        if (idx > 1) {
-          navigateTo(flowOrder[idx - 1]);
-        } else {
-          navigateTo('screen-home');
+        card.style.opacity = '1';
+        if (btn) {
+          btn.innerHTML = '<span>Tandai Selesai ✅</span>';
+          btn.disabled = false;
         }
       }
     });
+
+    // 2. Misi Adaptif
+    if (state.adaptiveCompleted) {
+      if (DOM.btnCompleteAdaptive) {
+        DOM.btnCompleteAdaptive.disabled = true;
+        DOM.btnCompleteAdaptive.innerHTML = '<span>Misi Adaptif Sudah Tuntas! ⭐</span>';
+        DOM.btnCompleteAdaptive.style.backgroundColor = 'var(--c-accent-mint)';
+      }
+      if (DOM.adaptiveSuccessMsg) {
+        DOM.adaptiveSuccessMsg.hidden = false;
+      }
+    } else {
+      if (DOM.btnCompleteAdaptive) {
+        DOM.btnCompleteAdaptive.disabled = false;
+        DOM.btnCompleteAdaptive.innerHTML = '<span>Selesaikan Varian Terpilih & Serang Boss! 💥</span>';
+      }
+      if (DOM.adaptiveSuccessMsg) {
+        DOM.adaptiveSuccessMsg.hidden = true;
+      }
+    }
+
+    // 3. Item Harian (Monster Sampah Sekitar)
+    [1, 2, 3].forEach(id => {
+      const itemCard = document.getElementById(`item-trash-${id}`);
+      if (!itemCard) return;
+      const isCap = !!state.itemsCaptured[id];
+      const btn = itemCard.querySelector('.btn-capture-item');
+
+      if (isCap) {
+        itemCard.classList.add('completed');
+        if (btn) {
+          btn.textContent = 'Terselamatkan! 🎉';
+          btn.disabled = true;
+          btn.style.backgroundColor = 'var(--c-success)';
+        }
+      } else {
+        itemCard.classList.remove('completed');
+        if (btn) btn.disabled = false;
+      }
+    });
   }
 
-  const btnSpeakScreen = document.getElementById('btn-speak-screen');
-  if (btnSpeakScreen) {
-    btnSpeakScreen.addEventListener('click', () => {
-      const activeScreen = document.querySelector('.screen.active');
-      if (activeScreen) {
-        const heading = activeScreen.querySelector('h1, h2');
-        const paragraphs = activeScreen.querySelectorAll('p, .queue-number, .counter-name');
-        let textToRead = heading ? heading.textContent + '. ' : '';
-        paragraphs.forEach(p => {
-          if (p.offsetWidth > 0 && p.offsetHeight > 0) { // Hanya elemen terlihat
-            textToRead += p.textContent + '. ';
+  // ==========================================
+  // RENDER KARTU HASIL & DAMPAK NYATA
+  // ==========================================
+  function renderStoryAndImpact() {
+    // 1. Story Card
+    if (DOM.storyStatBottles) {
+      DOM.storyStatBottles.textContent = `${state.impact.bottlesSaved} Botol`;
+    }
+    if (DOM.storyStatDamage) {
+      DOM.storyStatDamage.textContent = `-${1000 - state.bossCurrentHp} HP`;
+    }
+    if (DOM.storyHeadlineText) {
+      DOM.storyHeadlineText.textContent = `"Hari ini aku menyelamatkan ${state.impact.bottlesSaved} botol plastik & ${state.impact.plasticBagsAvoided} kresek bareng squad!"`;
+    }
+    if (DOM.storyCardPreview) {
+      DOM.storyCardPreview.className = `story-card ${state.storyTheme}`;
+    }
+
+    // Update active swatch
+    DOM.themeSwatches.forEach(swatch => {
+      const theme = swatch.getAttribute('data-theme');
+      swatch.classList.toggle('active', theme === state.storyTheme);
+    });
+  }
+
+  // ==========================================
+  // AKSI MISI & KERUSAKAN BOSS (BOSS DAMAGE)
+  // ==========================================
+  function damageBoss(damageAmount, reasonText) {
+    state.bossCurrentHp = Math.max(0, state.bossCurrentHp - damageAmount);
+    if (state.bossCurrentHp <= 0) {
+      state.bossDefeated = true;
+      notifyMultiChannel(`🎉 LUAR BIASA! Boss Raksasa Kresek Kosan berhasil dikalahkan! Squad ${state.squadName} menang telak!`);
+    } else {
+      notifyMultiChannel(`💥 Serangan Sukses! Boss kena -${damageAmount} HP (${reasonText}). Sisa HP: ${state.bossCurrentHp}`);
+    }
+
+    saveState();
+    renderSquadAndHome();
+    renderStoryAndImpact();
+  }
+
+  // ==========================================
+  // EVENT LISTENERS & INTERAKSI
+  // ==========================================
+  function initEventListeners() {
+
+    // 1. Bottom Nav
+    DOM.navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const targetScreen = item.getAttribute('data-screen');
+        navigateTo(targetScreen);
+      });
+    });
+
+    // 2. Prototype Bar Quick Screen Switch
+    DOM.protoBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        navigateTo(target);
+      });
+    });
+
+    // 3. Tombol-tombol jalan pintas di kartu (btn-goto-missions, dll)
+    document.querySelectorAll('.btn-goto-missions').forEach(btn => {
+      btn.addEventListener('click', () => {
+        navigateTo('screen-missions');
+      });
+    });
+
+    document.querySelectorAll('.btn-goto-share').forEach(btn => {
+      btn.addEventListener('click', () => {
+        navigateTo('screen-share');
+      });
+    });
+
+    // 4. Modal Pengaturan Aksesibilitas Universal
+    if (DOM.btnOpenA11y && DOM.modalA11y) {
+      DOM.btnOpenA11y.addEventListener('click', () => {
+        DOM.modalA11y.hidden = false;
+        DOM.modalA11y.removeAttribute('hidden');
+        announce('Membuka panel pengaturan aksesibilitas.');
+        if (DOM.btnCloseA11y) DOM.btnCloseA11y.focus();
+      });
+    }
+
+    if (DOM.btnCloseA11y && DOM.modalA11y) {
+      DOM.btnCloseA11y.addEventListener('click', () => {
+        DOM.modalA11y.hidden = true;
+        DOM.modalA11y.setAttribute('hidden', 'true');
+        announce('Panel pengaturan aksesibilitas ditutup.');
+        if (DOM.btnOpenA11y) DOM.btnOpenA11y.focus();
+      });
+    }
+
+    // Tutup modal dengan tombol Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && DOM.modalA11y && !DOM.modalA11y.hidden) {
+        DOM.modalA11y.hidden = true;
+        DOM.modalA11y.setAttribute('hidden', 'true');
+        if (DOM.btnOpenA11y) DOM.btnOpenA11y.focus();
+      }
+    });
+
+    // 5. Tombol Bacakan Layar Cepat di Header
+    if (DOM.btnSpeakScreen) {
+      DOM.btnSpeakScreen.addEventListener('click', () => {
+        speakScreenSummary(currentScreenId);
+      });
+    }
+
+    // 6. Skala Ukuran Font
+    if (DOM.btnFontNormal) {
+      DOM.btnFontNormal.addEventListener('click', () => {
+        state.a11y.fontScale = 1.0;
+        applyAccessibilitySettings();
+        notifyMultiChannel('Ukuran teks diatur ke Normal (100%).');
+      });
+    }
+    if (DOM.btnFontLarge) {
+      DOM.btnFontLarge.addEventListener('click', () => {
+        state.a11y.fontScale = 1.25;
+        applyAccessibilitySettings();
+        notifyMultiChannel('Ukuran teks diperbesar ke 125%.');
+      });
+    }
+    if (DOM.btnFontXlarge) {
+      DOM.btnFontXlarge.addEventListener('click', () => {
+        state.a11y.fontScale = 1.5;
+        applyAccessibilitySettings();
+        notifyMultiChannel('Ukuran teks diperbesar maksimal ke 150%.');
+      });
+    }
+
+    // 7. Toggle Toggles di Modal A11y
+    if (DOM.toggleHighContrast) {
+      DOM.toggleHighContrast.addEventListener('change', (e) => {
+        state.a11y.highContrast = e.target.checked;
+        applyAccessibilitySettings();
+        notifyMultiChannel(state.a11y.highContrast ? 'Mode Kontras Tinggi diaktifkan.' : 'Mode Kontras Tinggi dinonaktifkan.');
+      });
+    }
+
+    if (DOM.toggleColorblind) {
+      DOM.toggleColorblind.addEventListener('change', (e) => {
+        state.a11y.colorblindMode = e.target.checked;
+        applyAccessibilitySettings();
+        notifyMultiChannel(state.a11y.colorblindMode ? 'Mode Ramah Buta Warna diaktifkan.' : 'Mode Ramah Buta Warna dinonaktifkan.');
+      });
+    }
+
+    if (DOM.toggleLargeTouch) {
+      DOM.toggleLargeTouch.addEventListener('change', (e) => {
+        state.a11y.spaciousTouch = e.target.checked;
+        applyAccessibilitySettings();
+        notifyMultiChannel(state.a11y.spaciousTouch ? 'Area Sentuh Ekstra Lega (56px) diaktifkan.' : 'Area Sentuh kembali normal.');
+      });
+    }
+
+    if (DOM.toggleFocusMode) {
+      DOM.toggleFocusMode.addEventListener('change', (e) => {
+        state.a11y.focusMode = e.target.checked;
+        applyAccessibilitySettings();
+        notifyMultiChannel(state.a11y.focusMode ? 'Mode Fokus Kognitif diaktifkan.' : 'Mode Fokus dinonaktifkan.');
+      });
+    }
+
+    if (DOM.toggleReducedMotion) {
+      DOM.toggleReducedMotion.addEventListener('change', (e) => {
+        state.a11y.reducedMotion = e.target.checked;
+        applyAccessibilitySettings();
+        notifyMultiChannel(state.a11y.reducedMotion ? 'Pengurangan Gerakan diaktifkan.' : 'Animasi normal diaktifkan.');
+      });
+    }
+
+    if (DOM.toggleTtsAuto) {
+      DOM.toggleTtsAuto.addEventListener('change', (e) => {
+        state.a11y.ttsAuto = e.target.checked;
+        saveState();
+        notifyMultiChannel(state.a11y.ttsAuto ? 'Bacakan Layar Otomatis diaktifkan.' : 'Bacakan Layar Otomatis dimatikan.');
+      });
+    }
+
+    if (DOM.toggleHapticVisual) {
+      DOM.toggleHapticVisual.addEventListener('change', (e) => {
+        state.a11y.hapticVisual = e.target.checked;
+        saveState();
+      });
+    }
+
+    if (DOM.btnResetA11y) {
+      DOM.btnResetA11y.addEventListener('click', () => {
+        state.a11y = JSON.parse(JSON.stringify(defaultState.a11y));
+        applyAccessibilitySettings();
+        notifyMultiChannel('Pengaturan aksesibilitas di-reset ke standar.');
+      });
+    }
+
+    if (DOM.btnSaveA11y && DOM.modalA11y) {
+      DOM.btnSaveA11y.addEventListener('click', () => {
+        DOM.modalA11y.hidden = true;
+        notifyMultiChannel('Pengaturan aksesibilitas berhasil disimpan.');
+      });
+    }
+
+    // 8. Onboarding Checklist Sync
+    if (DOM.obLargerText) {
+      DOM.obLargerText.addEventListener('change', (e) => {
+        state.a11y.fontScale = e.target.checked ? 1.25 : 1.0;
+        applyAccessibilitySettings();
+      });
+    }
+    if (DOM.obHighContrast) {
+      DOM.obHighContrast.addEventListener('change', (e) => {
+        state.a11y.highContrast = e.target.checked;
+        applyAccessibilitySettings();
+      });
+    }
+    if (DOM.obColorblind) {
+      DOM.obColorblind.addEventListener('change', (e) => {
+        state.a11y.colorblindMode = e.target.checked;
+        applyAccessibilitySettings();
+      });
+    }
+    if (DOM.obFocusMode) {
+      DOM.obFocusMode.addEventListener('change', (e) => {
+        state.a11y.focusMode = e.target.checked;
+        applyAccessibilitySettings();
+      });
+    }
+    if (DOM.obReducedMotion) {
+      DOM.obReducedMotion.addEventListener('change', (e) => {
+        state.a11y.reducedMotion = e.target.checked;
+        applyAccessibilitySettings();
+      });
+    }
+    if (DOM.obLargeTouch) {
+      DOM.obLargeTouch.addEventListener('change', (e) => {
+        state.a11y.spaciousTouch = e.target.checked;
+        applyAccessibilitySettings();
+      });
+    }
+
+    // 9. Onboarding Tab Squad Switch
+    if (DOM.tabJoinSquad && DOM.tabCreateSquad) {
+      DOM.tabJoinSquad.addEventListener('click', () => {
+        DOM.tabJoinSquad.classList.add('active');
+        DOM.tabJoinSquad.setAttribute('aria-selected', 'true');
+        DOM.tabCreateSquad.classList.remove('active');
+        DOM.tabCreateSquad.setAttribute('aria-selected', 'false');
+        DOM.panelJoinSquad.hidden = false;
+        DOM.panelCreateSquad.hidden = true;
+      });
+
+      DOM.tabCreateSquad.addEventListener('click', () => {
+        DOM.tabCreateSquad.classList.add('active');
+        DOM.tabCreateSquad.setAttribute('aria-selected', 'true');
+        DOM.tabJoinSquad.classList.remove('active');
+        DOM.tabJoinSquad.setAttribute('aria-selected', 'false');
+        DOM.panelCreateSquad.hidden = false;
+        DOM.panelJoinSquad.hidden = true;
+      });
+    }
+
+    if (DOM.btnPasteCode) {
+      DOM.btnPasteCode.addEventListener('click', () => {
+        const val = (DOM.inputSquadCode.value || '').trim();
+        if (val) {
+          state.squadCode = val;
+          notifyMultiChannel(`Kode squad diperbarui: ${val}`);
+        }
+      });
+    }
+
+    // Tombol Submit Onboarding
+    if (DOM.btnSubmitOnboarding) {
+      DOM.btnSubmitOnboarding.addEventListener('click', () => {
+        // Cek jika membuat squad baru
+        if (DOM.tabCreateSquad && DOM.tabCreateSquad.classList.contains('active')) {
+          const newName = (DOM.inputNewSquadName.value || '').trim();
+          if (newName) {
+            state.squadName = newName;
           }
-        });
-        announce(textToRead, true); // Force bacakan
-      }
+        }
+        saveState();
+        renderSquadAndHome();
+        notifyMultiChannel(`Selamat datang di ${state.squadName}! Mabar dimulai! 🚀`);
+        navigateTo('screen-home');
+      });
+    }
+
+    if (DOM.btnSkipOnboarding) {
+      DOM.btnSkipOnboarding.addEventListener('click', () => {
+        navigateTo('screen-home');
+      });
+    }
+
+    // 10. Interaksi Colek Anggota Squad di Beranda
+    if (DOM.btnNudgeMember) {
+      DOM.btnNudgeMember.addEventListener('click', () => {
+        notifyMultiChannel('👋 Kamu mencolek santai Agus: "Yuk Gus, 5 menit mabar misi hijau bareng kita!"');
+        DOM.btnNudgeMember.disabled = true;
+        DOM.btnNudgeMember.innerHTML = '<span>TercColek Santai! ⏳</span>';
+
+        // Simulasi respon Agus setelah 2.5 detik
+        setTimeout(() => {
+          const agus = state.squadMembers.find(m => m.name === 'Agus');
+          if (agus) {
+            agus.done = true;
+            agus.action = 'Bawa Tumbler ke Kampus ✅';
+          }
+          saveState();
+          renderSquadAndHome();
+          damageBoss(50, 'Agus menyelesaikan misi setelah kamu colek santai');
+          notifyMultiChannel('🎉 Mantap! Agus langsung menyelesaikan misi tumbler! Semua anggota squad kini 100% tuntas!');
+          if (DOM.btnNudgeMember) {
+            DOM.btnNudgeMember.innerHTML = '<span>Semua Anggota Tuntas! 🎉</span>';
+          }
+        }, 2500);
+      });
+    }
+
+    // 11. Misi Adaptif Varian Radio Selection
+    const variantRadios = document.querySelectorAll('input[name="adaptive-variant"]');
+    variantRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        state.adaptiveVariantSelected = e.target.value;
+        saveState();
+        announce(`Varian terpilih: Varian ${state.adaptiveVariantSelected}`);
+      });
     });
+
+    // Audio Guide pada Varian C Misi Adaptif
+    if (DOM.btnPlayVariantAudio) {
+      DOM.btnPlayVariantAudio.addEventListener('click', () => {
+        const audioText = 'Panduan Suara Identifikasi Sampah. ' +
+          'Botol plastik bening biasanya memiliki kode daur ulang segitiga angka satu atau PETE. ' +
+          'Lepaskan tutup botol dan sedotan sebelum disetor ke tempat sampah terpilah. ' +
+          'Tutup botol biasanya berbahan polietilena angka dua atau HDPE.';
+        speakText(audioText);
+        notifyMultiChannel('🔊 Memutar panduan suara identifikasi bahan sampah daur ulang.');
+      });
+    }
+
+    // Selesaikan Misi Adaptif
+    if (DOM.btnCompleteAdaptive) {
+      DOM.btnCompleteAdaptive.addEventListener('click', () => {
+        if (state.adaptiveCompleted) return;
+
+        state.adaptiveCompleted = true;
+        state.impact.bottlesSaved += 2;
+        state.impact.plasticBagsAvoided += 1;
+        state.impact.co2GramsPrevented += 80;
+        state.impact.totalMissionsDone += 1;
+
+        saveState();
+        renderMissionsAndItems();
+        damageBoss(120, `Misi Adaptif Varian ${state.adaptiveVariantSelected} Tuntas!`);
+      });
+    }
+
+    // 12. Misi Rutin Aksi
+    document.querySelectorAll('.btn-action-mission').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-mission-id');
+        if (state.missionsDone[id]) return;
+
+        state.missionsDone[id] = true;
+        state.impact.totalMissionsDone += 1;
+
+        if (id === '1') {
+          state.impact.bottlesSaved += 1;
+          state.impact.co2GramsPrevented += 30;
+          damageBoss(50, 'Misi Bawa Tumbler Selesai');
+        } else if (id === '2') {
+          state.impact.plasticBagsAvoided += 1;
+          damageBoss(50, 'Misi Tolak Sedotan Selesai');
+        } else if (id === '3') {
+          state.impact.co2GramsPrevented += 50;
+          damageBoss(50, 'Misi Cabut Colokan Selesai');
+        }
+
+        saveState();
+        renderMissionsAndItems();
+      });
+    });
+
+    // 13. Tangkap Monster Sampah Sekitar (Item Harian Pokemon)
+    document.querySelectorAll('.btn-capture-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-item-id');
+        if (state.itemsCaptured[id]) return;
+
+        state.itemsCaptured[id] = true;
+        state.impact.bottlesSaved += 1;
+        damageBoss(30, 'Monster Sampah Sekitar Berhasil Diamankan');
+
+        saveState();
+        renderMissionsAndItems();
+      });
+    });
+
+    // 14. Pemilihan Tema Story Card
+    DOM.themeSwatches.forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        const theme = swatch.getAttribute('data-theme');
+        state.storyTheme = theme;
+        saveState();
+        renderStoryAndImpact();
+        announce(`Tema kartu diubah menjadi ${swatch.textContent.trim()}`);
+      });
+    });
+
+    // 15. Bagikan Story & Salin Teks
+    if (DOM.btnShareInstagram) {
+      DOM.btnShareInstagram.addEventListener('click', () => {
+        notifyMultiChannel('📸 Membuka simulasi bagikan ke Instagram Story & Status WhatsApp!');
+      });
+    }
+
+    if (DOM.btnCopyStoryText) {
+      DOM.btnCopyStoryText.addEventListener('click', () => {
+        const textToCopy = `Hari ini aku menyelamatkan ${state.impact.bottlesSaved} botol plastik bersama ${state.squadName} di GreenSteps! 🔥 ${state.impact.streakDays} hari streak mabar hijau. Yuk mabar bareng, masukkan kode squad: #${state.squadCode}`;
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            if (DOM.shareFeedback) {
+              DOM.shareFeedback.hidden = false;
+              setTimeout(() => { DOM.shareFeedback.hidden = true; }, 4000);
+            }
+            notifyMultiChannel('📋 Teks ringkasan berhasil disalin ke clipboard!');
+          }).catch(() => {
+            notifyMultiChannel('📋 Ringkasan siap disalin!');
+          });
+        } else {
+          notifyMultiChannel('📋 Ringkasan siap disalin!');
+        }
+      });
+    }
+
+    if (DOM.btnDownloadStoryMock) {
+      DOM.btnDownloadStoryMock.addEventListener('click', () => {
+        notifyMultiChannel('💾 Kartu pencapaian story berhasil diunduh (simulasi).');
+      });
+    }
+
+    // 16. Tab Switcher Dampak Pribadiku vs Squad
+    if (DOM.tabImpactPersonal && DOM.tabImpactSquad) {
+      DOM.tabImpactPersonal.addEventListener('click', () => {
+        DOM.tabImpactPersonal.classList.add('active');
+        DOM.tabImpactPersonal.setAttribute('aria-selected', 'true');
+        DOM.tabImpactSquad.classList.remove('active');
+        DOM.tabImpactSquad.setAttribute('aria-selected', 'false');
+        DOM.panelImpactPersonal.hidden = false;
+        DOM.panelImpactSquad.hidden = true;
+        announce('Menampilkan laporan dampak pribadiku.');
+      });
+
+      DOM.tabImpactSquad.addEventListener('click', () => {
+        DOM.tabImpactSquad.classList.add('active');
+        DOM.tabImpactSquad.setAttribute('aria-selected', 'true');
+        DOM.tabImpactPersonal.classList.remove('active');
+        DOM.tabImpactPersonal.setAttribute('aria-selected', 'false');
+        DOM.panelImpactSquad.hidden = false;
+        DOM.panelImpactPersonal.hidden = true;
+        announce('Menampilkan laporan dampak seluruh squad kosan.');
+      });
+    }
+
   }
 
-  // ========================================================
-  // 7. INISIALISASI SAAT HALAMAN DIMUAT
-  // ========================================================
-  document.addEventListener('DOMContentLoaded', () => {
-    applyAccessibilityStyles();
-    // Default mulai dari onboarding
+  // ==========================================
+  // INISIALISASI SAAT HALAMAN DIMUAT
+  // ==========================================
+  function init() {
+    applyAccessibilitySettings();
+    renderSquadAndHome();
+    renderMissionsAndItems();
+    renderStoryAndImpact();
+    initEventListeners();
+
+    // Default layar awal
     navigateTo('screen-onboarding');
-  });
+  }
+
+  // Jalankan saat DOM siap
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
 })();
