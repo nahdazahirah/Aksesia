@@ -1,0 +1,1479 @@
+/* ========================================================
+   AKSESIA - LOW-FIDELITY WIREFRAME STYLESHEET
+   Sesuai Prinsip Aksesibilitas WCAG 2.2 AA & Gaya Wireframe
+   ======================================================== */
+
+:root {
+  /* Skala Teks Dinamis (1.0 = 100%, 2.0 = 200%) */
+  --text-scale: 1;
+
+  /* Palet Warna Grayscale Wireframe Standar (Kontras Tinggi) */
+  --bg-app: #f7f7f7;
+  --bg-card: #ffffff;
+  --bg-card-subtle: #eeeeee;
+  --bg-hover: #e5e5e5;
+  --text-main: #111111;       /* Kontras > 14:1 terhadap #ffffff */
+  --text-muted: #444444;      /* Kontras > 7:1 terhadap #ffffff (WCAG AAA) */
+  --text-caption: #555555;    /* Kontras > 5.5:1 terhadap #ffffff (WCAG AA) */
+  --border-main: #222222;
+  --border-light: #888888;
+  --border-dashed: #666666;
+  --btn-primary-bg: #111111;
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #ffffff;
+  --btn-secondary-text: #111111;
+  --focus-ring: #000000;
+  
+  /* Ukuran Target Sentuh Minimum WCAG (48px) */
+  --min-touch-size: 48px;
+
+  /* Font Sistem Tanpa Hiasan */
+  --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ========================================================
+   MODE KONTRAS TINGGI (High Contrast Mode)
+   ======================================================== */
+body.high-contrast-mode {
+  --bg-app: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-subtle: #ffffff;
+  --bg-hover: #dddddd;
+  --text-main: #000000;
+  --text-muted: #000000;
+  --text-caption: #000000;
+  --border-main: #000000;
+  --border-light: #000000;
+  --border-dashed: #000000;
+  --btn-primary-bg: #000000;
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #ffffff;
+  --btn-secondary-text: #000000;
+  --focus-ring: #000000;
+}
+
+body.high-contrast-mode .wireframe-card,
+body.high-contrast-mode .wireframe-box,
+body.high-contrast-mode .btn-primary,
+body.high-contrast-mode .btn-secondary,
+body.high-contrast-mode .custom-select,
+body.high-contrast-mode .custom-textarea {
+  border-width: 3px !important;
+  font-weight: 600;
+}
+
+/* ========================================================
+   PALET RAMAH BUTA WARNA (Color-Blind Safe Mode)
+   Menggunakan Pola Garis & Batas Arsir Monokromatik Jelas
+   ======================================================== */
+body.colorblind-safe-mode .status-pill,
+body.colorblind-safe-mode .proto-badge,
+body.colorblind-safe-mode .tag-item {
+  border: 2px dashed #000000 !important;
+  background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0, 0, 0, 0.05) 5px, rgba(0, 0, 0, 0.05) 10px);
+}
+
+body.colorblind-safe-mode .alert-banner-flashing {
+  outline: 4px double #000000;
+}
+
+/* ========================================================
+   MODE SEDERHANA (Simple Mode / Satu Hal per Langkah)
+   ======================================================== */
+body.simple-mode .guide-box,
+body.simple-mode .guide-after-call,
+body.simple-mode .feedback-box,
+body.simple-mode .card-status-header .text-caption,
+body.simple-mode .comfort-notice {
+  display: none !important;
+}
+
+body.simple-mode .screen-content {
+  gap: calc(24px * var(--text-scale));
+}
+
+body.simple-mode .wireframe-card {
+  padding: calc(20px * var(--text-scale));
+}
+
+/* ========================================================
+   RESET & DASAR TAMPILAN
+   ======================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  background-color: #2b2b2b;
+  color: var(--text-main);
+  font-family: var(--font-system);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16px;
+  background-color: #2b2b2b;
+}
+
+/* Elemen Khusus Pembaca Layar */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sr-hidden {
+  display: none !important;
+}
+
+/* Aksesibilitas Indikator Fokus Keyboard */
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* ========================================================
+   BINGKAI PONSEL 390x844 (Viewport Rangka Prototipe)
+   ======================================================== */
+.device-viewport-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+}
+
+.prototype-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 390px;
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #eeeeee;
+  font-size: 0.8125rem;
+}
+
+.proto-badge {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border: 1px solid #777;
+  border-radius: 4px;
+}
+
+.proto-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #333333;
+  color: #ffffff;
+  border: 1px solid #777777;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 36px;
+}
+
+.proto-btn:hover {
+  background: #555555;
+}
+
+/* Ukuran Asli Ponsel 390x844 */
+.mobile-frame {
+  position: relative;
+  width: 390px;
+  height: 844px;
+  max-height: 844px;
+  background-color: var(--bg-app);
+  border: 3px solid #111111;
+  border-radius: 36px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media (max-width: 420px) {
+  body {
+    padding: 0;
+  }
+  .device-viewport-shell {
+    max-width: 100%;
+  }
+  .mobile-frame {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+  .prototype-bar {
+    max-width: 100%;
+    border-radius: 0;
+  }
+}
+
+/* ========================================================
+   BILAH HEADER APLIKASI & IKON PERSISTEN
+   ======================================================== */
+.app-header {
+  height: 64px;
+  min-height: 64px;
+  background-color: var(--bg-card);
+  border-bottom: 2px solid var(--border-main);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 20;
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-title {
+  font-size: calc(1.25rem * var(--text-scale));
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-main);
+}
+
+.btn-icon-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--min-touch-size);
+  min-width: var(--min-touch-size);
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: var(--text-main);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: calc(0.875rem * var(--text-scale));
+}
+
+.btn-icon-nav:hover {
+  background-color: var(--bg-hover);
+}
+
+.btn-icon-header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--min-touch-size);
+  min-height: var(--min-touch-size);
+  background: var(--bg-card);
+  border: 2px solid var(--border-main);
+  border-radius: 8px;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 6px 10px;
+  gap: 6px;
+}
+
+.btn-icon-header:hover {
+  background-color: var(--bg-hover);
+}
+
+.a11y-trigger {
+  font-size: calc(0.8125rem * var(--text-scale));
+  font-weight: 700;
+  background-color: #f0f0f0;
+}
+
+.badge-label {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* ========================================================
+   KONTEN UTAMA & NAVIGASI LAYAR
+   ======================================================== */
+.app-main {
+  flex: 1;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  background-color: var(--bg-app);
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  min-height: 100%;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+.screen.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.screen-content {
+  display: flex;
+  flex-direction: column;
+  gap: calc(16px * var(--text-scale));
+  flex: 1;
+}
+
+/* ========================================================
+   GAYA TYPOGRAPHY (RESPONSIF TERHADAP TEXT SCALE)
+   ======================================================== */
+.text-heading-1 {
+  font-size: calc(1.375rem * var(--text-scale));
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.25;
+}
+
+.text-heading-2 {
+  font-size: calc(1.125rem * var(--text-scale));
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.3;
+}
+
+.text-heading-3 {
+  font-size: calc(1rem * var(--text-scale));
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.text-body {
+  font-size: calc(0.9375rem * var(--text-scale));
+  color: var(--text-main);
+  line-height: 1.45;
+}
+
+.text-body-sm {
+  font-size: calc(0.875rem * var(--text-scale));
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.text-caption {
+  font-size: calc(0.8125rem * var(--text-scale));
+  color: var(--text-caption);
+  line-height: 1.35;
+}
+
+/* ========================================================
+   KARTU & KOTAK WIREFRAME (GRAYSCALE OUTLINES)
+   ======================================================== */
+.wireframe-box {
+  background-color: var(--bg-card-subtle);
+  border: 2px dashed var(--border-dashed);
+  border-radius: 10px;
+  padding: calc(14px * var(--text-scale));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wireframe-card {
+  background-color: var(--bg-card);
+  border: 2px solid var(--border-main);
+  border-radius: 12px;
+  padding: calc(16px * var(--text-scale));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header-banner {
+  border-style: solid;
+  border-color: var(--border-main);
+  background-color: #ebebeb;
+}
+
+/* ========================================================
+   TOMBOL & KONTROL SENTUH (MIN 48x48 PX)
+   ======================================================== */
+.btn-primary, .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--min-touch-size);
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: calc(1rem * var(--text-scale));
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+}
+
+.btn-primary {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: 2px solid var(--btn-primary-bg);
+}
+
+.btn-primary:hover {
+  background-color: #333333;
+}
+
+.btn-secondary {
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  border: 2px solid var(--border-main);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-hover);
+}
+
+.btn-large {
+  min-height: 56px;
+  font-size: calc(1.0625rem * var(--text-scale));
+}
+
+.screen-footer-actions {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ========================================================
+   KOMPONEN FORM, CHECKBOX, TOGGLE, RADIO
+   ======================================================== */
+.custom-checkbox, .custom-toggle, input[type="radio"] {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  accent-color: #111111;
+  cursor: pointer;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: var(--min-touch-size);
+  padding: 8px 10px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background-color: var(--bg-card);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-row:hover {
+  background-color: var(--bg-hover);
+}
+
+.label-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: calc(0.9375rem * var(--text-scale));
+}
+
+.label-info .subtext {
+  font-size: calc(0.8125rem * var(--text-scale));
+  color: var(--text-caption);
+  font-weight: normal;
+}
+
+.custom-select, .custom-textarea {
+  width: 100%;
+  min-height: var(--min-touch-size);
+  padding: 10px 12px;
+  border: 2px solid var(--border-main);
+  border-radius: 8px;
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: calc(0.9375rem * var(--text-scale));
+}
+
+.custom-textarea {
+  resize: vertical;
+}
+
+.custom-toggle {
+  width: 48px;
+  height: 28px;
+  min-width: 48px;
+  cursor: pointer;
+}
+
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.switch-label-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: calc(0.9375rem * var(--text-scale));
+  cursor: pointer;
+}
+
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: var(--border-main);
+  color: var(--bg-card);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin-right: 6px;
+}
+
+.time-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.radio-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--min-touch-size);
+  padding: 10px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background-color: var(--bg-card);
+  cursor: pointer;
+}
+
+.radio-card:hover {
+  background-color: var(--bg-hover);
+}
+
+.radio-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.fieldset-clean {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* ========================================================
+   STATUS PILL, BADGE & INDIKATOR
+   ======================================================== */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border-main);
+  border-radius: 16px;
+  font-size: calc(0.8125rem * var(--text-scale));
+  font-weight: 700;
+  background-color: var(--bg-card-subtle);
+}
+
+.status-ready {
+  background-color: #e5e5e5;
+  border: 2px solid #111111;
+}
+
+.status-pill svg {
+  fill: currentColor;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--border-light);
+  font-size: calc(0.875rem * var(--text-scale));
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.simple-list {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: calc(0.875rem * var(--text-scale));
+}
+
+/* ========================================================
+   LAYAR 4: PREFERENSI BERBAGI
+   ======================================================== */
+.shared-tags-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0;
+}
+
+.tag-item {
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  background-color: #ffffff;
+  font-size: calc(0.8125rem * var(--text-scale));
+  font-weight: 600;
+}
+
+.privacy-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: #ffffff;
+  border: 1px dashed var(--border-light);
+  border-radius: 6px;
+  font-size: calc(0.8125rem * var(--text-scale));
+  font-weight: 500;
+}
+
+/* ========================================================
+   LAYAR 5 & 6: TIKET, CHECK-IN & RUANG TUNGGU
+   ======================================================== */
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px dashed var(--border-dashed);
+  padding-bottom: 10px;
+}
+
+.location-badge, .poly-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: calc(0.8125rem * var(--text-scale));
+  font-weight: 700;
+}
+
+.queue-giant-box {
+  text-align: center;
+  padding: 16px 8px;
+  border: 2px solid var(--border-main);
+  border-radius: 12px;
+  background-color: #f0f0f0;
+}
+
+.queue-caption {
+  font-size: calc(0.875rem * var(--text-scale));
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.queue-number {
+  font-size: calc(3rem * var(--text-scale));
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--text-main);
+  line-height: 1.1;
+  margin: 6px 0;
+}
+
+.queue-time-info {
+  font-size: calc(0.875rem * var(--text-scale));
+  font-weight: 600;
+}
+
+.status-indicator-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+.status-badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: calc(0.8125rem * var(--text-scale));
+  font-weight: 700;
+  border: 1px solid var(--border-main);
+  padding: 4px 10px;
+  border-radius: 16px;
+  width: fit-content;
+}
+
+.live-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #111111;
+  animation: pulseDot 1.5s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.85); }
+}
+
+.waiting-highlight-box {
+  text-align: center;
+  padding: 16px 8px;
+  border: 2px solid var(--border-main);
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+.text-status-lead {
+  font-size: calc(1.125rem * var(--text-scale));
+  font-weight: 700;
+}
+
+.remaining-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.counter-number {
+  font-size: calc(2.5rem * var(--text-scale));
+  font-weight: 900;
+  line-height: 1;
+}
+
+.counter-text {
+  font-size: calc(0.9375rem * var(--text-scale));
+  font-weight: 600;
+}
+
+.counter-comparison-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 12px;
+  background: #f0f0f0;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+}
+
+.comp-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.comp-label {
+  font-size: calc(0.75rem * var(--text-scale));
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.comp-val {
+  font-size: calc(1.5rem * var(--text-scale));
+  font-weight: 800;
+}
+
+.comp-val.my-num {
+  text-decoration: underline;
+}
+
+.comp-sub {
+  font-size: calc(0.75rem * var(--text-scale));
+}
+
+.comp-divider {
+  width: 2px;
+  height: 40px;
+  background: var(--border-light);
+}
+
+.comfort-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px dashed var(--border-main);
+  border-radius: 8px;
+  font-size: calc(0.8125rem * var(--text-scale));
+  line-height: 1.35;
+}
+
+.demo-box {
+  background-color: #e5e5e5;
+  border: 2px solid #333333;
+}
+
+.demo-caption {
+  font-size: calc(0.8125rem * var(--text-scale));
+}
+
+/* ========================================================
+   LAYAR 7: PERINGATAN PANGGILAN MULTI-SALURAN
+   ======================================================== */
+.alert-banner-flashing {
+  background-color: #111111;
+  color: #ffffff;
+  border: 4px solid #ffffff;
+  border-radius: 16px;
+  padding: calc(20px * var(--text-scale));
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: flashAlert 1.2s infinite;
+}
+
+@keyframes flashAlert {
+  0%, 100% {
+    box-shadow: 0 0 0 4px #111111;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 10px #777777;
+    transform: scale(1.02);
+  }
+}
+
+.text-call-title {
+  font-size: calc(1.75rem * var(--text-scale));
+  font-weight: 900;
+  letter-spacing: 1.5px;
+}
+
+.text-call-instruction {
+  font-size: calc(1rem * var(--text-scale));
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.counter-target-box {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 12px 24px;
+  border: 3px solid #000000;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+}
+
+.counter-name {
+  font-size: calc(2rem * var(--text-scale));
+  font-weight: 900;
+}
+
+.counter-sub {
+  font-size: calc(0.875rem * var(--text-scale));
+  font-weight: 700;
+}
+
+.ticket-call-number {
+  font-size: calc(1.125rem * var(--text-scale));
+  margin-top: 4px;
+}
+
+/* Pengecualian Gerakan Animasi: Hormati Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .alert-banner-flashing, .live-dot, .screen {
+    animation: none !important;
+  }
+}
+
+body.reduced-motion-mode .alert-banner-flashing,
+body.reduced-motion-mode .live-dot,
+body.reduced-motion-mode .screen {
+  animation: none !important;
+}
+
+/* ========================================================
+   LAYAR 8: KARTU KOMUNIKASI & KETIK-UCAPKAN
+   ======================================================== */
+.comm-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.comm-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 14px 8px;
+  border: 2px solid var(--border-main);
+  border-radius: 10px;
+  background-color: #ffffff;
+  cursor: pointer;
+  min-height: 100px;
+  gap: 6px;
+}
+
+.comm-card:hover {
+  background-color: var(--bg-hover);
+  border-color: #000000;
+}
+
+.comm-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #eeeeee;
+  border: 1px solid var(--border-light);
+}
+
+.comm-title {
+  font-size: calc(0.875rem * var(--text-scale));
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.comm-hint {
+  font-size: calc(0.6875rem * var(--text-scale));
+  color: var(--text-caption);
+}
+
+.type-speak-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tts-action-row {
+  display: flex;
+  gap: 8px;
+}
+
+.tts-action-row .btn-primary,
+.tts-action-row .btn-secondary {
+  flex: 1;
+}
+
+/* ========================================================
+   LAYAR 9: SELESAI KUNJUNGAN
+   ======================================================== */
+.success-banner {
+  text-align: center;
+  align-items: center;
+  padding: calc(20px * var(--text-scale));
+  background-color: #ffffff;
+  border: 2px solid var(--border-main);
+}
+
+.success-icon-box {
+  width: 56px;
+  height: 56px;
+  border: 2px solid var(--border-main);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+}
+
+.step-guide-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px dotted var(--border-light);
+}
+
+.step-guide-item:last-child {
+  border-bottom: none;
+}
+
+.step-guide-num {
+  min-width: 28px;
+  height: 28px;
+  background-color: #111111;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.875rem;
+}
+
+.simple-rating-row {
+  display: flex;
+  gap: 8px;
+}
+
+.rating-btn {
+  flex: 1;
+  min-height: var(--min-touch-size);
+  padding: 8px 4px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background-color: #ffffff;
+  font-size: calc(0.75rem * var(--text-scale));
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rating-btn:hover {
+  background-color: var(--bg-hover);
+}
+
+/* ========================================================
+   LAYAR 10: MODAL PENGATURAN AKSESIBILITAS
+   ======================================================== */
+.modal-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.modal-screen[hidden] {
+  display: none !important;
+}
+
+.modal-dialog {
+  background-color: var(--bg-card);
+  border-top: 3px solid var(--border-main);
+  border-radius: 20px 20px 0 0;
+  max-height: 90%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--border-light);
+  padding-bottom: 12px;
+}
+
+.btn-close-modal {
+  min-width: var(--min-touch-size);
+  min-height: var(--min-touch-size);
+  background: transparent;
+  border: 2px solid var(--border-main);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.modal-body {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 14px 0;
+}
+
+.modal-footer {
+  border-top: 2px solid var(--border-light);
+  padding-top: 12px;
+}
+
+.live-preview-box {
+  background-color: var(--bg-app);
+  border: 2px solid var(--border-main);
+  border-radius: 8px;
+  padding: calc(12px * var(--text-scale));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.preview-tag {
+  font-size: calc(0.75rem * var(--text-scale));
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.preview-sample-title {
+  font-size: calc(1.125rem * var(--text-scale));
+  font-weight: 800;
+}
+
+.preview-sample-text {
+  font-size: calc(0.875rem * var(--text-scale));
+}
+
+.preview-sample-btn {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  padding: 8px 12px;
+  border-radius: 6px;
+  width: fit-content;
+  font-size: calc(0.8125rem * var(--text-scale));
+  font-weight: 700;
+}
+
+.setting-item-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background-color: var(--bg-card);
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.slider-val-badge {
+  font-weight: 800;
+  font-size: 0.875rem;
+  padding: 2px 8px;
+  border: 1px solid var(--border-main);
+  border-radius: 4px;
+  background-color: var(--bg-card-subtle);
+}
+
+.slider-control-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.custom-range {
+  flex: 1;
+  min-height: var(--min-touch-size);
+  accent-color: #000000;
+  cursor: pointer;
+}
+
+.slider-bound {
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.slider-bound.font-large {
+  font-size: 1.5rem;
+}
+
+.setting-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background-color: var(--bg-card);
+  gap: 12px;
+}
+
+.toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toggle-text .subtext {
+  font-size: calc(0.8125rem * var(--text-scale));
+  color: var(--text-caption);
+}
+
+/* ========================================================
+   LAYAR 11: MODE PETUGAS (STAFF VIEW)
+   ======================================================== */
+.staff-header-box {
+  background-color: #111111;
+  color: #ffffff;
+  border-style: solid;
+  border-color: #ffffff;
+}
+
+.staff-header-box .text-heading-1 {
+  color: #ffffff;
+}
+
+.staff-header-box .text-body-sm {
+  color: #cccccc;
+}
+
+.staff-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: #333333;
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.staff-patient-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.staff-patient-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid var(--border-light);
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+.staff-patient-item.done {
+  opacity: 0.6;
+  background-color: #f7f7f7;
+}
+
+.staff-patient-item.active-target {
+  border: 3px solid #000000;
+  background-color: #ffffff;
+}
+
+.patient-id-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+}
+
+.patient-num {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.patient-num.highlight {
+  font-size: 1.5rem;
+  text-decoration: underline;
+}
+
+.patient-status-done, .patient-status-wait {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.patient-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.staff-shared-box {
+  margin-top: 6px;
+  padding: 8px;
+  border: 1px dashed #333333;
+  border-radius: 6px;
+  background-color: #f5f5f5;
+}
+
+.staff-pref-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.staff-pref-tags {
+  list-style: none;
+  padding: 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.staff-instruction {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: #333333;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.patient-pref-badge {
+  font-size: 0.75rem;
+  color: var(--text-caption);
+}
+
+.staff-actions-bar {
+  margin-top: 8px;
+}
+
+/* ========================================================
+   MODAL FULL-SCREEN ZOOM KARTU KOMUNIKASI
+   ======================================================== */
+.zoom-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ffffff;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+}
+
+.zoom-modal[hidden] {
+  display: none !important;
+}
+
+.btn-close-zoom {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--min-touch-size);
+  padding: 8px 16px;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-close-zoom:hover {
+  background: #eeeeee;
+}
+
+.zoom-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+}
+
+.zoom-title {
+  font-size: calc(2.25rem * var(--text-scale));
+  font-weight: 900;
+  color: #000000;
+  line-height: 1.2;
+}
+
+.zoom-desc {
+  font-size: calc(1.375rem * var(--text-scale));
+  color: #222222;
+  line-height: 1.4;
+  border: 2px dashed #000000;
+  padding: 16px;
+  border-radius: 12px;
+  width: 100%;
+}
+
+/* ========================================================
+   IKON SVG SYSTEM WIREFRAME
+   ======================================================== */
+.icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.icon-sm {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.icon-inline {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.icon-huge {
+  width: 48px;
+  height: 48px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.icon-a11y {
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.status-icon-warning {
+  fill: #111111;
+  width: 32px;
+  height: 32px;
+}
