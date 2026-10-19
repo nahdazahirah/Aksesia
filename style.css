@@ -1653,3 +1653,112 @@ input:checked + .switch-slider::before {
   z-index: 300;
   pointer-events: none;
 }
+
+/* ========================================================
+   VOUCHER, TIKET BELANJA & CASHBACK (POIN REWARD)
+   ======================================================== */
+.voucher-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.voucher-ticket-card {
+  background-color: var(--c-white);
+  border: var(--border-thick);
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.voucher-ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.voucher-title-col {
+  flex: 1;
+}
+
+.voucher-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-dark-green);
+  text-transform: lowercase;
+  display: block;
+}
+
+.voucher-partner {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-dark-green);
+  opacity: 0.8;
+}
+
+.voucher-pts-badge {
+  background-color: var(--c-cream);
+  border: var(--border-thin);
+  border-radius: var(--blob-pill);
+  padding: 4px 10px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-dark-green);
+  white-space: nowrap;
+}
+
+.voucher-pts-badge.pts-affordable {
+  background-color: var(--c-green-tint);
+  border-color: var(--c-green);
+  color: var(--c-dark-green);
+}
+
+.voucher-ticket-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 2px dashed var(--c-cream-border);
+  padding-top: 8px;
+  margin-top: 2px;
+}
+
+.voucher-term-text {
+  font-size: 11px;
+  color: var(--c-dark-green);
+  font-weight: 600;
+}
+
+/* Kartu Barcode Tiket yang Sudah Ditukar */
+.claimed-ticket-box {
+  background-color: var(--c-cream-card);
+  border: var(--border-thick);
+  border-radius: 18px;
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.barcode-strip {
+  height: 38px;
+  background-color: var(--c-white);
+  border: var(--border-thin);
+  border-radius: 8px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 10px;
+}
+
+.barcode-line {
+  height: 24px;
+  background-color: var(--c-dark-green);
+}
+

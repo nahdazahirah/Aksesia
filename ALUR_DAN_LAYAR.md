@@ -67,6 +67,17 @@
    - Koleksi badge lengkap: *Eco-Rookie*, *Tumbler Warrior*, *Earth's Bestie*, *Zero-Waste Boss*, *Main Character*.
    - Circle League (leaderboard squad kosan, reset 2 hari lagi).
 
+### Fitur Poin & Voucher Belanja (Reward System)
+Poin yang dikumpulkan dari misi harian tidak hanya berupa gamifikasi abstrak, melainkan dapat langsung ditukarkan menjadi tiket belanja nyata dan cashback:
+1. **Akses Cepat:** Chip saldo poin di header beranda (*"850 poin • tukar"*), kartu *"tukar poin misi"* di Beranda, serta menu Profil.
+2. **Katalog Voucher Mahasiswa / Anak Kos:**
+   - *Voucher Belanja Minimarket Rp 10.000* (Indomaret / Alfamart / Kantin Kosan) — 500 poin
+   - *Cashback Saldo E-Wallet Rp 15.000* (GoPay / ShopeePay / DANA) — 750 poin
+   - *Gratis 1x Isi Ulang Galon Kosan (Rp 6.000)* (Depo Air Berkah) — 300 poin
+   - *Diskon Minuman Tumbler Rp 5.000* (Warkop & Kafe Kampus) — 250 poin
+   - *Tiket Sembako Squad Kosan Rp 25.000* (Minyak / Beras Warung Bu Sari) — 1.200 poin
+3. **Mekanisme Interaktif:** Saldo poin berkurang secara dinamis saat ditukar. Voucher tersimpan di profil pengguna dengan kode voucher dan barcode solid untuk ditunjukkan langsung ke kasir.
+
 ---
 
 ## 3. Varian Aksesibilitas Wajib

@@ -52,7 +52,15 @@
     currentOnboardingSlide: 1,
     selectedAdaptiveVariant: 'A',
     storyTheme: 'theme-green',
-    pendingVerificationMission: null
+    pendingVerificationMission: null,
+    claimedVouchers: [
+      {
+        id: 'v0',
+        title: 'diskon isi ulang galon rp 5.000',
+        partner: 'depo galon air berkah kukusan',
+        code: 'GS-GALON-5K'
+      }
+    ]
   };
 
   let state = loadState();
@@ -600,6 +608,142 @@
         showToast('kode disalin.');
       });
     }
+
+    // Update Tampilan Poin & Katalog Voucher
+    function updatePointsUI() {
+      const homeChip = document.getElementById('home-points-chip');
+      const modalPts = document.getElementById('voucher-modal-points');
+
+      if (homeChip) homeChip.textContent = `${state.user.ecoPoints} poin`;
+      if (modalPts) modalPts.textContent = `${state.user.ecoPoints} poin`;
+
+      // Perbarui tombol tukar voucher
+      document.querySelectorAll('.btn-redeem-action').forEach(btn => {
+        const cost = parseInt(btn.getAttribute('data-cost') || '0', 10);
+        if (state.user.ecoPoints >= cost) {
+          btn.className = 'btn-pill btn-primary-orange btn-sm-pill btn-redeem-action';
+          btn.querySelector('span').textContent = 'tukar';
+        } else {
+          btn.className = 'btn-pill btn-outline-pill btn-sm-pill btn-redeem-action';
+          btn.querySelector('span').textContent = 'poin kurang';
+        }
+      });
+    }
+
+    function renderClaimedVouchers() {
+      const listContainer = document.getElementById('profile-claimed-vouchers-list');
+      if (!listContainer) return;
+
+      listContainer.innerHTML = '';
+      if (!state.claimedVouchers || state.claimedVouchers.length === 0) {
+        listContainer.innerHTML = '<p class="card-caption">belum ada voucher yang ditukar.</p>';
+        return;
+      }
+
+      state.claimedVouchers.forEach(v => {
+        const item = document.createElement('div');
+        item.className = 'voucher-ticket-card';
+        item.innerHTML = `
+          <div class="voucher-ticket-header">
+            <div class="voucher-title-col">
+              <strong class="voucher-title">${v.title}</strong>
+              <span class="voucher-partner">${v.partner}</span>
+            </div>
+            <span class="sticker-tag sticker-tag-green" style="margin:0;">siap pakai</span>
+          </div>
+          <div class="voucher-ticket-footer">
+            <span class="voucher-term-text">kode: <strong>${v.code}</strong></span>
+            <button type="button" class="btn-pill btn-primary-orange btn-sm-pill btn-view-active-ticket" data-code="${v.code}" data-title="${v.title}" data-partner="${v.partner}">
+              <span>pakai tiket</span>
+            </button>
+          </div>
+        `;
+        listContainer.appendChild(item);
+      });
+
+      // Bind view active ticket buttons
+      listContainer.querySelectorAll('.btn-view-active-ticket').forEach(b => {
+        b.addEventListener('click', () => {
+          const code = b.getAttribute('data-code');
+          const title = b.getAttribute('data-title');
+          const partner = b.getAttribute('data-partner');
+          openVoucherTicket(title, partner, code);
+        });
+      });
+    }
+
+    const modalVouchers = document.getElementById('modal-vouchers');
+    const modalTicket = document.getElementById('modal-voucher-ticket');
+
+    function openVoucherCatalog() {
+      updatePointsUI();
+      if (modalVouchers) modalVouchers.hidden = false;
+    }
+
+    function openVoucherTicket(title, partner, code) {
+      const dispTitle = document.getElementById('ticket-display-title');
+      const dispPartner = document.getElementById('ticket-display-partner');
+      const dispCode = document.getElementById('ticket-display-code');
+
+      if (dispTitle) dispTitle.textContent = title.toLowerCase();
+      if (dispPartner) dispPartner.textContent = partner.toLowerCase();
+      if (dispCode) dispCode.textContent = code;
+
+      if (modalTicket) modalTicket.hidden = false;
+    }
+
+    document.querySelectorAll('.btn-trigger-vouchers').forEach(btn => {
+      btn.addEventListener('click', openVoucherCatalog);
+    });
+
+    const btnProtoVouchers = document.getElementById('btn-proto-vouchers');
+    if (btnProtoVouchers) {
+      btnProtoVouchers.addEventListener('click', openVoucherCatalog);
+    }
+
+    const btnCloseVouchers = document.getElementById('btn-close-vouchers');
+    const btnDoneVouchers = document.getElementById('btn-done-vouchers');
+    if (btnCloseVouchers) btnCloseVouchers.addEventListener('click', () => { if (modalVouchers) modalVouchers.hidden = true; });
+    if (btnDoneVouchers) btnDoneVouchers.addEventListener('click', () => { if (modalVouchers) modalVouchers.hidden = true; });
+
+    const btnCloseTicket = document.getElementById('btn-close-ticket');
+    const btnUseTicketNow = document.getElementById('btn-use-ticket-now');
+    if (btnCloseTicket) btnCloseTicket.addEventListener('click', () => { if (modalTicket) modalTicket.hidden = true; });
+    if (btnUseTicketNow) {
+      btnUseTicketNow.addEventListener('click', () => {
+        if (modalTicket) modalTicket.hidden = true;
+        showToast('tunjukkan barcode ke kasir.');
+      });
+    }
+
+    // Tukar voucher
+    document.querySelectorAll('.btn-redeem-action').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cost = parseInt(btn.getAttribute('data-cost') || '0', 10);
+        const title = btn.getAttribute('data-title') || 'Voucher';
+        const partner = btn.getAttribute('data-partner') || 'Mitra';
+        const code = btn.getAttribute('data-code') || 'GS-VOUCHER';
+
+        if (state.user.ecoPoints >= cost) {
+          state.user.ecoPoints -= cost;
+          if (!state.claimedVouchers) state.claimedVouchers = [];
+          state.claimedVouchers.unshift({ id: 'v_' + Date.now(), title, partner, code });
+          saveState();
+
+          updatePointsUI();
+          renderClaimedVouchers();
+
+          if (modalVouchers) modalVouchers.hidden = true;
+          openVoucherTicket(title, partner, code);
+          showToast(`voucher ditukar. -${cost} poin.`);
+        } else {
+          showToast(`poin belum cukup (${cost} poin dibutuhkan).`);
+        }
+      });
+    });
+
+    renderClaimedVouchers();
+    updatePointsUI();
 
     // Reset data
     const btnResetData = document.getElementById('btn-reset-data');

@@ -34,6 +34,7 @@
         <button type="button" class="proto-screen-btn" data-target="screen-impact">5. dampak</button>
         <button type="button" class="proto-screen-btn" data-target="screen-squad">squad</button>
         <button type="button" class="proto-screen-btn" data-target="screen-profile">profil</button>
+        <button type="button" class="proto-screen-btn" id="btn-proto-vouchers">voucher</button>
       </div>
 
       <!-- Quick Switcher Varian Aksesibilitas Wajib -->
@@ -359,17 +360,32 @@
                   </svg>
                   <span>7 hari</span>
                 </div>
-                <div class="game-chip" title="ecopoin">
+                <button type="button" class="game-chip btn-trigger-vouchers" title="tukar ecopoin" style="cursor: pointer; border: var(--border-thin);">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="#D9822B" stroke="#18614D" stroke-width="2">
                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                   </svg>
-                  <span>850 poin</span>
-                </div>
+                  <span id="home-points-chip">850 poin</span>
+                  <span style="color: var(--c-orange); font-weight: 800; margin-left: 2px;">• tukar</span>
+                </button>
               </div>
             </div>
             <p style="font-size: 14px; color: var(--c-cream); font-weight: 700;">
               hari ini baru 1 dari 3 misi. tumbler udah dibawa belum?
             </p>
+          </div>
+
+          <!-- KARTU TUKAR POIN VOUCHER & CASHBACK -->
+          <div class="blob-card blob-2">
+            <span class="sticker-tag">reward belanja</span>
+            <h3 class="card-title">tukar poin misi</h3>
+            <p class="card-caption">
+              poin dari aksi harian bisa ditukar tiket belanja minimarket, cashback e-wallet, atau galon kosan.
+            </p>
+            <div style="margin-top: 10px;">
+              <button type="button" class="btn-pill btn-secondary-dark btn-sm-pill btn-trigger-vouchers">
+                <span>buka katalog voucher</span>
+              </button>
+            </div>
           </div>
 
           <!-- KARTU NORMA SOSIAL POSITIF -->
@@ -1164,6 +1180,34 @@
             </div>
           </div>
 
+          <div class="blob-card blob-1">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <h3 class="card-title">voucher aktifku</h3>
+              <button type="button" class="btn-pill btn-secondary-dark btn-sm-pill btn-trigger-vouchers">
+                <span>+ tukar poin</span>
+              </button>
+            </div>
+            <p class="card-caption">tiket belanja yang siap kamu pakai di kasir.</p>
+
+            <div id="profile-claimed-vouchers-list" style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+              <div class="voucher-ticket-card" id="sample-active-voucher">
+                <div class="voucher-ticket-header">
+                  <div class="voucher-title-col">
+                    <strong class="voucher-title">diskon isi ulang galon rp 5.000</strong>
+                    <span class="voucher-partner">depo galon air kosan berkah</span>
+                  </div>
+                  <span class="sticker-tag sticker-tag-green" style="margin:0;">siap pakai</span>
+                </div>
+                <div class="voucher-ticket-footer">
+                  <span class="voucher-term-text">kode: <strong>GS-GALON-5K</strong></span>
+                  <button type="button" class="btn-pill btn-primary-orange btn-sm-pill btn-view-active-ticket" data-code="GS-GALON-5K" data-title="Diskon Isi Ulang Galon Rp 5.000" data-partner="Depo Galon Air Kosan Berkah">
+                    <span>pakai tiket</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="blob-card blob-4">
             <h3 class="card-title">pengaturan</h3>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
@@ -1351,6 +1395,194 @@
         <button type="button" id="btn-save-a11y" class="btn-pill btn-primary-orange" style="width: 100%;">
           <span>terapkan</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL KATALOG TUKAR POIN VOUCHER & CASHBACK              -->
+  <!-- ======================================================== -->
+  <div id="modal-vouchers" class="a11y-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-voucher-title" hidden>
+    <div class="a11y-modal-container">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="2"/>
+            <circle cx="12" cy="12" r="2"/>
+            <path d="M6 12h.01M18 12h.01"/>
+          </svg>
+          <h2 id="modal-voucher-title" class="modal-title">tukar poin voucher</h2>
+        </div>
+        <button type="button" id="btn-close-vouchers" class="btn-icon-header" aria-label="tutup katalog voucher">✕</button>
+      </div>
+
+      <div class="modal-scroll-body">
+        
+        <!-- Info Saldo Poin -->
+        <div style="background: var(--c-white); border: var(--border-thick); border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span class="card-caption" style="font-weight: 700;">saldo poin kamu:</span>
+            <strong style="font-family: var(--font-heading); font-size: 20px; color: var(--c-dark-green); display: block;" id="voucher-modal-points">850 poin</strong>
+          </div>
+          <span class="sticker-tag sticker-tag-green" style="margin:0;">aktif</span>
+        </div>
+
+        <p class="card-caption" style="margin-top: 10px;">
+          pilih tiket belanja atau cashback di bawah ini:
+        </p>
+
+        <!-- Daftar Voucher -->
+        <div class="voucher-list">
+          
+          <!-- Voucher 1 -->
+          <div class="voucher-ticket-card" id="voucher-card-1">
+            <div class="voucher-ticket-header">
+              <div class="voucher-title-col">
+                <strong class="voucher-title">voucher belanja rp 10.000</strong>
+                <span class="voucher-partner">indomaret / alfamart / kantin kosan</span>
+              </div>
+              <span class="voucher-pts-badge pts-affordable">500 poin</span>
+            </div>
+            <div class="voucher-ticket-footer">
+              <span class="voucher-term-text">min. belanja rp 20.000</span>
+              <button type="button" class="btn-pill btn-primary-orange btn-sm-pill btn-redeem-action" data-cost="500" data-title="Voucher Belanja Rp 10.000" data-partner="Indomaret / Alfamart / Kantin Kosan" data-code="GS-BELANJA-10K">
+                <span>tukar</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 2 -->
+          <div class="voucher-ticket-card" id="voucher-card-2">
+            <div class="voucher-ticket-header">
+              <div class="voucher-title-col">
+                <strong class="voucher-title">cashback e-wallet rp 15.000</strong>
+                <span class="voucher-partner">gopay / shopeepay / dana / ovo</span>
+              </div>
+              <span class="voucher-pts-badge pts-affordable">750 poin</span>
+            </div>
+            <div class="voucher-ticket-footer">
+              <span class="voucher-term-text">langsung masuk ke saldo akun</span>
+              <button type="button" class="btn-pill btn-primary-orange btn-sm-pill btn-redeem-action" data-cost="750" data-title="Cashback E-Wallet Rp 15.000" data-partner="GoPay / ShopeePay / DANA" data-code="GS-CASHBACK-15K">
+                <span>tukar</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 3 -->
+          <div class="voucher-ticket-card" id="voucher-card-3">
+            <div class="voucher-ticket-header">
+              <div class="voucher-title-col">
+                <strong class="voucher-title">gratis 1x isi ulang galon kosan</strong>
+                <span class="voucher-partner">depo galon air berkah kukusan</span>
+              </div>
+              <span class="voucher-pts-badge pts-affordable">300 poin</span>
+            </div>
+            <div class="voucher-ticket-footer">
+              <span class="voucher-term-text">berlaku 1 galon 19 liter</span>
+              <button type="button" class="btn-pill btn-primary-orange btn-sm-pill btn-redeem-action" data-cost="300" data-title="Gratis 1x Isi Ulang Galon Kosan" data-partner="Depo Galon Air Berkah Kukusan" data-code="GS-GALON-FREE">
+                <span>tukar</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 4 -->
+          <div class="voucher-ticket-card" id="voucher-card-4">
+            <div class="voucher-ticket-header">
+              <div class="voucher-title-col">
+                <strong class="voucher-title">diskon kopi / es teh tumbler rp 5.000</strong>
+                <span class="voucher-partner">warkop & kafe sekitar kampus</span>
+              </div>
+              <span class="voucher-pts-badge pts-affordable">250 poin</span>
+            </div>
+            <div class="voucher-ticket-footer">
+              <span class="voucher-term-text">wajib bawa tumbler sendiri</span>
+              <button type="button" class="btn-pill btn-primary-orange btn-sm-pill btn-redeem-action" data-cost="250" data-title="Diskon Minuman Tumbler Rp 5.000" data-partner="Warkop & Kafe Sekitar Kampus" data-code="GS-TUMBLER-5K">
+                <span>tukar</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 5 -->
+          <div class="voucher-ticket-card" id="voucher-card-5">
+            <div class="voucher-ticket-header">
+              <div class="voucher-title-col">
+                <strong class="voucher-title">tiket sembako squad kosan rp 25.000</strong>
+                <span class="voucher-partner">warung sembako bu sari (minyak/beras)</span>
+              </div>
+              <span class="voucher-pts-badge">1200 poin</span>
+            </div>
+            <div class="voucher-ticket-footer">
+              <span class="voucher-term-text">target poin patungan satu kosan</span>
+              <button type="button" class="btn-pill btn-outline-pill btn-sm-pill btn-redeem-action" data-cost="1200" data-title="Tiket Sembako Squad Kosan Rp 25.000" data-partner="Warung Sembako Bu Sari" data-code="GS-SEMBAKO-25K">
+                <span>poin kurang</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="btn-done-vouchers" class="btn-pill btn-secondary-dark" style="width: 100%;">
+          <span>tutup katalog</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL TIKET BARCODE VOUCHER AKTIF                        -->
+  <!-- ======================================================== -->
+  <div id="modal-voucher-ticket" class="a11y-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-ticket-title" hidden>
+    <div class="a11y-modal-container">
+      <div class="modal-header">
+        <h3 id="modal-ticket-title" class="modal-title">tiket voucher kamu</h3>
+        <button type="button" id="btn-close-ticket" class="btn-icon-header" aria-label="tutup tiket">✕</button>
+      </div>
+
+      <div class="modal-scroll-body">
+        
+        <div class="claimed-ticket-box">
+          <strong style="font-family: var(--font-heading); font-size: 18px; color: var(--c-dark-green);" id="ticket-display-title">voucher belanja rp 10.000</strong>
+          <p class="card-caption" id="ticket-display-partner" style="margin-top: 2px;">indomaret / alfamart / kantin kosan</p>
+
+          <!-- Simulasi Barcode Garis-Garis Solid -->
+          <div class="barcode-strip" aria-hidden="true">
+            <div class="barcode-line" style="width: 3px;"></div>
+            <div class="barcode-line" style="width: 1px;"></div>
+            <div class="barcode-line" style="width: 4px;"></div>
+            <div class="barcode-line" style="width: 2px;"></div>
+            <div class="barcode-line" style="width: 1px;"></div>
+            <div class="barcode-line" style="width: 5px;"></div>
+            <div class="barcode-line" style="width: 2px;"></div>
+            <div class="barcode-line" style="width: 4px;"></div>
+            <div class="barcode-line" style="width: 1px;"></div>
+            <div class="barcode-line" style="width: 3px;"></div>
+            <div class="barcode-line" style="width: 2px;"></div>
+            <div class="barcode-line" style="width: 5px;"></div>
+            <div class="barcode-line" style="width: 1px;"></div>
+            <div class="barcode-line" style="width: 4px;"></div>
+            <div class="barcode-line" style="width: 2px;"></div>
+            <div class="barcode-line" style="width: 3px;"></div>
+          </div>
+
+          <div style="text-align: center; margin-top: 8px;">
+            <span class="card-caption" style="font-size: 11px; display: block;">tunjukkan kode ini ke kasir:</span>
+            <strong style="font-family: var(--font-heading); font-size: 22px; color: var(--c-dark-green); letter-spacing: 2px;" id="ticket-display-code">GS-BELANJA-10K</strong>
+          </div>
+
+          <div style="border-top: var(--border-thin); padding-top: 8px; margin-top: 10px; font-size: 11px; color: var(--c-dark-green);">
+            <span>berlaku sampai: 30 hari ke depan • 1x pakai</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px;">
+          <button type="button" id="btn-use-ticket-now" class="btn-pill btn-primary-orange">
+            <span>pakai sekarang di kasir</span>
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
