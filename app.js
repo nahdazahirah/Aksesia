@@ -1,78 +1,58 @@
 /**
- * GREENSTEPS - PROTOTIPE REFERENSI UI/UX
- * Logika Interaksi, Navigasi 5 Layar, Preferensi Aksesibilitas,
- * Misi Adaptif, Boss Raid, dan Kartu Cerita
+ * GREENSTEPS - MOBILE APP LOGIC
+ * Clean & Crisp Indonesian Young Adult Copy
+ * NO EMOJIS • NO GLOW • NO SHADOWS
  */
 
 (function () {
   'use strict';
 
-  // ==========================================
-  // STATE APLIKASI (Disimpan di localStorage)
-  // ==========================================
-  const STORAGE_KEY = 'greensteps_state_v1';
+  const STORAGE_KEY = 'greensteps_app_state_v3';
 
   const defaultState = {
-    // Profil & Squad
-    userName: 'Rian',
-    squadName: 'Kosan Barokah Asri',
-    squadCode: 'KOS-BAROKAH-24',
-    squadEnvironment: 'kos',
-    squadMembers: [
-      { id: 'm1', name: 'Rian (Kamu)', avatar: '🧑‍🌾', done: true, role: 'Tumbler Warrior', action: 'Bawa Tumbler Sendiri' },
-      { id: 'm2', name: 'Fajar', avatar: '⚡', done: true, role: 'Trash Hunter', action: 'Sortir Meja Kosan' },
-      { id: 'm3', name: 'Dita', avatar: '🌻', done: true, role: 'Zero Waste', action: 'Tolak Sedotan Es Teh' },
-      { id: 'm4', name: 'Bima', avatar: '🚲', done: true, role: 'Eco Patrol', action: 'Amankan Gelas Boba' },
-      { id: 'm5', name: 'Siti', avatar: '✨', done: true, role: 'Energy Saver', action: 'Cabut Colokan Kamar' },
-      { id: 'm6', name: 'Agus', avatar: '🧤', done: false, role: 'Pending Mabar', action: 'Belum ada misi hari ini' }
-    ],
-
-    // Boss Raid State
-    bossMaxHp: 1000,
-    bossCurrentHp: 380,
-    bossDefeated: false,
-
-    // Misi Adaptif
-    adaptiveVariantSelected: 'A',
-    adaptiveCompleted: false,
-
-    // Misi Harian Rutin (id -> boolean)
-    missionsDone: {
-      1: true,   // Bawa Tumbler
-      2: false,  // Tolak Sedotan
-      3: false   // Cabut Colokan
+    user: {
+      name: 'rian',
+      role: 'tumbler warrior',
+      ecoPoints: 850,
+      streakDays: 7
     },
-
-    // Item Sampah Sekitar (id -> boolean)
-    itemsCaptured: {
-      1: false, // Gelas Boba
-      2: false, // Kardus Paket
-      3: false  // Kresek Mini
+    squad: {
+      name: 'kosan barokah asri',
+      code: 'KOS-BAROKAH-24',
+      totalMembers: 6,
+      completedToday: 5,
+      members: [
+        { name: 'rian', done: true, action: 'bawa tumbler' },
+        { name: 'fajar', done: true, action: 'pilah kardus' },
+        { name: 'dita', done: true, action: 'tolak sedotan' },
+        { name: 'bima', done: true, action: 'gelas boba' },
+        { name: 'siti', done: true, action: 'cabut colokan' },
+        { name: 'agus', done: false, action: 'belum' }
+      ]
     },
-
-    // Statistik Dampak Nyata
+    monster: {
+      name: 'kiki si kresek nakal',
+      currentHp: 380,
+      maxHp: 1000
+    },
     impact: {
-      bottlesSaved: 5,
-      plasticBagsAvoided: 3,
-      co2GramsPrevented: 250,
-      streakDays: 7,
-      totalMissionsDone: 14
+      bottlesSaved: 42,
+      plasticBagsAvoided: 38,
+      co2Kg: 26.5,
+      cardboardKg: 14.8
     },
-
-    // Tema Story Card
-    storyTheme: 'theme-story-green',
-
-    // Preferensi Aksesibilitas
     a11y: {
-      fontScale: 1.0,          // 1.0, 1.25, 1.5
       highContrast: false,
-      colorblindMode: false,
-      focusMode: false,
-      reducedMotion: false,
+      largeText: false,
+      cognitiveFocus: false,
       spaciousTouch: false,
-      ttsAuto: false,
-      hapticVisual: true
-    }
+      reducedMotion: false
+    },
+    activeScreen: 'screen-onboarding',
+    currentOnboardingSlide: 1,
+    selectedAdaptiveVariant: 'A',
+    storyTheme: 'theme-green',
+    pendingVerificationMission: null
   };
 
   let state = loadState();
@@ -84,7 +64,7 @@
         return Object.assign({}, defaultState, JSON.parse(saved));
       }
     } catch (e) {
-      console.warn('Gagal membaca localStorage, gunakan state default', e);
+      console.warn('Gagal memuat state dari storage', e);
     }
     return JSON.parse(JSON.stringify(defaultState));
   }
@@ -93,927 +73,546 @@
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (e) {
-      console.warn('Gagal menyimpan ke localStorage', e);
+      console.warn('Gagal menyimpan state ke storage', e);
     }
   }
 
-  // ==========================================
-  // ELEMEN DOM UTAMA
-  // ==========================================
-  const DOM = {
-    announcer: document.getElementById('a11y-announcer'),
-    visualToast: document.getElementById('visual-toast'),
-    screens: document.querySelectorAll('.screen'),
-    navItems: document.querySelectorAll('.bottom-nav-bar .nav-item'),
-    protoBtns: document.querySelectorAll('.proto-screen-btn'),
-    headerSquadName: document.getElementById('header-squad-name'),
-    btnOpenA11y: document.getElementById('btn-open-a11y'),
-    btnCloseA11y: document.getElementById('btn-close-a11y'),
-    modalA11y: document.getElementById('modal-a11y-settings'),
-    btnSpeakScreen: document.getElementById('btn-speak-screen'),
-
-    // Onboarding Elements
-    obLargerText: document.getElementById('ob-larger-text'),
-    obHighContrast: document.getElementById('ob-high-contrast'),
-    obColorblind: document.getElementById('ob-colorblind'),
-    obFocusMode: document.getElementById('ob-focus-mode'),
-    obReducedMotion: document.getElementById('ob-reduced-motion'),
-    obLargeTouch: document.getElementById('ob-large-touch'),
-    tabJoinSquad: document.getElementById('tab-join-squad'),
-    tabCreateSquad: document.getElementById('tab-create-squad'),
-    panelJoinSquad: document.getElementById('panel-join-squad'),
-    panelCreateSquad: document.getElementById('panel-create-squad'),
-    inputSquadCode: document.getElementById('input-squad-code'),
-    btnPasteCode: document.getElementById('btn-paste-code'),
-    inputNewSquadName: document.getElementById('input-new-squad-name'),
-    inputSquadEnv: document.getElementById('input-squad-env'),
-    btnSubmitOnboarding: document.getElementById('btn-submit-onboarding'),
-    btnSkipOnboarding: document.getElementById('btn-skip-onboarding'),
-
-    // Beranda Elements
-    squadCompletionPill: document.getElementById('squad-completion-pill'),
-    squadRatioText: document.getElementById('squad-ratio-text'),
-    squadProgressFill: document.getElementById('squad-progress-fill'),
-    squadProgressPct: document.getElementById('squad-progress-pct'),
-    squadMemberList: document.getElementById('squad-member-list'),
-    btnNudgeMember: document.getElementById('btn-nudge-member'),
-    homeBossHpText: document.getElementById('home-boss-hp-text'),
-    homeBossHpFill: document.getElementById('home-boss-hp-fill'),
-
-    // Misi Elements
-    bossEmojiState: document.getElementById('boss-emoji-state'),
-    battleBossHpText: document.getElementById('battle-boss-hp-text'),
-    battleBossHpFill: document.getElementById('battle-boss-hp-fill'),
-    btnCompleteAdaptive: document.getElementById('btn-complete-adaptive'),
-    adaptiveSuccessMsg: document.getElementById('adaptive-success-msg'),
-    btnPlayVariantAudio: document.getElementById('btn-play-variant-audio'),
-    dailyItemsList: document.getElementById('daily-items-list'),
-
-    // Story Elements
-    storyCardPreview: document.getElementById('story-card-preview'),
-    storyHeadlineText: document.getElementById('story-headline-text'),
-    storyStatBottles: document.getElementById('story-stat-bottles'),
-    storyStatDamage: document.getElementById('story-stat-damage'),
-    themeSwatches: document.querySelectorAll('.btn-theme-swatch'),
-    btnShareInstagram: document.getElementById('btn-share-instagram'),
-    btnCopyStoryText: document.getElementById('btn-copy-story-text'),
-    btnDownloadStoryMock: document.getElementById('btn-download-story-mock'),
-    shareFeedback: document.getElementById('share-feedback'),
-
-    // Dampak Elements
-    tabImpactPersonal: document.getElementById('tab-impact-personal'),
-    tabImpactSquad: document.getElementById('tab-impact-squad'),
-    panelImpactPersonal: document.getElementById('panel-impact-personal'),
-    panelImpactSquad: document.getElementById('panel-impact-squad'),
-
-    // Modal A11y Elements
-    btnFontNormal: document.getElementById('btn-font-normal'),
-    btnFontLarge: document.getElementById('btn-font-large'),
-    btnFontXlarge: document.getElementById('btn-font-xlarge'),
-    toggleHighContrast: document.getElementById('toggle-high-contrast'),
-    toggleColorblind: document.getElementById('toggle-colorblind'),
-    toggleLargeTouch: document.getElementById('toggle-large-touch'),
-    toggleFocusMode: document.getElementById('toggle-focus-mode'),
-    toggleReducedMotion: document.getElementById('toggle-reduced-motion'),
-    toggleTtsAuto: document.getElementById('toggle-tts-auto'),
-    toggleHapticVisual: document.getElementById('toggle-haptic-visual'),
-    btnResetA11y: document.getElementById('btn-reset-a11y'),
-    btnSaveA11y: document.getElementById('btn-save-a11y')
-  };
-
-  // ==========================================
-  // SISTEM PENGUMUMAN AKSESIBILITAS & MULTI-SALURAN
-  // ==========================================
-
-  /**
-   * Mengumumkan teks untuk Screen Reader (aria-live)
-   */
-  function announce(text) {
-    if (DOM.announcer) {
-      DOM.announcer.textContent = '';
+  // Notifikasi Toast
+  function showToast(message, duration = 2500) {
+    const toast = document.getElementById('visual-toast');
+    const announcer = document.getElementById('a11y-announcer');
+    
+    if (toast) {
+      toast.textContent = message;
+      toast.style.display = 'flex';
       setTimeout(() => {
-        DOM.announcer.textContent = text;
-      }, 50);
-    }
-  }
-
-  /**
-   * Menampilkan toast visual + getaran (haptic feedback) untuk rungu/tuli
-   */
-  function notifyMultiChannel(message, duration = 3000) {
-    // 1. Getar haptic bila didukung
-    if (state.a11y.hapticVisual && 'vibrate' in navigator) {
-      try {
-        navigator.vibrate([60, 40, 60]);
-      } catch (e) {
-        // Abaikan jika tidak diizinkan browser
-      }
-    }
-
-    // 2. Banner toast visual
-    if (DOM.visualToast) {
-      DOM.visualToast.textContent = message;
-      DOM.visualToast.classList.add('show');
-      DOM.visualToast.setAttribute('aria-hidden', 'false');
-
-      setTimeout(() => {
-        DOM.visualToast.classList.remove('show');
-        DOM.visualToast.setAttribute('aria-hidden', 'true');
+        toast.style.display = 'none';
       }, duration);
     }
 
-    // 3. Screen reader announcement
-    announce(message);
+    if (announcer) {
+      announcer.textContent = message;
+    }
+
+    if ('vibrate' in navigator && !state.a11y.reducedMotion) {
+      try {
+        navigator.vibrate(40);
+      } catch (e) {}
+    }
   }
 
-  /**
-   * Web Speech Text-to-Speech (TTS)
-   */
+  // Text-to-Speech
   function speakText(text) {
-    if (!('speechSynthesis' in window)) {
-      notifyMultiChannel('Perangkat tidak mendukung suara Web Speech API.');
-      return;
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'id-ID';
+      utterance.rate = 1.0;
+      window.speechSynthesis.speak(utterance);
+    } else {
+      showToast('peramban tidak mendukung suara.');
     }
-
-    window.speechSynthesis.cancel(); // Hentikan yang sedang berjalan
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'id-ID';
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    window.speechSynthesis.speak(utterance);
   }
 
-  // ==========================================
-  // MANAJEMEN NAVIGASI 5 LAYAR
-  // ==========================================
-  let currentScreenId = 'screen-onboarding';
+  // Navigasi Layar
+  function switchScreen(screenId) {
+    const screens = document.querySelectorAll('.screen');
+    screens.forEach(s => s.classList.remove('active'));
 
-  function navigateTo(targetScreenId) {
-    const target = document.getElementById(targetScreenId);
-    if (!target) return;
+    const targetScreen = document.getElementById(screenId);
+    if (targetScreen) {
+      targetScreen.classList.add('active');
+      state.activeScreen = screenId;
+      saveState();
 
-    currentScreenId = targetScreenId;
+      const mainScroller = document.getElementById('app-main-content');
+      if (mainScroller) mainScroller.scrollTop = 0;
 
-    // Sembunyikan semua layar
-    DOM.screens.forEach(s => {
-      s.classList.remove('active');
-      s.hidden = true;
-      s.setAttribute('aria-hidden', 'true');
-    });
+      // Update bilah atas
+      document.querySelectorAll('.proto-screen-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-target') === screenId);
+      });
 
-    // Tampilkan layar target
-    target.classList.remove('active');
-    void target.offsetWidth; // Trigger reflow untuk animasi
-    target.classList.add('active');
-    target.hidden = false;
-    target.removeAttribute('aria-hidden');
+      // Update bilah navigasi bawah
+      document.querySelectorAll('.bottom-nav-bar .nav-item').forEach(item => {
+        item.classList.toggle('active', item.getAttribute('data-screen') === screenId);
+      });
 
-    // Update bottom navigation bar
-    DOM.navItems.forEach(item => {
-      const isCurrent = item.getAttribute('data-screen') === targetScreenId;
-      item.classList.toggle('active', isCurrent);
-      if (isCurrent) {
-        item.setAttribute('aria-current', 'page');
-      } else {
-        item.removeAttribute('aria-current');
+      const heading = targetScreen.querySelector('h2, h3');
+      if (heading) {
+        showToast('layar: ' + heading.textContent, 1500);
       }
-    });
-
-    // Update proto top buttons
-    DOM.protoBtns.forEach(btn => {
-      const isCurrent = btn.getAttribute('data-target') === targetScreenId;
-      btn.style.backgroundColor = isCurrent ? '#52b788' : '';
-      btn.style.color = isCurrent ? '#14281d' : '';
-      btn.style.fontWeight = isCurrent ? '800' : '';
-    });
-
-    // Scroll ke atas
-    const main = document.getElementById('app-main-content');
-    if (main) main.scrollTop = 0;
-
-    // Dapatkan judul layar untuk screen reader
-    const titleEl = target.querySelector('h1, h2');
-    const screenTitle = titleEl ? titleEl.textContent : targetScreenId;
-    announce(`Beralih ke ${screenTitle}`);
-
-    // Jika TTS Auto aktif, bacakan ringkasan layar
-    if (state.a11y.ttsAuto) {
-      setTimeout(() => {
-        speakScreenSummary(targetScreenId);
-      }, 400);
     }
   }
 
-  function speakScreenSummary(screenId) {
-    let summary = '';
-    switch (screenId) {
-      case 'screen-onboarding':
-        summary = 'Layar Onboarding GreenSteps. Atur preferensi aksesibilitas dan gabung squad kosan.';
-        break;
-      case 'screen-home':
-        summary = `Beranda GreenSteps. Lima dari enam anggota ${state.squadName} sudah menyelesaikan misi hari ini. Tujuh puluh dua persen anak kos di sekitarmu pakai tumbler hari ini.`;
-        break;
-      case 'screen-missions':
-        summary = `Layar Misi dan Boss Raid. Darah Boss Raksasa Kresek tersisa ${state.bossCurrentHp} HP. Tersedia misi adaptif inklusif dengan nilai setara.`;
-        break;
-      case 'screen-share':
-        summary = `Layar Kartu Pencapaian. Hari ini kamu menyelamatkan ${state.impact.bottlesSaved} botol plastik dan mempertahankan 7 hari streak mabar. Siap dibagikan ke media sosial.`;
-        break;
-      case 'screen-impact':
-        summary = `Layar Laporan Dampak Nyata. Kamu telah menyelamatkan ${state.impact.bottlesSaved} botol plastik dan mencegah ${state.impact.co2GramsPrevented} gram karbon dioksida.`;
-        break;
-      default:
-        summary = 'Aplikasi GreenSteps aksi hijau bersama.';
+  // Pengaturan Aksesibilitas
+  function applyA11ySettings() {
+    const body = document.body;
+
+    body.classList.toggle('high-contrast-mode', state.a11y.highContrast);
+    body.classList.toggle('large-text-mode', state.a11y.largeText);
+    body.classList.toggle('cognitive-focus-mode', state.a11y.cognitiveFocus);
+    body.classList.toggle('spacious-touch-mode', state.a11y.spaciousTouch);
+
+    // Sync input switches
+    const toggleContrast = document.getElementById('toggle-high-contrast');
+    if (toggleContrast) toggleContrast.checked = state.a11y.highContrast;
+
+    const toggleLarge = document.getElementById('toggle-large-text');
+    if (toggleLarge) toggleLarge.checked = state.a11y.largeText;
+
+    const toggleCognitive = document.getElementById('toggle-cognitive');
+    if (toggleCognitive) toggleCognitive.checked = state.a11y.cognitiveFocus;
+
+    const toggleSpacious = document.getElementById('toggle-spacious');
+    if (toggleSpacious) toggleSpacious.checked = state.a11y.spaciousTouch;
+
+    // Sync prototype top mode buttons
+    const btnNormal = document.getElementById('btn-mode-normal');
+    const btnContrast = document.getElementById('btn-mode-contrast');
+    const btnCognitive = document.getElementById('btn-mode-cognitive');
+
+    if (btnNormal && btnContrast && btnCognitive) {
+      btnNormal.classList.remove('active');
+      btnContrast.classList.remove('active');
+      btnCognitive.classList.remove('active');
+
+      if (state.a11y.highContrast) {
+        btnContrast.classList.add('active');
+      } else if (state.a11y.cognitiveFocus) {
+        btnCognitive.classList.add('active');
+      } else {
+        btnNormal.classList.add('active');
+      }
     }
-    speakText(summary);
-  }
-
-  // ==========================================
-  // SISTEM PREFERENSI AKSESIBILITAS TERAPKAN LANGSUNG
-  // ==========================================
-  function applyAccessibilitySettings() {
-    const { fontScale, highContrast, colorblindMode, focusMode, reducedMotion, spaciousTouch } = state.a11y;
-
-    // 1. Skala Font
-    document.documentElement.style.setProperty('--font-scale', fontScale);
-
-    // Update active state tombol skala font di modal
-    if (DOM.btnFontNormal && DOM.btnFontLarge && DOM.btnFontXlarge) {
-      DOM.btnFontNormal.classList.toggle('active', fontScale === 1.0);
-      DOM.btnFontLarge.classList.toggle('active', fontScale === 1.25);
-      DOM.btnFontXlarge.classList.toggle('active', fontScale === 1.5);
-    }
-
-    // 2. High Contrast
-    document.body.classList.toggle('high-contrast-mode', !!highContrast);
-    if (DOM.toggleHighContrast) DOM.toggleHighContrast.checked = !!highContrast;
-    if (DOM.obHighContrast) DOM.obHighContrast.checked = !!highContrast;
-
-    // 3. Colorblind Safe Mode
-    document.body.classList.toggle('colorblind-mode', !!colorblindMode);
-    if (DOM.toggleColorblind) DOM.toggleColorblind.checked = !!colorblindMode;
-    if (DOM.obColorblind) DOM.obColorblind.checked = !!colorblindMode;
-
-    // 4. Focus Mode (ADHD / Cognitive)
-    document.body.classList.toggle('focus-mode', !!focusMode);
-    if (DOM.toggleFocusMode) DOM.toggleFocusMode.checked = !!focusMode;
-    if (DOM.obFocusMode) DOM.obFocusMode.checked = !!focusMode;
-
-    // 5. Reduced Motion
-    document.body.classList.toggle('reduced-motion-mode', !!reducedMotion);
-    if (DOM.toggleReducedMotion) DOM.toggleReducedMotion.checked = !!reducedMotion;
-    if (DOM.obReducedMotion) DOM.obReducedMotion.checked = !!reducedMotion;
-
-    // 6. Spacious Touch (Motorik)
-    document.body.classList.toggle('spacious-touch-mode', !!spaciousTouch);
-    if (DOM.toggleLargeTouch) DOM.toggleLargeTouch.checked = !!spaciousTouch;
-    if (DOM.obLargeTouch) DOM.obLargeTouch.checked = !!spaciousTouch;
-
-    // 7. Checkbox teks lebih besar di onboarding
-    if (DOM.obLargerText) DOM.obLargerText.checked = fontScale > 1.0;
-
-    // 8. Toggles lainnya
-    if (DOM.toggleTtsAuto) DOM.toggleTtsAuto.checked = !!state.a11y.ttsAuto;
-    if (DOM.toggleHapticVisual) DOM.toggleHapticVisual.checked = !!state.a11y.hapticVisual;
 
     saveState();
   }
 
-  // ==========================================
-  // RENDER BERANDA & SQUAD
-  // ==========================================
-  function renderSquadAndHome() {
-    if (DOM.headerSquadName) {
-      DOM.headerSquadName.textContent = state.squadName;
-    }
+  // Event Listeners DOM
+  document.addEventListener('DOMContentLoaded', () => {
 
-    // Hitung berapa yang sudah selesai
-    const totalMembers = state.squadMembers.length;
-    const doneMembers = state.squadMembers.filter(m => m.done).length;
-    const pct = Math.round((doneMembers / totalMembers) * 100);
+    applyA11ySettings();
 
-    if (DOM.squadRatioText) {
-      DOM.squadRatioText.textContent = `${doneMembers} dari ${totalMembers} Selesai`;
-    }
-    if (DOM.squadProgressFill) {
-      DOM.squadProgressFill.style.width = `${pct}%`;
-    }
-    if (DOM.squadProgressPct) {
-      DOM.squadProgressPct.textContent = `${pct}%`;
-    }
-
-    // Render Squad Roster
-    if (DOM.squadMemberList) {
-      DOM.squadMemberList.innerHTML = '';
-      state.squadMembers.forEach(m => {
-        const li = document.createElement('li');
-        li.className = 'roster-item';
-
-        li.innerHTML = `
-          <div class="roster-user-info">
-            <span class="roster-avatar" aria-hidden="true">${m.avatar}</span>
-            <div>
-              <strong>${m.name}</strong>
-              <small class="roster-role" style="display:block; font-size:11px; opacity:0.8;">${m.action}</small>
-            </div>
-          </div>
-          <span class="roster-status ${m.done ? 'done' : 'pending'}" aria-label="${m.done ? 'Sudah selesai' : 'Belum selesai'}">
-            ${m.done ? '✅ Selesai' : '⏳ Belum'}
-          </span>
-        `;
-        DOM.squadMemberList.appendChild(li);
-      });
-    }
-
-    // Boss Mini HP di Home
-    const bossPct = Math.max(0, Math.round((state.bossCurrentHp / state.bossMaxHp) * 100));
-    if (DOM.homeBossHpText) {
-      DOM.homeBossHpText.textContent = `${state.bossCurrentHp} / ${state.bossMaxHp} HP`;
-    }
-    if (DOM.homeBossHpFill) {
-      DOM.homeBossHpFill.style.width = `${bossPct}%`;
-    }
-
-    // Battle Boss HP di Misi
-    if (DOM.battleBossHpText) {
-      DOM.battleBossHpText.textContent = `${state.bossCurrentHp} / ${state.bossMaxHp} HP`;
-    }
-    if (DOM.battleBossHpFill) {
-      DOM.battleBossHpFill.style.width = `${bossPct}%`;
-    }
-
-    // Boss Emoji State
-    if (DOM.bossEmojiState) {
-      if (state.bossCurrentHp <= 0) {
-        DOM.bossEmojiState.textContent = '💀';
-      } else if (state.bossCurrentHp < 300) {
-        DOM.bossEmojiState.textContent = '🤕';
-      } else {
-        DOM.bossEmojiState.textContent = '👾';
-      }
-    }
-  }
-
-  // ==========================================
-  // RENDER MISI HARIAN & ITEM HARIAN
-  // ==========================================
-  function renderMissionsAndItems() {
-    // 1. Misi Rutin
-    [1, 2, 3].forEach(id => {
-      const card = document.getElementById(`card-mission-${id}`);
-      if (!card) return;
-      const btn = card.querySelector('.btn-action-mission');
-      const isDone = !!state.missionsDone[id];
-
-      if (isDone) {
-        card.style.opacity = '0.75';
-        if (btn) {
-          btn.innerHTML = '<span>Tuntas ✅</span>';
-          btn.disabled = true;
-          btn.style.backgroundColor = 'var(--c-success-soft)';
-          btn.style.color = 'var(--c-success)';
-          btn.style.borderColor = 'var(--c-accent-mint)';
-        }
-      } else {
-        card.style.opacity = '1';
-        if (btn) {
-          btn.innerHTML = '<span>Tandai Selesai ✅</span>';
-          btn.disabled = false;
-        }
-      }
-    });
-
-    // 2. Misi Adaptif
-    if (state.adaptiveCompleted) {
-      if (DOM.btnCompleteAdaptive) {
-        DOM.btnCompleteAdaptive.disabled = true;
-        DOM.btnCompleteAdaptive.innerHTML = '<span>Misi Adaptif Sudah Tuntas! ⭐</span>';
-        DOM.btnCompleteAdaptive.style.backgroundColor = 'var(--c-accent-mint)';
-      }
-      if (DOM.adaptiveSuccessMsg) {
-        DOM.adaptiveSuccessMsg.hidden = false;
-      }
-    } else {
-      if (DOM.btnCompleteAdaptive) {
-        DOM.btnCompleteAdaptive.disabled = false;
-        DOM.btnCompleteAdaptive.innerHTML = '<span>Selesaikan Varian Terpilih & Serang Boss! 💥</span>';
-      }
-      if (DOM.adaptiveSuccessMsg) {
-        DOM.adaptiveSuccessMsg.hidden = true;
-      }
-    }
-
-    // 3. Item Harian (Monster Sampah Sekitar)
-    [1, 2, 3].forEach(id => {
-      const itemCard = document.getElementById(`item-trash-${id}`);
-      if (!itemCard) return;
-      const isCap = !!state.itemsCaptured[id];
-      const btn = itemCard.querySelector('.btn-capture-item');
-
-      if (isCap) {
-        itemCard.classList.add('completed');
-        if (btn) {
-          btn.textContent = 'Terselamatkan! 🎉';
-          btn.disabled = true;
-          btn.style.backgroundColor = 'var(--c-success)';
-        }
-      } else {
-        itemCard.classList.remove('completed');
-        if (btn) btn.disabled = false;
-      }
-    });
-  }
-
-  // ==========================================
-  // RENDER KARTU HASIL & DAMPAK NYATA
-  // ==========================================
-  function renderStoryAndImpact() {
-    // 1. Story Card
-    if (DOM.storyStatBottles) {
-      DOM.storyStatBottles.textContent = `${state.impact.bottlesSaved} Botol`;
-    }
-    if (DOM.storyStatDamage) {
-      DOM.storyStatDamage.textContent = `-${1000 - state.bossCurrentHp} HP`;
-    }
-    if (DOM.storyHeadlineText) {
-      DOM.storyHeadlineText.textContent = `"Hari ini aku menyelamatkan ${state.impact.bottlesSaved} botol plastik & ${state.impact.plasticBagsAvoided} kresek bareng squad!"`;
-    }
-    if (DOM.storyCardPreview) {
-      DOM.storyCardPreview.className = `story-card ${state.storyTheme}`;
-    }
-
-    // Update active swatch
-    DOM.themeSwatches.forEach(swatch => {
-      const theme = swatch.getAttribute('data-theme');
-      swatch.classList.toggle('active', theme === state.storyTheme);
-    });
-  }
-
-  // ==========================================
-  // AKSI MISI & KERUSAKAN BOSS (BOSS DAMAGE)
-  // ==========================================
-  function damageBoss(damageAmount, reasonText) {
-    state.bossCurrentHp = Math.max(0, state.bossCurrentHp - damageAmount);
-    if (state.bossCurrentHp <= 0) {
-      state.bossDefeated = true;
-      notifyMultiChannel(`🎉 LUAR BIASA! Boss Raksasa Kresek Kosan berhasil dikalahkan! Squad ${state.squadName} menang telak!`);
-    } else {
-      notifyMultiChannel(`💥 Serangan Sukses! Boss kena -${damageAmount} HP (${reasonText}). Sisa HP: ${state.bossCurrentHp}`);
-    }
-
-    saveState();
-    renderSquadAndHome();
-    renderStoryAndImpact();
-  }
-
-  // ==========================================
-  // EVENT LISTENERS & INTERAKSI
-  // ==========================================
-  function initEventListeners() {
-
-    // 1. Bottom Nav
-    DOM.navItems.forEach(item => {
-      item.addEventListener('click', () => {
-        const targetScreen = item.getAttribute('data-screen');
-        navigateTo(targetScreen);
-      });
-    });
-
-    // 2. Prototype Bar Quick Screen Switch
-    DOM.protoBtns.forEach(btn => {
+    // Navigasi bilah atas
+    document.querySelectorAll('.proto-screen-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const target = btn.getAttribute('data-target');
-        navigateTo(target);
+        if (target) switchScreen(target);
       });
     });
 
-    // 3. Tombol-tombol jalan pintas di kartu (btn-goto-missions, dll)
+    // Navigasi bottom bar
+    document.querySelectorAll('.bottom-nav-bar .nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const target = item.getAttribute('data-screen');
+        if (target) switchScreen(target);
+      });
+    });
+
+    // Tombol shortcut ke misi
     document.querySelectorAll('.btn-goto-missions').forEach(btn => {
-      btn.addEventListener('click', () => {
-        navigateTo('screen-missions');
+      btn.addEventListener('click', () => switchScreen('screen-missions'));
+    });
+
+    // Onboarding carousel
+    const slides = [
+      document.getElementById('slide-1'),
+      document.getElementById('slide-2'),
+      document.getElementById('slide-3')
+    ];
+    const dots = document.querySelectorAll('.slide-dot');
+    const btnNextSlide = document.getElementById('btn-next-slide');
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        if (slide) slide.classList.toggle('active', i === index - 1);
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index - 1);
+      });
+      state.currentOnboardingSlide = index;
+      if (btnNextSlide) {
+        btnNextSlide.querySelector('span').textContent = index === 3 ? 'atur kebutuhan' : 'lanjut';
+      }
+    }
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const idx = parseInt(dot.getAttribute('data-slide'), 10);
+        showSlide(idx);
       });
     });
 
-    document.querySelectorAll('.btn-goto-share').forEach(btn => {
-      btn.addEventListener('click', () => {
-        navigateTo('screen-share');
-      });
-    });
-
-    // 4. Modal Pengaturan Aksesibilitas Universal
-    if (DOM.btnOpenA11y && DOM.modalA11y) {
-      DOM.btnOpenA11y.addEventListener('click', () => {
-        DOM.modalA11y.hidden = false;
-        DOM.modalA11y.removeAttribute('hidden');
-        announce('Membuka panel pengaturan aksesibilitas.');
-        if (DOM.btnCloseA11y) DOM.btnCloseA11y.focus();
+    if (btnNextSlide) {
+      btnNextSlide.addEventListener('click', () => {
+        let next = state.currentOnboardingSlide + 1;
+        if (next > 3) {
+          const cardPref = document.getElementById('card-pref-netra');
+          if (cardPref) cardPref.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          showSlide(next);
+        }
       });
     }
 
-    if (DOM.btnCloseA11y && DOM.modalA11y) {
-      DOM.btnCloseA11y.addEventListener('click', () => {
-        DOM.modalA11y.hidden = true;
-        DOM.modalA11y.setAttribute('hidden', 'true');
-        announce('Panel pengaturan aksesibilitas ditutup.');
-        if (DOM.btnOpenA11y) DOM.btnOpenA11y.focus();
-      });
-    }
+    // Toggle preferensi aksesibilitas
+    const toggleCards = [
+      { id: 'card-pref-netra', prop: 'highContrast', extra: 'largeText' },
+      { id: 'card-pref-rungu', msg: 'mode rungu aktif: getaran & teks disiapkan.' },
+      { id: 'card-pref-motorik', prop: 'spaciousTouch' },
+      { id: 'card-pref-kognitif', prop: 'cognitiveFocus' }
+    ];
 
-    // Tutup modal dengan tombol Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && DOM.modalA11y && !DOM.modalA11y.hidden) {
-        DOM.modalA11y.hidden = true;
-        DOM.modalA11y.setAttribute('hidden', 'true');
-        if (DOM.btnOpenA11y) DOM.btnOpenA11y.focus();
+    toggleCards.forEach(item => {
+      const card = document.getElementById(item.id);
+      if (card) {
+        card.addEventListener('click', () => {
+          card.classList.toggle('selected');
+          const isSelected = card.classList.contains('selected');
+          card.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+
+          if (item.prop) state.a11y[item.prop] = isSelected;
+          if (item.extra) state.a11y[item.extra] = isSelected;
+
+          applyA11ySettings();
+          showToast(isSelected ? `${card.querySelector('strong').textContent} aktif.` : 'dinonaktifkan.');
+        });
       }
     });
 
-    // 5. Tombol Bacakan Layar Cepat di Header
-    if (DOM.btnSpeakScreen) {
-      DOM.btnSpeakScreen.addEventListener('click', () => {
-        speakScreenSummary(currentScreenId);
+    // Squad tab onboarding
+    const tabJoinBtn = document.getElementById('tab-join-btn');
+    const tabCreateBtn = document.getElementById('tab-create-btn');
+    const panelJoin = document.getElementById('panel-join-content');
+    const panelCreate = document.getElementById('panel-create-content');
+
+    if (tabJoinBtn && tabCreateBtn) {
+      tabJoinBtn.addEventListener('click', () => {
+        tabJoinBtn.classList.add('active');
+        tabCreateBtn.classList.remove('active');
+        if (panelJoin) panelJoin.style.display = 'block';
+        if (panelCreate) panelCreate.style.display = 'none';
+      });
+
+      tabCreateBtn.addEventListener('click', () => {
+        tabCreateBtn.classList.add('active');
+        tabJoinBtn.classList.remove('active');
+        if (panelJoin) panelJoin.style.display = 'none';
+        if (panelCreate) panelCreate.style.display = 'block';
       });
     }
 
-    // 6. Skala Ukuran Font
-    if (DOM.btnFontNormal) {
-      DOM.btnFontNormal.addEventListener('click', () => {
-        state.a11y.fontScale = 1.0;
-        applyAccessibilitySettings();
-        notifyMultiChannel('Ukuran teks diatur ke Normal (100%).');
-      });
-    }
-    if (DOM.btnFontLarge) {
-      DOM.btnFontLarge.addEventListener('click', () => {
-        state.a11y.fontScale = 1.25;
-        applyAccessibilitySettings();
-        notifyMultiChannel('Ukuran teks diperbesar ke 125%.');
-      });
-    }
-    if (DOM.btnFontXlarge) {
-      DOM.btnFontXlarge.addEventListener('click', () => {
-        state.a11y.fontScale = 1.5;
-        applyAccessibilitySettings();
-        notifyMultiChannel('Ukuran teks diperbesar maksimal ke 150%.');
+    const btnStartMabar = document.getElementById('btn-start-mabar');
+    const btnSkipOnboarding = document.getElementById('btn-skip-onboarding');
+
+    if (btnStartMabar) {
+      btnStartMabar.addEventListener('click', () => {
+        showToast('masuk ke kosan barokah.');
+        switchScreen('screen-home');
       });
     }
 
-    // 7. Toggle Toggles di Modal A11y
-    if (DOM.toggleHighContrast) {
-      DOM.toggleHighContrast.addEventListener('change', (e) => {
-        state.a11y.highContrast = e.target.checked;
-        applyAccessibilitySettings();
-        notifyMultiChannel(state.a11y.highContrast ? 'Mode Kontras Tinggi diaktifkan.' : 'Mode Kontras Tinggi dinonaktifkan.');
+    if (btnSkipOnboarding) {
+      btnSkipOnboarding.addEventListener('click', () => {
+        switchScreen('screen-home');
       });
     }
 
-    if (DOM.toggleColorblind) {
-      DOM.toggleColorblind.addEventListener('change', (e) => {
-        state.a11y.colorblindMode = e.target.checked;
-        applyAccessibilitySettings();
-        notifyMultiChannel(state.a11y.colorblindMode ? 'Mode Ramah Buta Warna diaktifkan.' : 'Mode Ramah Buta Warna dinonaktifkan.');
-      });
+    // Colek santai
+    function handleNudge() {
+      showToast('agus sudah dicolek.');
+      setTimeout(() => {
+        showToast('agus: "siap, tumbler udah diisi galon."');
+      }, 1500);
     }
 
-    if (DOM.toggleLargeTouch) {
-      DOM.toggleLargeTouch.addEventListener('change', (e) => {
-        state.a11y.spaciousTouch = e.target.checked;
-        applyAccessibilitySettings();
-        notifyMultiChannel(state.a11y.spaciousTouch ? 'Area Sentuh Ekstra Lega (56px) diaktifkan.' : 'Area Sentuh kembali normal.');
-      });
-    }
+    const btnNudgeHome = document.getElementById('btn-nudge-home');
+    if (btnNudgeHome) btnNudgeHome.addEventListener('click', handleNudge);
 
-    if (DOM.toggleFocusMode) {
-      DOM.toggleFocusMode.addEventListener('change', (e) => {
-        state.a11y.focusMode = e.target.checked;
-        applyAccessibilitySettings();
-        notifyMultiChannel(state.a11y.focusMode ? 'Mode Fokus Kognitif diaktifkan.' : 'Mode Fokus dinonaktifkan.');
-      });
-    }
+    const btnNudgeSquad = document.getElementById('btn-nudge-squad');
+    if (btnNudgeSquad) btnNudgeSquad.addEventListener('click', handleNudge);
 
-    if (DOM.toggleReducedMotion) {
-      DOM.toggleReducedMotion.addEventListener('change', (e) => {
-        state.a11y.reducedMotion = e.target.checked;
-        applyAccessibilitySettings();
-        notifyMultiChannel(state.a11y.reducedMotion ? 'Pengurangan Gerakan diaktifkan.' : 'Animasi normal diaktifkan.');
-      });
-    }
+    // Pemilih varian adaptif
+    const variantOptions = [
+      { id: 'opt-variant-a', val: 'A' },
+      { id: 'opt-variant-c', val: 'C' },
+      { id: 'opt-variant-b', val: 'B' }
+    ];
 
-    if (DOM.toggleTtsAuto) {
-      DOM.toggleTtsAuto.addEventListener('change', (e) => {
-        state.a11y.ttsAuto = e.target.checked;
-        saveState();
-        notifyMultiChannel(state.a11y.ttsAuto ? 'Bacakan Layar Otomatis diaktifkan.' : 'Bacakan Layar Otomatis dimatikan.');
-      });
-    }
-
-    if (DOM.toggleHapticVisual) {
-      DOM.toggleHapticVisual.addEventListener('change', (e) => {
-        state.a11y.hapticVisual = e.target.checked;
-        saveState();
-      });
-    }
-
-    if (DOM.btnResetA11y) {
-      DOM.btnResetA11y.addEventListener('click', () => {
-        state.a11y = JSON.parse(JSON.stringify(defaultState.a11y));
-        applyAccessibilitySettings();
-        notifyMultiChannel('Pengaturan aksesibilitas di-reset ke standar.');
-      });
-    }
-
-    if (DOM.btnSaveA11y && DOM.modalA11y) {
-      DOM.btnSaveA11y.addEventListener('click', () => {
-        DOM.modalA11y.hidden = true;
-        notifyMultiChannel('Pengaturan aksesibilitas berhasil disimpan.');
-      });
-    }
-
-    // 8. Onboarding Checklist Sync
-    if (DOM.obLargerText) {
-      DOM.obLargerText.addEventListener('change', (e) => {
-        state.a11y.fontScale = e.target.checked ? 1.25 : 1.0;
-        applyAccessibilitySettings();
-      });
-    }
-    if (DOM.obHighContrast) {
-      DOM.obHighContrast.addEventListener('change', (e) => {
-        state.a11y.highContrast = e.target.checked;
-        applyAccessibilitySettings();
-      });
-    }
-    if (DOM.obColorblind) {
-      DOM.obColorblind.addEventListener('change', (e) => {
-        state.a11y.colorblindMode = e.target.checked;
-        applyAccessibilitySettings();
-      });
-    }
-    if (DOM.obFocusMode) {
-      DOM.obFocusMode.addEventListener('change', (e) => {
-        state.a11y.focusMode = e.target.checked;
-        applyAccessibilitySettings();
-      });
-    }
-    if (DOM.obReducedMotion) {
-      DOM.obReducedMotion.addEventListener('change', (e) => {
-        state.a11y.reducedMotion = e.target.checked;
-        applyAccessibilitySettings();
-      });
-    }
-    if (DOM.obLargeTouch) {
-      DOM.obLargeTouch.addEventListener('change', (e) => {
-        state.a11y.spaciousTouch = e.target.checked;
-        applyAccessibilitySettings();
-      });
-    }
-
-    // 9. Onboarding Tab Squad Switch
-    if (DOM.tabJoinSquad && DOM.tabCreateSquad) {
-      DOM.tabJoinSquad.addEventListener('click', () => {
-        DOM.tabJoinSquad.classList.add('active');
-        DOM.tabJoinSquad.setAttribute('aria-selected', 'true');
-        DOM.tabCreateSquad.classList.remove('active');
-        DOM.tabCreateSquad.setAttribute('aria-selected', 'false');
-        DOM.panelJoinSquad.hidden = false;
-        DOM.panelCreateSquad.hidden = true;
-      });
-
-      DOM.tabCreateSquad.addEventListener('click', () => {
-        DOM.tabCreateSquad.classList.add('active');
-        DOM.tabCreateSquad.setAttribute('aria-selected', 'true');
-        DOM.tabJoinSquad.classList.remove('active');
-        DOM.tabJoinSquad.setAttribute('aria-selected', 'false');
-        DOM.panelCreateSquad.hidden = false;
-        DOM.panelJoinSquad.hidden = true;
-      });
-    }
-
-    if (DOM.btnPasteCode) {
-      DOM.btnPasteCode.addEventListener('click', () => {
-        const val = (DOM.inputSquadCode.value || '').trim();
-        if (val) {
-          state.squadCode = val;
-          notifyMultiChannel(`Kode squad diperbarui: ${val}`);
-        }
-      });
-    }
-
-    // Tombol Submit Onboarding
-    if (DOM.btnSubmitOnboarding) {
-      DOM.btnSubmitOnboarding.addEventListener('click', () => {
-        // Cek jika membuat squad baru
-        if (DOM.tabCreateSquad && DOM.tabCreateSquad.classList.contains('active')) {
-          const newName = (DOM.inputNewSquadName.value || '').trim();
-          if (newName) {
-            state.squadName = newName;
-          }
-        }
-        saveState();
-        renderSquadAndHome();
-        notifyMultiChannel(`Selamat datang di ${state.squadName}! Mabar dimulai! 🚀`);
-        navigateTo('screen-home');
-      });
-    }
-
-    if (DOM.btnSkipOnboarding) {
-      DOM.btnSkipOnboarding.addEventListener('click', () => {
-        navigateTo('screen-home');
-      });
-    }
-
-    // 10. Interaksi Colek Anggota Squad di Beranda
-    if (DOM.btnNudgeMember) {
-      DOM.btnNudgeMember.addEventListener('click', () => {
-        notifyMultiChannel('👋 Kamu mencolek santai Agus: "Yuk Gus, 5 menit mabar misi hijau bareng kita!"');
-        DOM.btnNudgeMember.disabled = true;
-        DOM.btnNudgeMember.innerHTML = '<span>TercColek Santai! ⏳</span>';
-
-        // Simulasi respon Agus setelah 2.5 detik
-        setTimeout(() => {
-          const agus = state.squadMembers.find(m => m.name === 'Agus');
-          if (agus) {
-            agus.done = true;
-            agus.action = 'Bawa Tumbler ke Kampus ✅';
-          }
-          saveState();
-          renderSquadAndHome();
-          damageBoss(50, 'Agus menyelesaikan misi setelah kamu colek santai');
-          notifyMultiChannel('🎉 Mantap! Agus langsung menyelesaikan misi tumbler! Semua anggota squad kini 100% tuntas!');
-          if (DOM.btnNudgeMember) {
-            DOM.btnNudgeMember.innerHTML = '<span>Semua Anggota Tuntas! 🎉</span>';
-          }
-        }, 2500);
-      });
-    }
-
-    // 11. Misi Adaptif Varian Radio Selection
-    const variantRadios = document.querySelectorAll('input[name="adaptive-variant"]');
-    variantRadios.forEach(radio => {
-      radio.addEventListener('change', (e) => {
-        state.adaptiveVariantSelected = e.target.value;
-        saveState();
-        announce(`Varian terpilih: Varian ${state.adaptiveVariantSelected}`);
-      });
-    });
-
-    // Audio Guide pada Varian C Misi Adaptif
-    if (DOM.btnPlayVariantAudio) {
-      DOM.btnPlayVariantAudio.addEventListener('click', () => {
-        const audioText = 'Panduan Suara Identifikasi Sampah. ' +
-          'Botol plastik bening biasanya memiliki kode daur ulang segitiga angka satu atau PETE. ' +
-          'Lepaskan tutup botol dan sedotan sebelum disetor ke tempat sampah terpilah. ' +
-          'Tutup botol biasanya berbahan polietilena angka dua atau HDPE.';
-        speakText(audioText);
-        notifyMultiChannel('🔊 Memutar panduan suara identifikasi bahan sampah daur ulang.');
-      });
-    }
-
-    // Selesaikan Misi Adaptif
-    if (DOM.btnCompleteAdaptive) {
-      DOM.btnCompleteAdaptive.addEventListener('click', () => {
-        if (state.adaptiveCompleted) return;
-
-        state.adaptiveCompleted = true;
-        state.impact.bottlesSaved += 2;
-        state.impact.plasticBagsAvoided += 1;
-        state.impact.co2GramsPrevented += 80;
-        state.impact.totalMissionsDone += 1;
-
-        saveState();
-        renderMissionsAndItems();
-        damageBoss(120, `Misi Adaptif Varian ${state.adaptiveVariantSelected} Tuntas!`);
-      });
-    }
-
-    // 12. Misi Rutin Aksi
-    document.querySelectorAll('.btn-action-mission').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-mission-id');
-        if (state.missionsDone[id]) return;
-
-        state.missionsDone[id] = true;
-        state.impact.totalMissionsDone += 1;
-
-        if (id === '1') {
-          state.impact.bottlesSaved += 1;
-          state.impact.co2GramsPrevented += 30;
-          damageBoss(50, 'Misi Bawa Tumbler Selesai');
-        } else if (id === '2') {
-          state.impact.plasticBagsAvoided += 1;
-          damageBoss(50, 'Misi Tolak Sedotan Selesai');
-        } else if (id === '3') {
-          state.impact.co2GramsPrevented += 50;
-          damageBoss(50, 'Misi Cabut Colokan Selesai');
-        }
-
-        saveState();
-        renderMissionsAndItems();
-      });
-    });
-
-    // 13. Tangkap Monster Sampah Sekitar (Item Harian Pokemon)
-    document.querySelectorAll('.btn-capture-item').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-item-id');
-        if (state.itemsCaptured[id]) return;
-
-        state.itemsCaptured[id] = true;
-        state.impact.bottlesSaved += 1;
-        damageBoss(30, 'Monster Sampah Sekitar Berhasil Diamankan');
-
-        saveState();
-        renderMissionsAndItems();
-      });
-    });
-
-    // 14. Pemilihan Tema Story Card
-    DOM.themeSwatches.forEach(swatch => {
-      swatch.addEventListener('click', () => {
-        const theme = swatch.getAttribute('data-theme');
-        state.storyTheme = theme;
-        saveState();
-        renderStoryAndImpact();
-        announce(`Tema kartu diubah menjadi ${swatch.textContent.trim()}`);
-      });
-    });
-
-    // 15. Bagikan Story & Salin Teks
-    if (DOM.btnShareInstagram) {
-      DOM.btnShareInstagram.addEventListener('click', () => {
-        notifyMultiChannel('📸 Membuka simulasi bagikan ke Instagram Story & Status WhatsApp!');
-      });
-    }
-
-    if (DOM.btnCopyStoryText) {
-      DOM.btnCopyStoryText.addEventListener('click', () => {
-        const textToCopy = `Hari ini aku menyelamatkan ${state.impact.bottlesSaved} botol plastik bersama ${state.squadName} di GreenSteps! 🔥 ${state.impact.streakDays} hari streak mabar hijau. Yuk mabar bareng, masukkan kode squad: #${state.squadCode}`;
-        
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(textToCopy).then(() => {
-            if (DOM.shareFeedback) {
-              DOM.shareFeedback.hidden = false;
-              setTimeout(() => { DOM.shareFeedback.hidden = true; }, 4000);
+    variantOptions.forEach(opt => {
+      const el = document.getElementById(opt.id);
+      if (el) {
+        el.addEventListener('click', () => {
+          variantOptions.forEach(o => {
+            const itemEl = document.getElementById(o.id);
+            if (itemEl) {
+              itemEl.classList.remove('selected');
+              itemEl.setAttribute('aria-checked', 'false');
             }
-            notifyMultiChannel('📋 Teks ringkasan berhasil disalin ke clipboard!');
-          }).catch(() => {
-            notifyMultiChannel('📋 Ringkasan siap disalin!');
+          });
+          el.classList.add('selected');
+          el.setAttribute('aria-checked', 'true');
+          state.selectedAdaptiveVariant = opt.val;
+          showToast(`varian ${opt.val} dipilih. dampaknya sama.`);
+        });
+      }
+    });
+
+    // Audio guide
+    const btnPlayAudio = document.getElementById('btn-play-audio-guide');
+    if (btnPlayAudio) {
+      btnPlayAudio.addEventListener('click', (e) => {
+        e.stopPropagation();
+        speakText('petunjuk suara: periksa bagian bawah wadah plastik. cari logo segitiga panah berputar. nomor satu artinya plastik pet seperti botol minum bening. nomor dua artinya plastik hdpe seperti botol sampo. keduanya bisa dipilah.');
+        showToast('memutar petunjuk suara.');
+      });
+    }
+
+    // Modal verifikasi
+    const modalVerify = document.getElementById('modal-verify');
+    const btnCloseVerify = document.getElementById('btn-close-verify');
+    const btnVerifyPhoto = document.getElementById('btn-verify-photo');
+    const btnVerifySimple = document.getElementById('btn-verify-simple');
+    const btnConfirmComp = document.getElementById('btn-confirm-completion');
+    const verifyTitle = document.getElementById('verify-mission-name');
+
+    function openVerificationModal(title, pts, impactText) {
+      state.pendingVerificationMission = { title, pts, impactText };
+      if (verifyTitle) verifyTitle.textContent = title.toLowerCase();
+      if (modalVerify) modalVerify.hidden = false;
+    }
+
+    if (btnCloseVerify) {
+      btnCloseVerify.addEventListener('click', () => {
+        if (modalVerify) modalVerify.hidden = true;
+      });
+    }
+
+    if (btnVerifyPhoto && btnVerifySimple) {
+      btnVerifyPhoto.addEventListener('click', () => {
+        btnVerifyPhoto.classList.add('selected');
+        btnVerifySimple.classList.remove('selected');
+      });
+      btnVerifySimple.addEventListener('click', () => {
+        btnVerifySimple.classList.add('selected');
+        btnVerifyPhoto.classList.remove('selected');
+      });
+    }
+
+    const btnAdaptiveTrigger = document.getElementById('btn-trigger-verify-adaptive');
+    if (btnAdaptiveTrigger) {
+      btnAdaptiveTrigger.addEventListener('click', () => {
+        openVerificationModal('serang kiki kresek', 50, '1 kresek dibereskan');
+      });
+    }
+
+    document.querySelectorAll('.btn-action-verify').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const title = btn.getAttribute('data-mission-title') || 'misi';
+        const pts = parseInt(btn.getAttribute('data-pts') || '25', 10);
+        const impact = btn.getAttribute('data-impact') || '1 sampah berkurang';
+        openVerificationModal(title, pts, impact);
+      });
+    });
+
+    if (btnConfirmComp) {
+      btnConfirmComp.addEventListener('click', () => {
+        if (modalVerify) modalVerify.hidden = true;
+
+        state.monster.currentHp = Math.max(0, state.monster.currentHp - 120);
+        state.user.ecoPoints += (state.pendingVerificationMission ? state.pendingVerificationMission.pts : 50);
+        state.user.streakDays = 8;
+        state.squad.completedToday = 6;
+
+        const hpFill = document.getElementById('monster-hp-fill');
+        const hpLabel = document.getElementById('monster-hp-label');
+        if (hpFill) hpFill.style.width = Math.round((state.monster.currentHp / state.monster.maxHp) * 100) + '%';
+        if (hpLabel) hpLabel.textContent = `${state.monster.currentHp} / ${state.monster.maxHp} hp`;
+
+        const homeSquadProg = document.getElementById('home-squad-progress');
+        if (homeSquadProg) homeSquadProg.style.width = '100%';
+
+        saveState();
+
+        showToast('misi selesai. hp monster berkurang 120.');
+        
+        setTimeout(() => {
+          switchScreen('screen-share');
+        }, 1000);
+      });
+    }
+
+    // Switch tema story
+    document.querySelectorAll('.btn-theme-switch').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.btn-theme-switch').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const theme = btn.getAttribute('data-theme');
+        const card = document.getElementById('strava-share-card');
+        if (card && theme) {
+          card.className = `strava-story-card ${theme}`;
+          state.storyTheme = theme;
+          saveState();
+        }
+      });
+    });
+
+    // Share & Save
+    const btnShareStory = document.getElementById('btn-share-story');
+    const btnSaveStory = document.getElementById('btn-save-story');
+
+    if (btnShareStory) {
+      btnShareStory.addEventListener('click', () => {
+        const text = `GreenSteps: hari ini 1 botol plastik diselamatkan bareng anak kosan. streak 8 hari. kode squad: #BAROKAH-ECO`;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+            showToast('teks ringkasan disalin.');
           });
         } else {
-          notifyMultiChannel('📋 Ringkasan siap disalin!');
+          showToast('siap dibagikan.');
         }
       });
     }
 
-    if (DOM.btnDownloadStoryMock) {
-      DOM.btnDownloadStoryMock.addEventListener('click', () => {
-        notifyMultiChannel('💾 Kartu pencapaian story berhasil diunduh (simulasi).');
+    if (btnSaveStory) {
+      btnSaveStory.addEventListener('click', () => {
+        showToast('kartu disimpan.');
       });
     }
 
-    // 16. Tab Switcher Dampak Pribadiku vs Squad
-    if (DOM.tabImpactPersonal && DOM.tabImpactSquad) {
-      DOM.tabImpactPersonal.addEventListener('click', () => {
-        DOM.tabImpactPersonal.classList.add('active');
-        DOM.tabImpactPersonal.setAttribute('aria-selected', 'true');
-        DOM.tabImpactSquad.classList.remove('active');
-        DOM.tabImpactSquad.setAttribute('aria-selected', 'false');
-        DOM.panelImpactPersonal.hidden = false;
-        DOM.panelImpactSquad.hidden = true;
-        announce('Menampilkan laporan dampak pribadiku.');
+    // Tab switcher dampak
+    const tabImpPersonal = document.getElementById('tab-impact-personal-btn');
+    const tabImpSquad = document.getElementById('tab-impact-squad-btn');
+    const pnlImpPersonal = document.getElementById('panel-impact-personal');
+    const pnlImpSquad = document.getElementById('panel-impact-squad');
+
+    if (tabImpPersonal && tabImpSquad) {
+      tabImpPersonal.addEventListener('click', () => {
+        tabImpPersonal.classList.add('active');
+        tabImpSquad.classList.remove('active');
+        if (pnlImpPersonal) pnlImpPersonal.style.display = 'block';
+        if (pnlImpSquad) pnlImpSquad.style.display = 'none';
       });
 
-      DOM.tabImpactSquad.addEventListener('click', () => {
-        DOM.tabImpactSquad.classList.add('active');
-        DOM.tabImpactSquad.setAttribute('aria-selected', 'true');
-        DOM.tabImpactPersonal.classList.remove('active');
-        DOM.tabImpactPersonal.setAttribute('aria-selected', 'false');
-        DOM.panelImpactSquad.hidden = false;
-        DOM.panelImpactPersonal.hidden = true;
-        announce('Menampilkan laporan dampak seluruh squad kosan.');
+      tabImpSquad.addEventListener('click', () => {
+        tabImpSquad.classList.add('active');
+        tabImpPersonal.classList.remove('active');
+        if (pnlImpPersonal) pnlImpPersonal.style.display = 'none';
+        if (pnlImpSquad) pnlImpSquad.style.display = 'block';
       });
     }
 
-  }
+    // Modal aksesibilitas
+    const modalA11y = document.getElementById('modal-a11y');
+    const btnOpenA11y = document.getElementById('btn-open-a11y');
+    const btnCloseA11y = document.getElementById('btn-close-a11y');
+    const btnSaveA11y = document.getElementById('btn-save-a11y');
+    const btnProfileA11y = document.getElementById('btn-profile-open-a11y');
 
-  // ==========================================
-  // INISIALISASI SAAT HALAMAN DIMUAT
-  // ==========================================
-  function init() {
-    applyAccessibilitySettings();
-    renderSquadAndHome();
-    renderMissionsAndItems();
-    renderStoryAndImpact();
-    initEventListeners();
+    function openA11yModal() {
+      if (modalA11y) modalA11y.hidden = false;
+    }
 
-    // Default layar awal
-    navigateTo('screen-onboarding');
-  }
+    if (btnOpenA11y) btnOpenA11y.addEventListener('click', openA11yModal);
+    if (btnProfileA11y) btnProfileA11y.addEventListener('click', openA11yModal);
 
-  // Jalankan saat DOM siap
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+    if (btnCloseA11y) {
+      btnCloseA11y.addEventListener('click', () => {
+        if (modalA11y) modalA11y.hidden = true;
+      });
+    }
+
+    if (btnSaveA11y) {
+      btnSaveA11y.addEventListener('click', () => {
+        const toggleContrast = document.getElementById('toggle-high-contrast');
+        const toggleLarge = document.getElementById('toggle-large-text');
+        const toggleCognitive = document.getElementById('toggle-cognitive');
+        const toggleSpacious = document.getElementById('toggle-spacious');
+
+        if (toggleContrast) state.a11y.highContrast = toggleContrast.checked;
+        if (toggleLarge) state.a11y.largeText = toggleLarge.checked;
+        if (toggleCognitive) state.a11y.cognitiveFocus = toggleCognitive.checked;
+        if (toggleSpacious) state.a11y.spaciousTouch = toggleSpacious.checked;
+
+        applyA11ySettings();
+        if (modalA11y) modalA11y.hidden = true;
+        showToast('pengaturan diterapkan.');
+      });
+    }
+
+    // Quick switcher mode di atas
+    const btnModeNormal = document.getElementById('btn-mode-normal');
+    const btnModeContrast = document.getElementById('btn-mode-contrast');
+    const btnModeCognitive = document.getElementById('btn-mode-cognitive');
+
+    if (btnModeNormal) {
+      btnModeNormal.addEventListener('click', () => {
+        state.a11y.highContrast = false;
+        state.a11y.largeText = false;
+        state.a11y.cognitiveFocus = false;
+        applyA11ySettings();
+        showToast('mode normal.');
+      });
+    }
+
+    if (btnModeContrast) {
+      btnModeContrast.addEventListener('click', () => {
+        state.a11y.highContrast = true;
+        state.a11y.largeText = true;
+        state.a11y.cognitiveFocus = false;
+        applyA11ySettings();
+        showToast('mode kontras tinggi.');
+      });
+    }
+
+    if (btnModeCognitive) {
+      btnModeCognitive.addEventListener('click', () => {
+        state.a11y.highContrast = false;
+        state.a11y.cognitiveFocus = true;
+        applyA11ySettings();
+        showToast('mode fokus.');
+      });
+    }
+
+    // TTS speaker header
+    const btnSpeakScreen = document.getElementById('btn-speak-screen');
+    if (btnSpeakScreen) {
+      btnSpeakScreen.addEventListener('click', () => {
+        const activeEl = document.querySelector('.screen.active');
+        if (activeEl) {
+          const h = activeEl.querySelector('h2, h3');
+          const title = h ? h.textContent : 'layar aktif';
+          const p = activeEl.querySelector('p');
+          const desc = p ? p.textContent : '';
+          speakText(`layar: ${title}. ${desc}`);
+        }
+      });
+    }
+
+    // Salin kode squad
+    const btnCopyCode = document.getElementById('btn-copy-code');
+    if (btnCopyCode) {
+      btnCopyCode.addEventListener('click', () => {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText('KOS-BAROKAH-24');
+        }
+        showToast('kode disalin.');
+      });
+    }
+
+    // Reset data
+    const btnResetData = document.getElementById('btn-reset-data');
+    if (btnResetData) {
+      btnResetData.addEventListener('click', () => {
+        localStorage.removeItem(STORAGE_KEY);
+        state = JSON.parse(JSON.stringify(defaultState));
+        applyA11ySettings();
+        switchScreen('screen-onboarding');
+        showToast('data direset.');
+      });
+    }
+
+  });
 
 })();

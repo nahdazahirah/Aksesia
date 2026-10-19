@@ -3,902 +3,1231 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GreenSteps - Aksi Hijau Mabar Bareng Squad Kosan</title>
+  <title>GreenSteps</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="theme-greensteps">
+<body>
 
-  <!-- Pengumuman Screen Reader Live Region (Pembaruan status secara dinamis) -->
+  <!-- Screen reader live announcement region -->
   <div id="a11y-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- Indikator Notifikasi Multi-Saluran Visual & Getar -->
-  <div id="visual-toast" class="visual-toast" role="status" aria-hidden="true"></div>
+  <!-- Umpan Balik Visual & Getar (Toast) -->
+  <div id="visual-toast" class="visual-toast" role="status" aria-hidden="true" style="display: none;"></div>
 
-  <!-- Pembungkus Tampilan Luar (Desktop Container / Mobile Device Wrapper) -->
+  <!-- Pembungkus Tampilan Luar (Desktop Container / Prototype Shell) -->
   <div class="device-viewport-shell">
 
-    <!-- Bilah Pengalih Cepat Khusus Prototipe Lomba -->
-    <aside class="prototype-bar" aria-label="Bilah Kontrol Prototipe Lomba UI/UX">
+    <!-- Bilah Pengalih Cepat Layar & Mode Aksesibilitas -->
+    <aside class="prototype-bar" aria-label="Bilah Kontrol Prototipe GreenSteps">
       <div class="proto-badge">
         <span class="badge-dot" aria-hidden="true"></span>
-        <span>GreenSteps • Prototipe Referensi UI/UX</span>
+        <span>greensteps • 390x844</span>
       </div>
+
+      <!-- Lompat Layar Utama -->
       <div class="proto-nav-quick">
-        <span class="proto-label">Lompat Layar:</span>
-        <button type="button" class="proto-screen-btn" data-target="screen-onboarding">1. Onboarding</button>
-        <button type="button" class="proto-screen-btn" data-target="screen-home">2. Beranda</button>
-        <button type="button" class="proto-screen-btn" data-target="screen-missions">3. Misi & Boss</button>
-        <button type="button" class="proto-screen-btn" data-target="screen-share">4. Kartu Cerita</button>
-        <button type="button" class="proto-screen-btn" data-target="screen-impact">5. Dampak Nyata</button>
+        <span class="proto-label">layar:</span>
+        <button type="button" class="proto-screen-btn active" data-target="screen-onboarding">1. onboarding</button>
+        <button type="button" class="proto-screen-btn" data-target="screen-home">2. beranda</button>
+        <button type="button" class="proto-screen-btn" data-target="screen-missions">3. misi</button>
+        <button type="button" class="proto-screen-btn" data-target="screen-share">4. hasil</button>
+        <button type="button" class="proto-screen-btn" data-target="screen-impact">5. dampak</button>
+        <button type="button" class="proto-screen-btn" data-target="screen-squad">squad</button>
+        <button type="button" class="proto-screen-btn" data-target="screen-profile">profil</button>
+      </div>
+
+      <!-- Quick Switcher Varian Aksesibilitas Wajib -->
+      <div class="proto-a11y-quick">
+        <span class="proto-label">mode:</span>
+        <button type="button" class="proto-mode-btn active" id="btn-mode-normal">normal</button>
+        <button type="button" class="proto-mode-btn" id="btn-mode-contrast">kontras tinggi & teks besar</button>
+        <button type="button" class="proto-mode-btn" id="btn-mode-cognitive">mode fokus</button>
       </div>
     </aside>
 
-    <!-- Rangka Ponsel 390px (Mobile Device Container) -->
+    <!-- ======================================================== -->
+    <!-- RANGKA PONSEL MOBILE 390x844 (PORTRAIT)                  -->
+    <!-- ======================================================== -->
     <div class="mobile-frame" id="mobile-app-root">
 
-      <!-- Bilah Header Aplikasi (Persistent Universal Accessibility Icon) -->
+      <!-- HEADER TETAP -->
       <header class="app-header" role="banner">
         <div class="header-left">
-          <div class="brand-logo" aria-hidden="true">🌱</div>
+          <div class="brand-icon-box" aria-hidden="true">
+            <!-- Hand-drawn leaf sprout SVG -->
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21V11"/>
+              <path d="M12 11C12 6 7 4 3 6C3 11 8 13 12 11Z" fill="#EDE4B5"/>
+              <path d="M12 11C12 7 17 5 21 7C21 12 16 14 12 11Z" fill="#EDE4B5"/>
+            </svg>
+          </div>
           <div>
-            <h1 class="brand-title">GreenSteps</h1>
-            <p class="brand-subtitle" id="header-squad-name">Kosan Barokah Squad</p>
+            <h1 class="brand-title">greensteps</h1>
           </div>
         </div>
 
         <div class="header-right">
-          <!-- Tombol Bacakan Layar Cepat (Text-to-Speech) -->
-          <button type="button" id="btn-speak-screen" class="btn-icon-header" title="Bacakan ringkasan layar dengan suara" aria-label="Bacakan ringkasan layar dengan suara">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          <!-- Text-to-Speech -->
+          <button type="button" id="btn-speak-screen" class="btn-icon-header" title="bacakan layar" aria-label="bacakan ringkasan layar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
             </svg>
-            <span class="sr-only">Bacakan Layar</span>
           </button>
 
-          <!-- Ikon Aksesibilitas Universal Persisten (Dapat dibuka kapan saja) -->
-          <button type="button" id="btn-open-a11y" class="btn-icon-header a11y-trigger" title="Buka Pengaturan Aksesibilitas" aria-label="Buka Pengaturan Aksesibilitas dan Kenyamanan Tampilan" aria-haspopup="dialog">
-            <svg class="icon-a11y" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <circle cx="12" cy="4" r="2.2" />
-              <path d="M19 13v-2c-1.54.02-3.09-.75-4.07-1.83l-1.29-1.43c-.4-.44-1.02-.68-1.64-.68-.62 0-1.24.24-1.64.68L9.07 9.17C8.09 10.25 6.54 11.02 5 11v2c1.78-.02 3.53-.78 4.75-2.02L11 9.7V15l-3.5 5.5 1.7 1 3.8-6 3.8 6 1.7-1L15 15V9.7l1.25 1.28C17.47 12.22 19.22 12.98 21 13v-2l-2 2z"/>
+          <!-- Tombol Aksesibilitas Universal -->
+          <button type="button" id="btn-open-a11y" class="btn-a11y-header" aria-label="buka pengaturan aksesibilitas" aria-haspopup="dialog">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="4" r="2"/>
+              <path d="M4 9h16"/>
+              <path d="M12 9v12"/>
+              <path d="M8 21l4-5 4 5"/>
             </svg>
-            <span class="badge-label">Aksesibilitas</span>
+            <span>akses</span>
           </button>
         </div>
       </header>
 
-      <!-- Area Konten Utama Layar (5 Layar Inti) -->
+      <!-- AREA UTAMA SCROLLER -->
       <main id="app-main-content" class="app-main" tabindex="-1">
 
-        <!-- ============================================== -->
-        <!-- 1. LAYAR ONBOARDING + PREFERENSI + SQUAD       -->
-        <!-- ============================================== -->
+        <!-- ======================================================== -->
+        <!-- 1. LAYAR ONBOARDING + PREFERENSI AKSESIBILITAS + SQUAD   -->
+        <!-- ======================================================== -->
         <section id="screen-onboarding" class="screen active" aria-labelledby="title-onboarding">
-          <div class="screen-content">
+          
+          <div class="cognitive-step-banner" style="display: none;">
+            langkah 1: kenalan & atur tampilan
+          </div>
+
+          <!-- Slide Sambutan Onboarding Interaktif (3 Slide) -->
+          <div class="blob-card blob-1">
+            <span class="sticker-tag">mulai dari kosan</span>
             
-            <div class="hero-card">
-              <div class="hero-badge">Aksi Hijau Mabar Kosan</div>
-              <h2 id="title-onboarding" class="hero-title">Yuk, Mabar Bikin Kosan & Kampus Lebih Asri!</h2>
-              <p class="hero-desc">
-                Tindakan kecilmu terasa bermakna kalau dilakukan bareng squad. Bukan soal sempurna, tapi soal saling dukung tanpa menggurui!
-              </p>
-            </div>
+            <div class="onboarding-slides-container">
+              <!-- Slide 1 -->
+              <div class="onboarding-slide active" id="slide-1">
+                <!-- Flat Asymmetric Illustration: Mini Earth, Hills, Trees, Tumbler -->
+                <div class="mini-earth-illustration" style="margin: 8px 0;" aria-hidden="true">
+                  <svg width="240" height="145" viewBox="0 0 240 145" fill="none" style="display: block; margin: 0 auto;">
+                    <!-- Lapisan bukit hijau solid -->
+                    <path d="M0 135 C40 90, 110 95, 160 120 C190 135, 220 125, 240 130 L240 145 L0 145 Z" fill="#4A9A44" stroke="#18614D" stroke-width="2.5"/>
+                    <path d="M80 145 C110 100, 170 105, 240 115 L240 145 Z" fill="#387A33" stroke="#18614D" stroke-width="2.5"/>
+                    <path d="M-10 145 C20 115, 60 110, 110 135 L110 145 Z" fill="#DFEEDE" stroke="#18614D" stroke-width="2.5"/>
+                    
+                    <!-- Turbin Angin Sederhana Gambar Tangan -->
+                    <line x1="50" y1="65" x2="50" y2="115" stroke="#18614D" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="50" cy="65" r="4" fill="#D9822B" stroke="#18614D" stroke-width="2"/>
+                    <line x1="50" y1="65" x2="36" y2="55" stroke="#18614D" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="50" y1="65" x2="64" y2="55" stroke="#18614D" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="50" y1="65" x2="50" y2="80" stroke="#18614D" stroke-width="2.5" stroke-linecap="round"/>
+                    
+                    <!-- Pohon-Pohon Datar Asimetris -->
+                    <rect x="180" y="85" width="5" height="25" fill="#18614D"/>
+                    <path d="M170 85 C170 70, 195 70, 195 85 Z" fill="#4A9A44" stroke="#18614D" stroke-width="2.5"/>
+                    
+                    <rect x="155" y="98" width="4" height="20" fill="#18614D"/>
+                    <circle cx="157" cy="94" r="12" fill="#FAF6DE" stroke="#18614D" stroke-width="2.5"/>
+                    
+                    <!-- Tumbler & Botol Datar -->
+                    <g transform="translate(95, 45)">
+                      <rect x="10" y="16" width="22" height="42" rx="6" fill="#D9822B" stroke="#18614D" stroke-width="2.5"/>
+                      <rect x="15" y="8" width="12" height="8" rx="2" fill="#18614D"/>
+                      <line x1="17" y1="26" x2="25" y2="26" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+                      <circle cx="21" cy="38" r="3" fill="#FFFFFF"/>
+                    </g>
 
-            <!-- Panel Pengaturan Aksesibilitas Cepat (Bagian Alur Utama) -->
-            <div class="app-card a11y-onboarding-card">
-              <div class="card-header-row">
-                <span class="icon-card" aria-hidden="true">♿</span>
-                <div>
-                  <h3 class="card-title">Kenyamanan Tampilan & Interaksi</h3>
-                  <p class="card-caption">Opsional: sesuaikan kebutuhanmu agar aplikasi ini nyaman digunakan.</p>
+                    <!-- Awan Datar -->
+                    <path d="M15 35 C15 28, 26 26, 32 30 C36 24, 48 24, 52 30 C58 28, 65 32, 65 37 L15 37 Z" fill="#FFFFFF" stroke="#18614D" stroke-width="2"/>
+                  </svg>
                 </div>
-              </div>
-
-              <fieldset class="checklist-group">
-                <legend class="sr-only">Pilihan preferensi aksesibilitas awal</legend>
-
-                <label class="checkbox-row" for="ob-larger-text">
-                  <input type="checkbox" id="ob-larger-text" class="custom-checkbox">
-                  <span class="checkbox-indicator" aria-hidden="true"></span>
-                  <span class="label-info">
-                    <strong>Teks Lebih Besar (+25%)</strong>
-                    <span class="subtext">Memperbesar huruf di seluruh aplikasi agar mudah dibaca.</span>
-                  </span>
-                </label>
-
-                <label class="checkbox-row" for="ob-high-contrast">
-                  <input type="checkbox" id="ob-high-contrast" class="custom-checkbox">
-                  <span class="checkbox-indicator" aria-hidden="true"></span>
-                  <span class="label-info">
-                    <strong>Kontras Tinggi & Batas Jelas</strong>
-                    <span class="subtext">Mempertegas garis kartu dan kepekatan teks (WCAG AAA).</span>
-                  </span>
-                </label>
-
-                <label class="checkbox-row" for="ob-colorblind">
-                  <input type="checkbox" id="ob-colorblind" class="custom-checkbox">
-                  <span class="checkbox-indicator" aria-hidden="true"></span>
-                  <span class="label-info">
-                    <strong>Ramah Buta Warna (Pola & Ikon)</strong>
-                    <span class="subtext">Tambahkan pola garis arsir dan simbol unik pada tiap indikator status.</span>
-                  </span>
-                </label>
-
-                <label class="checkbox-row" for="ob-focus-mode">
-                  <input type="checkbox" id="ob-focus-mode" class="custom-checkbox">
-                  <span class="checkbox-indicator" aria-hidden="true"></span>
-                  <span class="label-info">
-                    <strong>Mode Fokus (Ramah Kognitif / ADHD)</strong>
-                    <span class="subtext">Kurangi distraksi visual dan tonjolkan satu aksi utama per langkah.</span>
-                  </span>
-                </label>
-
-                <label class="checkbox-row" for="ob-reduced-motion">
-                  <input type="checkbox" id="ob-reduced-motion" class="custom-checkbox">
-                  <span class="checkbox-indicator" aria-hidden="true"></span>
-                  <span class="label-info">
-                    <strong>Kurangi Gerakan & Animasi</strong>
-                    <span class="subtext">Nonaktifkan animasi layar bergerak untuk kenyamanan vestibular.</span>
-                  </span>
-                </label>
-
-                <label class="checkbox-row" for="ob-large-touch">
-                  <input type="checkbox" id="ob-large-touch" class="custom-checkbox">
-                  <span class="checkbox-indicator" aria-hidden="true"></span>
-                  <span class="label-info">
-                    <strong>Area Sentuh Ekstra Lega (Ramah Motorik)</strong>
-                    <span class="subtext">Perbesar tombol (56px) dan berikan jarak longgar antar tombol.</span>
-                  </span>
-                </label>
-              </fieldset>
-            </div>
-
-            <!-- Panel Squad Mabar (Gabung / Buat) -->
-            <div class="app-card squad-onboarding-card">
-              <div class="card-header-row">
-                <span class="icon-card" aria-hidden="true">👥</span>
-                <div>
-                  <h3 class="card-title">Gabung atau Buat Squad Mabar</h3>
-                  <p class="card-caption">Misi bareng anak satu kosan, asrama, atau teman sekampus.</p>
-                </div>
-              </div>
-
-              <!-- Pilihan Tab Squad -->
-              <div class="tab-pill-group" role="tablist" aria-label="Pilihan Bergabung Squad">
-                <button type="button" class="tab-pill active" id="tab-join-squad" role="tab" aria-selected="true" aria-controls="panel-join-squad">
-                  Pakai Kode Squad
-                </button>
-                <button type="button" class="tab-pill" id="tab-create-squad" role="tab" aria-selected="false" aria-controls="panel-create-squad">
-                  Buat Squad Baru
-                </button>
-              </div>
-
-              <!-- Konten Gabung Squad -->
-              <div id="panel-join-squad" class="tab-panel active" role="tabpanel" aria-labelledby="tab-join-squad">
-                <label for="input-squad-code" class="form-label">Kode Squad Kosan / Asrama</label>
-                <div class="input-with-button">
-                  <input type="text" id="input-squad-code" class="form-input" value="KOS-BAROKAH-24" placeholder="Contoh: KOS-BAROKAH-24">
-                  <button type="button" id="btn-paste-code" class="btn-secondary-sm">Ganti</button>
-                </div>
-
-                <div class="squad-preview-box" id="squad-preview">
-                  <div class="squad-preview-header">
-                    <span class="squad-avatar-group" aria-hidden="true">🏡</span>
-                    <div>
-                      <strong id="preview-squad-title">Kosan Barokah Asri</strong>
-                      <span class="squad-member-count" id="preview-squad-members">6 Teman Aktif • Kukusan, Depok</span>
-                    </div>
-                  </div>
-                  <p class="squad-preview-desc">
-                    "Kosan bersih, selokan lancar, sampah terpilah. Mabar santai tiap sore!"
-                  </p>
-                </div>
-              </div>
-
-              <!-- Konten Buat Squad Baru -->
-              <div id="panel-create-squad" class="tab-panel" role="tabpanel" aria-labelledby="tab-create-squad" hidden>
-                <label for="input-new-squad-name" class="form-label">Nama Squad Baru</label>
-                <input type="text" id="input-new-squad-name" class="form-input" placeholder="Contoh: Asrama Sakura Hijau">
-                
-                <label for="input-squad-env" class="form-label mt-2">Lingkungan</label>
-                <select id="input-squad-env" class="form-input">
-                  <option value="kos">Lingkungan Kosan</option>
-                  <option value="asrama">Asrama Mahasiswa</option>
-                  <option value="kampus">Fakultas / Kampus</option>
-                  <option value="komplek">Komplek Perumahan</option>
-                </select>
-              </div>
-
-              <!-- Tombol Aksi Onboarding -->
-              <div class="btn-group-vertical">
-                <button type="button" id="btn-submit-onboarding" class="btn-primary">
-                  <span>Mulai Mabar Hijau! 🚀</span>
-                </button>
-                <button type="button" id="btn-skip-onboarding" class="btn-ghost">
-                  <span>Lewati & Gunakan Pengaturan Standar</span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 2. LAYAR BERANDA (screen-home)                 -->
-        <!-- ============================================== -->
-        <section id="screen-home" class="screen" aria-labelledby="title-home" hidden>
-          <div class="screen-content">
-
-            <!-- Banner Sambutan Ramah -->
-            <div class="greeting-banner">
-              <div class="greeting-text">
-                <span class="greeting-sub">Halo Rian! 👋</span>
-                <h2 id="title-home" class="greeting-heading">Mabar Jaga Kosan Hari Ini</h2>
-              </div>
-              <div class="streak-badge" title="7 Hari Mabar Berturut-turut">
-                <span class="streak-fire" aria-hidden="true">🔥</span>
-                <span class="streak-count">7 Hari</span>
-              </div>
-            </div>
-
-            <!-- Widget 1: Ringkasan Progres Squad (Mabar Meter) -->
-            <div class="app-card squad-progress-card">
-              <div class="card-header-row">
-                <span class="icon-card" aria-hidden="true">📊</span>
-                <div class="header-text-flex">
-                  <h3 class="card-title">Mabar Meter Hari Ini</h3>
-                  <span class="status-pill status-pill-success" id="squad-completion-pill">
-                    <span class="pill-pattern" aria-hidden="true">●</span>
-                    <span id="squad-ratio-text">5 dari 6 Selesai</span>
-                  </span>
-                </div>
-              </div>
-
-              <!-- Progress Bar Dinamis -->
-              <div class="progress-bar-container" role="progressbar" aria-valuenow="83" aria-valuemin="0" aria-valuemax="100" aria-label="Progres misi squad hari ini">
-                <div class="progress-bar-fill" id="squad-progress-fill" style="width: 83%;"></div>
-              </div>
-              <div class="progress-caption-row">
-                <span class="text-caption">Target: Semua anak kos selesaikan min. 1 aksi</span>
-                <strong class="text-caption-bold" id="squad-progress-pct">83%</strong>
-              </div>
-
-              <!-- Daftar Anggota Squad & Status -->
-              <div class="squad-roster">
-                <h4 class="roster-title">Aktivitas Teman Kosan:</h4>
-                <ul class="roster-list" id="squad-member-list" aria-label="Daftar anggota squad">
-                  <!-- Rendered via JS -->
-                </ul>
-              </div>
-
-              <!-- Tombol Interaksi Mabar: Colek Ramah -->
-              <div class="nudge-box">
-                <p class="nudge-text">Tinggal <strong>Agus</strong> yang belum misi hari ini. Mau colek santai?</p>
-                <button type="button" id="btn-nudge-member" class="btn-secondary-sm">
-                  <span aria-hidden="true">👋</span> Colek Santai Agus
-                </button>
-              </div>
-            </div>
-
-            <!-- Widget 2: Norma Sosial Positif di Sekitar -->
-            <div class="app-card social-norm-card">
-              <div class="card-header-row">
-                <span class="icon-card" aria-hidden="true">🌍</span>
-                <div>
-                  <h3 class="card-title">Kabar Baik Dari Sekitarmu</h3>
-                  <p class="card-caption">Bukan rasa bersalah, ini bukti kita jalan bareng-bareng!</p>
-                </div>
-              </div>
-
-              <div class="norm-stat-box">
-                <div class="norm-number" aria-hidden="true">72%</div>
-                <div class="norm-statement">
-                  <strong>Anak kos di sekitarmu pakai tumbler hari ini!</strong>
-                  <p class="text-body-sm">
-                    Kemarin ada <strong>340 botol plastik</strong> yang berhasil dicegah di area Kukusan & Bareng. Keren banget, kebiasaan baikmu nular ke tetangga kos!
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Widget 3: Boss Raid Mini Banner (Tantangan Mingguan) -->
-            <div class="app-card boss-mini-card">
-              <div class="boss-mini-header">
-                <div class="boss-avatar-frame" aria-hidden="true">👾</div>
-                <div class="boss-info-col">
-                  <div class="badge-tag">Boss Raid Mingguan</div>
-                  <h3 class="boss-title">Raksasa Kresek Kosan</h3>
-                  <p class="boss-sub">HP tersisa: <strong id="home-boss-hp-text">380 / 1.000 HP</strong></p>
-                </div>
-              </div>
-              <div class="progress-bar-container boss-hp-bar" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100" aria-label="Health bar boss monster kresek">
-                <div class="progress-bar-fill fill-boss" id="home-boss-hp-fill" style="width: 38%;"></div>
-              </div>
-              <button type="button" class="btn-primary-sm full-width mt-2 btn-goto-missions" data-target="screen-missions">
-                <span>Serang Boss di Misi Bersama ⚔️</span>
-              </button>
-            </div>
-
-            <!-- Widget 4: Akses Cepat Misi Harian -->
-            <div class="app-card quick-missions-card">
-              <div class="card-header-row">
-                <span class="icon-card" aria-hidden="true">🎯</span>
-                <div>
-                  <h3 class="card-title">Misi Cepat Hari Ini</h3>
-                  <p class="card-caption">Cuma butuh 5-10 menit untuk kasih dampak nyata.</p>
-                </div>
-              </div>
-
-              <div class="quick-mission-item">
-                <div class="mission-icon" aria-hidden="true">🥤</div>
-                <div class="mission-details">
-                  <strong>Bawa Tumbler Pas Kuliah</strong>
-                  <span class="mission-impact-tag">+1 Botol Plastik Hemat</span>
-                </div>
-                <span class="status-check-done" aria-label="Sudah selesai">✅ Selesai</span>
-              </div>
-
-              <div class="quick-mission-item">
-                <div class="mission-icon" aria-hidden="true">🔍</div>
-                <div class="mission-details">
-                  <strong>Amankan Monster Sampah Terdekat</strong>
-                  <span class="mission-impact-tag">Item Harian Tersedia</span>
-                </div>
-                <button type="button" class="btn-secondary-sm btn-goto-missions" data-target="screen-missions">
-                  Buka
-                </button>
-              </div>
-
-              <button type="button" class="btn-primary full-width mt-3 btn-goto-missions" data-target="screen-missions">
-                <span>Lihat Semua Misi & Item Harian 📋</span>
-              </button>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 3. LAYAR MISI HARIAN + BOSS + ADAPTIF          -->
-        <!-- ============================================== -->
-        <section id="screen-missions" class="screen" aria-labelledby="title-missions" hidden>
-          <div class="screen-content">
-
-            <!-- Section Header -->
-            <div class="section-title-box">
-              <h2 id="title-missions" class="screen-title">Misi & Item Harian</h2>
-              <p class="screen-desc">Kalahkan boss monster kresek bersama squad melalui tindakan nyata.</p>
-            </div>
-
-            <!-- BAGIAN 1: BOSS RAID MINGGUAN -->
-            <div class="app-card boss-battle-card">
-              <div class="boss-battle-header">
-                <div class="boss-monster-graphic" aria-hidden="true">
-                  <span class="boss-emoji" id="boss-emoji-state">👾</span>
-                  <span class="boss-level-tag">Lv. 3 Boss Kosan</span>
-                </div>
-                <div class="boss-details">
-                  <h3 class="boss-name">Raksasa Kresek Kosan</h3>
-                  <p class="boss-lore">Menghantui tempat sampah dapur & selokan kosan kalau kita lengah!</p>
-                  
-                  <div class="hp-info-row">
-                    <span class="hp-label">Darah Boss:</span>
-                    <strong class="hp-value" id="battle-boss-hp-text">380 / 1.000 HP</strong>
-                  </div>
-                  <div class="progress-bar-container boss-hp-bar" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100" aria-label="Sisa HP Boss Raksasa Kresek">
-                    <div class="progress-bar-fill fill-boss" id="battle-boss-hp-fill" style="width: 38%;"></div>
-                  </div>
-                  <span class="text-caption mt-1">Tiap misi yang kamu atau squad selesaikan mengurangi HP boss!</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- BAGIAN 2: MISI ADAPTIF (WAJIB ADA & INKLUSIF) -->
-            <div class="app-card adaptive-mission-card">
-              <div class="card-header-row">
-                <span class="icon-card" aria-hidden="true">⭐</span>
-                <div>
-                  <div class="badge-tag-adaptive">Misi Adaptif Inklusif</div>
-                  <h3 class="card-title">Operasi Tangkap Sampah Kosan</h3>
-                  <p class="card-caption">Pilih cara yang paling sesuai kemampuanmu. Semua varian bernilai setara!</p>
-                </div>
-              </div>
-
-              <!-- Penjelasan Nilai Setara -->
-              <div class="equity-banner" role="note">
-                <span class="equity-icon" aria-hidden="true">⚖️</span>
-                <p>
-                  <strong>Dampak Setara:</strong> Varian mana pun yang kamu pilih akan menyumbang <strong>+1 Misi Squad</strong> dan memberikan <strong>-120 Kerusakan HP Boss</strong> secara adil.
+                <h2 id="title-onboarding" class="card-title">bawa tumbler, buang sampah beneran.</h2>
+                <p class="card-caption">
+                  Bukan karena kamu nggak tahu caranya. Kadang cuma butuh mulai bareng teman satu kosan.
                 </p>
               </div>
 
-              <!-- Pilihan Varian Adaptif (Tab / Selector) -->
-              <fieldset class="variant-selection-group">
-                <legend class="variant-legend">Pilih Varian Pelaksanaan Misi:</legend>
-
-                <!-- Varian A: Eksplorasi / Lapangan -->
-                <label class="variant-card-option" for="variant-a">
-                  <input type="radio" name="adaptive-variant" id="variant-a" value="A" checked>
-                  <span class="variant-custom-radio" aria-hidden="true"></span>
-                  <div class="variant-body">
-                    <div class="variant-header">
-                      <strong class="variant-name">Varian A: Aksi Lorong & Pekarangan</strong>
-                      <span class="variant-tag tag-outdoor">Mobilitas Penuh</span>
-                    </div>
-                    <p class="variant-text">
-                      Jalan 50 langkah di lorong atau pekarangan kosan, ambil 2 sampah plastik kemasan yang tercecer lalu masukkan ke tempat sampah.
-                    </p>
-                    <span class="variant-time">⏱️ Estimasi: 5-8 menit</span>
-                  </div>
-                </label>
-
-                <!-- Varian B: Ramah Mobilitas / Motorik Sederhana -->
-                <label class="variant-card-option" for="variant-b">
-                  <input type="radio" name="adaptive-variant" id="variant-b" value="B">
-                  <span class="variant-custom-radio" aria-hidden="true"></span>
-                  <div class="variant-body">
-                    <div class="variant-header">
-                      <strong class="variant-name">Varian B: Sortir Meja / Kamar Sendiri</strong>
-                      <span class="variant-tag tag-mobility">Ramah Mobilitas</span>
-                    </div>
-                    <p class="variant-text">
-                      Cukup pilah 1 sampah plastik atau botol minuman di mejamu sendiri tanpa harus jalan berkeliling. Pisahkan tutup botol dan labelnya.
-                    </p>
-                    <span class="variant-time">⏱️ Estimasi: 3 menit • Tanpa mobilitas jauh</span>
-                  </div>
-                </label>
-
-                <!-- Varian C: Ramah Sensorik / Netra / Teks & Audio -->
-                <label class="variant-card-option" for="variant-c">
-                  <input type="radio" name="adaptive-variant" id="variant-c" value="C">
-                  <span class="variant-custom-radio" aria-hidden="true"></span>
-                  <div class="variant-body">
-                    <div class="variant-header">
-                      <strong class="variant-name">Varian C: Audit Sampah Teks & Audio</strong>
-                      <span class="variant-tag tag-sensory">Ramah Sensorik & Netra</span>
-                    </div>
-                    <p class="variant-text">
-                      Dengarkan petunjuk suara atau baca deskripsi simbol daur ulang nomor 1 (PET) dan 2 (HDPE), lalu periksa 1 barang belanjaan hari ini.
-                    </p>
-                    <div class="audio-guide-action mt-2">
-                      <button type="button" id="btn-play-variant-audio" class="btn-secondary-xs" aria-label="Putar panduan audio audit sampah">
-                        <span aria-hidden="true">🔊</span> Putar Panduan Suara
-                      </button>
-                    </div>
-                    <span class="variant-time">⏱️ Estimasi: 4 menit • Panduan audio lengkap</span>
-                  </div>
-                </label>
-              </fieldset>
-
-              <!-- Tombol Selesaikan Misi Adaptif -->
-              <div class="mission-action-row">
-                <button type="button" id="btn-complete-adaptive" class="btn-primary full-width">
-                  <span>Selesaikan Varian Terpilih & Serang Boss! 💥</span>
-                </button>
-                <div id="adaptive-success-msg" class="success-banner" hidden>
-                  🎉 <strong>Keren banget!</strong> Kamu menyumbang 1 misi untuk squad dan memotong -120 HP Boss!
+              <!-- Slide 2 -->
+              <div class="onboarding-slide" id="slide-2">
+                <div class="mini-earth-illustration" style="margin: 16px 0; text-align: center;" aria-hidden="true">
+                  <svg width="180" height="120" viewBox="0 0 180 120" fill="none" style="display: block; margin: 0 auto;">
+                    <!-- Dua Orang Anak Kos Gambar Tangan -->
+                    <circle cx="65" cy="40" r="18" fill="#EDE4B5" stroke="#18614D" stroke-width="2.5"/>
+                    <path d="M58 38 L62 38 M68 38 L72 38" stroke="#18614D" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M60 48 Q65 52 70 48" stroke="#18614D" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M45 85 C45 65, 85 65, 85 85 L85 105 L45 105 Z" fill="#4A9A44" stroke="#18614D" stroke-width="2.5"/>
+                    
+                    <circle cx="115" cy="45" r="18" fill="#EDE4B5" stroke="#18614D" stroke-width="2.5"/>
+                    <path d="M108 43 L112 43 M118 43 L122 43" stroke="#18614D" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M110 52 Q115 56 120 52" stroke="#18614D" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M95 88 C95 70, 135 70, 135 88 L135 105 L95 105 Z" fill="#D9822B" stroke="#18614D" stroke-width="2.5"/>
+                  </svg>
                 </div>
+                <h2 class="card-title">mabar bareng squad kosan.</h2>
+                <p class="card-caption">
+                  Kerjain aksi bareng. Kalau ada yang kelupaan, tinggal colek santai tanpa bikin tersinggung.
+                </p>
+              </div>
+
+              <!-- Slide 3 -->
+              <div class="onboarding-slide" id="slide-3">
+                <div class="mini-earth-illustration" style="margin: 16px 0; text-align: center;" aria-hidden="true">
+                  <svg width="180" height="120" viewBox="0 0 180 120" fill="none" style="display: block; margin: 0 auto;">
+                    <!-- Api Streak & Monster Kresek -->
+                    <path d="M55 85 C40 85, 35 65, 50 50 C50 40, 65 30, 60 20 C75 35, 80 50, 75 60 C80 60, 85 68, 75 85 Z" fill="#D9822B" stroke="#18614D" stroke-width="2.5"/>
+                    <!-- Kiki Kresek Asimetris -->
+                    <path d="M105 45 C100 30, 135 30, 135 45 L140 85 C140 95, 95 95, 100 85 Z" fill="#FAF6DE" stroke="#18614D" stroke-width="2.5"/>
+                    <circle cx="112" cy="55" r="3" fill="#18614D"/>
+                    <circle cx="126" cy="55" r="3" fill="#18614D"/>
+                    <path d="M114 68 L117 64 L120 68 L123 64 L126 68" stroke="#18614D" stroke-width="2"/>
+                  </svg>
+                </div>
+                <h2 class="card-title">streak dan monster sampah.</h2>
+                <p class="card-caption">
+                  Tiap aksi motong hp monster sampah dan jaga streak api squad tetap nyala.
+                </p>
               </div>
             </div>
 
-            <!-- BAGIAN 3: MISI HARIAN RUTIN -->
-            <div class="app-card regular-missions-card">
-              <div class="card-header-row">
-                <span class="icon-card" aria-hidden="true">📋</span>
-                <div>
-                  <h3 class="card-title">Misi Rutin Hari Ini</h3>
-                  <p class="card-caption">Aksi kecil 5 menit untuk menjaga bumi tetap hijau.</p>
+            <!-- Slide Indicator Dots -->
+            <div class="slide-dots" role="tablist" aria-label="navigasi slide">
+              <button type="button" class="slide-dot active" data-slide="1" aria-label="slide 1"></button>
+              <button type="button" class="slide-dot" data-slide="2" aria-label="slide 2"></button>
+              <button type="button" class="slide-dot" data-slide="3" aria-label="slide 3"></button>
+            </div>
+
+            <button type="button" id="btn-next-slide" class="btn-pill btn-primary-orange">
+              <span>lanjut</span>
+            </button>
+          </div>
+
+          <!-- Sapuan Kuas Pembatas Section Solid -->
+          <svg class="brush-divider" viewBox="0 0 320 14" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M2 7 C 35 2, 75 11, 130 5 C 180 1, 235 11, 275 6 C 298 3, 314 8, 318 7 C 308 10, 255 12, 195 9 C 135 6, 75 13, 2 7 Z" fill="#18614D"/>
+          </svg>
+
+          <!-- SESUAIKAN APLIKASIMU (AKSESIBILITAS) -->
+          <div class="blob-card blob-2">
+            <span class="sticker-tag sticker-tag-dark">opsional</span>
+            <h3 class="card-title">sesuaikan aplikasimu</h3>
+            <p class="card-caption">
+              Pilih kebutuhan yang kamu perlukan. Bisa dilewati sekarang.
+            </p>
+
+            <div class="a11y-category-grid" role="group" aria-label="kebutuhan aksesibilitas">
+              
+              <!-- 1. NETRA -->
+              <div class="a11y-toggle-card" id="card-pref-netra" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="a11y-card-icon-box" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3" fill="#D9822B"/>
+                  </svg>
+                </div>
+                <div class="a11y-card-content">
+                  <strong class="a11y-card-title">netra</strong>
+                  <span class="a11y-card-desc">screen reader, petunjuk suara, kontras tinggi, dan teks besar.</span>
+                </div>
+                <div class="custom-switch-check" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
                 </div>
               </div>
 
+              <!-- 2. RUNGU -->
+              <div class="a11y-toggle-card" id="card-pref-rungu" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="a11y-card-icon-box" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                  </svg>
+                </div>
+                <div class="a11y-card-content">
+                  <strong class="a11y-card-title">rungu</strong>
+                  <span class="a11y-card-desc">semua info lewat visual dan teks, ada getar saat selesai.</span>
+                </div>
+                <div class="custom-switch-check" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- 3. MOTORIK -->
+              <div class="a11y-toggle-card" id="card-pref-motorik" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="a11y-card-icon-box" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 11V6a2 2 0 0 0-4 0v5"/>
+                    <path d="M14 10V4a2 2 0 0 0-4 0v7"/>
+                    <path d="M10 10.5V6a2 2 0 0 0-4 0v8"/>
+                    <path d="M6 14v-1a2 2 0 0 0-4 0v5a8 8 0 0 0 16 0v-4a2 2 0 0 0-4 0"/>
+                  </svg>
+                </div>
+                <div class="a11y-card-content">
+                  <strong class="a11y-card-title">motorik</strong>
+                  <span class="a11y-card-desc">area sentuh besar (min 56px), jarak longgar antar tombol.</span>
+                </div>
+                <div class="custom-switch-check" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- 4. KOGNITIF, ADHD & LANSIA -->
+              <div class="a11y-toggle-card" id="card-pref-kognitif" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="a11y-card-icon-box" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 7v5l3 3"/>
+                  </svg>
+                </div>
+                <div class="a11y-card-content">
+                  <strong class="a11y-card-title">kognitif & adhd</strong>
+                  <span class="a11y-card-desc">satu langkah per layar, mode fokus, kurangi elemen bergerak.</span>
+                </div>
+                <div class="custom-switch-check" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- SQUAD -->
+          <div class="blob-card blob-3">
+            <span class="sticker-tag sticker-tag-green">squad</span>
+            <h3 class="card-title">gabung squad kosan</h3>
+
+            <div class="tab-pill-group" role="tablist">
+              <button type="button" class="tab-pill-btn active" id="tab-join-btn" role="tab" aria-selected="true">pakai kode</button>
+              <button type="button" class="tab-pill-btn" id="tab-create-btn" role="tab" aria-selected="false">buat squad</button>
+            </div>
+
+            <!-- Panel Masuk Kode -->
+            <div id="panel-join-content">
+              <label for="input-squad-code" class="card-caption" style="font-weight: 700;">kode squad:</label>
+              <input type="text" id="input-squad-code" class="form-input-field" value="KOS-BAROKAH-24" aria-label="kode squad">
+              
+              <div class="squad-preview-blob">
+                <strong style="font-family: var(--font-heading); color: var(--c-dark-green); font-size: 16px;">kosan barokah asri</strong>
+                <p class="card-caption">6 anggota aktif • kukusan, depok</p>
+              </div>
+            </div>
+
+            <!-- Panel Buat Squad Baru -->
+            <div id="panel-create-content" style="display: none;">
+              <label for="input-new-squad" class="card-caption" style="font-weight: 700;">nama squad baru:</label>
+              <input type="text" id="input-new-squad" class="form-input-field" placeholder="contoh: asrama sakura">
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
+              <button type="button" id="btn-start-mabar" class="btn-pill btn-primary-orange">
+                <span>masuk squad</span>
+              </button>
+              <button type="button" id="btn-skip-onboarding" class="btn-pill btn-outline-pill">
+                <span>lewati</span>
+              </button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- 2. LAYAR BERANDA                                         -->
+        <!-- ======================================================== -->
+        <section id="screen-home" class="screen" aria-labelledby="title-home">
+          
+          <div class="cognitive-step-banner" style="display: none;">
+            tugas hari ini: bawa tumbler ke kampus
+          </div>
+
+          <!-- Header Beranda -->
+          <div class="home-header-banner">
+            <div class="home-greeting-row">
+              <div>
+                <h2 id="title-home" class="lowercase-title" style="color: var(--c-cream); font-size: 26px;">rian.</h2>
+              </div>
+              <div class="gamification-chips-row">
+                <div class="game-chip game-chip-orange" title="7 hari streak">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#FFFFFF" stroke="#18614D" stroke-width="2">
+                    <path d="M12 2c0 6-6 8-6 13a6 6 0 0 0 12 0c0-5-6-7-6-13z"/>
+                  </svg>
+                  <span>7 hari</span>
+                </div>
+                <div class="game-chip" title="ecopoin">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#D9822B" stroke="#18614D" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                  <span>850 poin</span>
+                </div>
+              </div>
+            </div>
+            <p style="font-size: 14px; color: var(--c-cream); font-weight: 700;">
+              hari ini baru 1 dari 3 misi. tumbler udah dibawa belum?
+            </p>
+          </div>
+
+          <!-- KARTU NORMA SOSIAL POSITIF -->
+          <div class="blob-card blob-4 social-norm-card">
+            <span class="sticker-tag">di sekitarmu</span>
+            
+            <div class="norm-metric-highlight">
+              <div class="norm-big-percent">72%</div>
+              <div>
+                <strong style="display: block; font-size: 15px;">anak kos di sekitarmu pakai tumbler hari ini.</strong>
+                <p class="card-caption">340 botol plastik nggak jadi sampah di area kukusan.</p>
+              </div>
+            </div>
+
+            <div style="border-top: var(--border-thin); padding-top: 8px; margin-top: 8px;">
+              <span class="card-caption" style="font-weight: 800;">5 dari 6 anggota squadmu sudah selesai.</span>
+            </div>
+          </div>
+
+          <!-- PROGRES MISI MINGGUAN SQUAD -->
+          <div class="blob-card blob-5">
+            <h3 class="card-title">progres squad hari ini</h3>
+            <p class="card-caption">target: semua anak kos selesaikan min. 1 aksi.</p>
+
+            <!-- Progress Bar Squad -->
+            <div class="progress-bar-container" role="progressbar" aria-valuenow="83" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar-fill" id="home-squad-progress" style="width: 83%;"></div>
+            </div>
+            <div class="progress-caption-row">
+              <span>5 dari 6 selesai</span>
+              <span>83%</span>
+            </div>
+
+            <!-- Avatar Roster Anggota Squad -->
+            <div class="squad-member-avatars" aria-label="daftar anggota squad">
+              <!-- Rian (User) -->
+              <div class="member-avatar-chip" title="rian - selesai">
+                <svg width="28" height="28" viewBox="0 0 40 40">
+                  <circle cx="20" cy="20" r="16" fill="#EDE4B5"/>
+                  <path d="M14 18 L18 18 M22 18 L26 18" stroke="#18614D" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M16 26 Q20 30 24 26" stroke="#18614D" stroke-width="2" fill="none" stroke-linecap="round"/>
+                </svg>
+                <span class="avatar-badge-status">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+              </div>
+              
+              <!-- Fajar -->
+              <div class="member-avatar-chip" title="fajar - selesai">
+                <svg width="28" height="28" viewBox="0 0 40 40">
+                  <circle cx="20" cy="20" r="16" fill="#EDE4B5"/>
+                  <path d="M14 17 L17 19 M23 19 L26 17" stroke="#18614D" stroke-width="2.5" stroke-linecap="round"/>
+                  <line x1="16" y1="26" x2="24" y2="26" stroke="#18614D" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="avatar-badge-status">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+              </div>
+
+              <!-- Dita -->
+              <div class="member-avatar-chip" title="dita - selesai">
+                <svg width="28" height="28" viewBox="0 0 40 40">
+                  <circle cx="20" cy="20" r="16" fill="#EDE4B5"/>
+                  <circle cx="15" cy="18" r="2" fill="#18614D"/>
+                  <circle cx="25" cy="18" r="2" fill="#18614D"/>
+                  <path d="M16 25 Q20 28 24 25" stroke="#18614D" stroke-width="2" fill="none"/>
+                </svg>
+                <span class="avatar-badge-status">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+              </div>
+
+              <!-- Bima -->
+              <div class="member-avatar-chip" title="bima - selesai">
+                <svg width="28" height="28" viewBox="0 0 40 40">
+                  <circle cx="20" cy="20" r="16" fill="#EDE4B5"/>
+                  <line x1="13" y1="18" x2="18" y2="18" stroke="#18614D" stroke-width="2.5"/>
+                  <line x1="22" y1="18" x2="27" y2="18" stroke="#18614D" stroke-width="2.5"/>
+                  <path d="M17 26 Q20 28 23 26" stroke="#18614D" stroke-width="2" fill="none"/>
+                </svg>
+                <span class="avatar-badge-status">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+              </div>
+
+              <!-- Siti -->
+              <div class="member-avatar-chip" title="siti - selesai">
+                <svg width="28" height="28" viewBox="0 0 40 40">
+                  <circle cx="20" cy="20" r="16" fill="#EDE4B5"/>
+                  <circle cx="15" cy="18" r="2" fill="#18614D"/>
+                  <circle cx="25" cy="18" r="2" fill="#18614D"/>
+                  <line x1="16" y1="26" x2="24" y2="26" stroke="#18614D" stroke-width="2"/>
+                </svg>
+                <span class="avatar-badge-status">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+              </div>
+
+              <!-- Agus (Pending) -->
+              <div class="member-avatar-chip pending" title="agus - belum selesai">
+                <svg width="28" height="28" viewBox="0 0 40 40">
+                  <circle cx="20" cy="20" r="16" fill="#FAF6DE"/>
+                  <circle cx="15" cy="18" r="2" fill="#18614D"/>
+                  <circle cx="25" cy="18" r="2" fill="#18614D"/>
+                  <line x1="17" y1="26" x2="23" y2="26" stroke="#18614D" stroke-width="2"/>
+                </svg>
+                <span class="avatar-badge-status">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3">
+                    <circle cx="12" cy="12" r="8"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <!-- Interaksi Colek Santai -->
+            <div class="nudge-box">
+              <span class="card-caption">tinggal agus yang belum.</span>
+              <button type="button" id="btn-nudge-home" class="btn-pill btn-secondary-dark btn-sm-pill">
+                <span>colek agus</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- BOSS MONSTER MINGGUAN -->
+          <div class="blob-card blob-1">
+            <span class="sticker-tag">monster sampah</span>
+            <div class="monster-card-body">
+              <div class="monster-artwork-frame" aria-hidden="true">
+                <svg width="55" height="55" viewBox="0 0 60 60" fill="none">
+                  <path d="M12 25 C10 16, 22 14, 30 14 C38 14, 50 16, 48 25 L45 50 C45 55, 38 56, 30 56 C22 56, 15 55, 15 50 Z" fill="#FAF6DE" stroke="#18614D" stroke-width="2.5"/>
+                  <path d="M22 15 C22 8, 26 6, 28 6 C30 6, 30 14, 30 15" stroke="#18614D" stroke-width="2" fill="none"/>
+                  <path d="M30 15 C30 14, 30 6, 32 6 C34 6, 38 8, 38 15" stroke="#18614D" stroke-width="2" fill="none"/>
+                  <circle cx="23" cy="28" r="3.5" fill="#18614D"/>
+                  <circle cx="37" cy="28" r="3.5" fill="#18614D"/>
+                  <path d="M25 40 L28 36 L31 40 L34 36 L37 40" stroke="#18614D" stroke-width="2" fill="#D9822B"/>
+                </svg>
+              </div>
+              <div class="monster-details-col">
+                <strong class="monster-name">kiki si kresek nakal</strong>
+                <span class="monster-location">dapur kosan • sisa 380 hp</span>
+                <div class="progress-bar-container" style="height: 12px; margin: 4px 0;">
+                  <div class="progress-bar-fill fill-orange" style="width: 38%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RINGKASAN MISI HARI INI & CTA -->
+          <div class="blob-card blob-2">
+            <h3 class="card-title">misi hari ini</h3>
+            <p class="card-caption">butuh 5-10 menit.</p>
+
+            <div style="margin-top: 12px;">
+              <button type="button" class="btn-pill btn-primary-orange btn-goto-missions">
+                <span>mulai misi</span>
+              </button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- 3. LAYAR MISI HARIAN + MONSTER SAMPAH                    -->
+        <!-- ======================================================== -->
+        <section id="screen-missions" class="screen" aria-labelledby="title-missions">
+          
+          <div class="cognitive-step-banner" style="display: none;">
+            pilih 1 misi di bawah lalu tekan "selesai"
+          </div>
+
+          <div style="margin-bottom: 12px;">
+            <h2 id="title-missions" class="lowercase-title" style="font-size: 24px;">misi harian</h2>
+            <p class="card-caption">tiap aksi motong hp monster sampah.</p>
+          </div>
+
+          <!-- KARTU MONSTER SAMPAH HARI INI -->
+          <div class="blob-card blob-3 monster-raid-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="sticker-tag">target hari ini</span>
+              <span class="card-caption" style="font-weight: 800; color: var(--c-orange);">-120 hp</span>
+            </div>
+
+            <div class="monster-card-body">
+              <div class="monster-artwork-frame" aria-hidden="true">
+                <svg width="55" height="55" viewBox="0 0 60 60" fill="none">
+                  <path d="M12 25 C10 16, 22 14, 30 14 C38 14, 50 16, 48 25 L45 50 C45 55, 38 56, 30 56 C22 56, 15 55, 15 50 Z" fill="#EDE4B5" stroke="#18614D" stroke-width="2.5"/>
+                  <path d="M22 15 C22 8, 26 6, 28 6 C30 6, 30 14, 30 15" stroke="#18614D" stroke-width="2" fill="none"/>
+                  <path d="M30 15 C30 14, 30 6, 32 6 C34 6, 38 8, 38 15" stroke="#18614D" stroke-width="2" fill="none"/>
+                  <circle cx="23" cy="28" r="3.5" fill="#18614D"/>
+                  <circle cx="37" cy="28" r="3.5" fill="#18614D"/>
+                  <path d="M25 40 L28 36 L31 40 L34 36 L37 40" stroke="#18614D" stroke-width="2" fill="#D9822B"/>
+                </svg>
+              </div>
+              <div class="monster-details-col">
+                <strong class="monster-name" id="monster-target-name">kiki si kresek nakal</strong>
+                <span class="monster-location">dapur kosan • tempat sampah penuh</span>
+                <div class="progress-bar-container" style="height: 12px; margin: 4px 0;">
+                  <div class="progress-bar-fill fill-orange" id="monster-hp-fill" style="width: 38%;"></div>
+                </div>
+                <div class="progress-caption-row">
+                  <span id="monster-hp-label">380 / 1000 hp</span>
+                  <span>sisa 38%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PEMILIH VARIAN ADAPTIF -->
+          <div class="blob-card blob-1">
+            <h3 class="card-title">pilih cara misi</h3>
+            <p class="card-caption">semua varian nilainya sama.</p>
+
+            <div class="adaptive-selector-box" role="radiogroup" aria-label="pilihan cara menjalankan misi">
+              
+              <!-- Varian 1 -->
+              <div class="variant-card-radio selected" id="opt-variant-a" role="radio" aria-checked="true" tabindex="0">
+                <div class="variant-radio-dot" aria-hidden="true"></div>
+                <div class="variant-info">
+                  <strong>cari sendiri</strong>
+                  <p>jalan di lorong kosan, ambil 2 sampah plastik lalu buang.</p>
+                </div>
+              </div>
+
+              <!-- Varian 2 -->
+              <div class="variant-card-radio" id="opt-variant-c" role="radio" aria-checked="false" tabindex="0">
+                <div class="variant-radio-dot" aria-hidden="true"></div>
+                <div class="variant-info">
+                  <strong>petunjuk suara</strong>
+                  <p>dengar panduan membedakan kode plastik 1 pet & 2 hdpe.</p>
+                  <button type="button" id="btn-play-audio-guide" class="btn-pill btn-secondary-dark btn-sm-pill" style="margin-top: 6px;">
+                    <span>putar suara</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Varian 3 -->
+              <div class="variant-card-radio" id="opt-variant-b" role="radio" aria-checked="false" tabindex="0">
+                <div class="variant-radio-dot" aria-hidden="true"></div>
+                <div class="variant-info">
+                  <strong>pilih dari daftar</strong>
+                  <p>sortir 1 botol atau kardus di mejamu sendiri tanpa keliling.</p>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Banner Nilai Setara -->
+            <div class="equity-pill">
+              semua cara sama: +1 misi squad, -120 hp monster.
+            </div>
+
+            <div style="margin-top: 12px;">
+              <button type="button" id="btn-trigger-verify-adaptive" class="btn-pill btn-primary-orange">
+                <span>serang monster</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- DAFTAR MISI 5-10 MENIT -->
+          <div class="blob-card blob-2">
+            <h3 class="card-title">daftar misi harian</h3>
+
+            <div class="mission-list">
+              
               <!-- Misi 1 -->
-              <div class="mission-card-item" id="card-mission-1">
-                <div class="mission-item-header">
-                  <div class="mission-icon-large" aria-hidden="true">🧃</div>
-                  <div class="mission-text-col">
-                    <strong class="mission-title">Bawa Tumbler Sendiri</strong>
-                    <p class="mission-desc">Gunakan botol minum isi ulang saat ke kampus atau nongkrong di warkop.</p>
-                    <div class="mission-meta">
-                      <span class="meta-tag">💧 Hemat 1 Botol</span>
-                      <span class="meta-tag">-50 HP Boss</span>
+              <div class="mission-item-card" id="mission-card-1">
+                <div class="mission-left-col">
+                  <div class="mission-icon-box" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="6" y="8" width="12" height="13" rx="3"/>
+                      <path d="M9 5h6"/>
+                      <line x1="9" y1="2" x2="15" y2="2"/>
+                    </svg>
+                  </div>
+                  <div class="mission-info-col">
+                    <strong>bawa tumbler</strong>
+                    <div class="mission-meta-row">
+                      <span>5 menit</span>
+                      <span class="mission-tag-pts">+30 poin</span>
                     </div>
                   </div>
                 </div>
-                <button type="button" class="btn-secondary-sm btn-action-mission" data-mission-id="1">
-                  <span>Tandai Selesai ✅</span>
+                <button type="button" class="btn-pill btn-secondary-dark btn-sm-pill btn-action-verify" data-mission-title="Bawa Tumbler" data-pts="30" data-impact="1 botol plastik dicegah">
+                  <span>selesai</span>
                 </button>
               </div>
 
               <!-- Misi 2 -->
-              <div class="mission-card-item" id="card-mission-2">
-                <div class="mission-item-header">
-                  <div class="mission-icon-large" aria-hidden="true">🥤</div>
-                  <div class="mission-text-col">
-                    <strong class="mission-title">Tolak Sedotan Plastik</strong>
-                    <p class="mission-desc">Minta minuman tanpa sedotan sekali pakai saat jajan es teh atau jus.</p>
-                    <div class="mission-meta">
-                      <span class="meta-tag">🚯 Tolak 1 Plastik</span>
-                      <span class="meta-tag">-50 HP Boss</span>
+              <div class="mission-item-card" id="mission-card-2">
+                <div class="mission-left-col">
+                  <div class="mission-icon-box" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-2 14H7L5 6"/>
+                      <path d="M10 11v6"/>
+                      <path d="M14 11v6"/>
+                    </svg>
+                  </div>
+                  <div class="mission-info-col">
+                    <strong>buang sampah pada tempatnya</strong>
+                    <div class="mission-meta-row">
+                      <span>3 menit</span>
+                      <span class="mission-tag-pts">+20 poin</span>
                     </div>
                   </div>
                 </div>
-                <button type="button" class="btn-secondary-sm btn-action-mission" data-mission-id="2">
-                  <span>Tandai Selesai ✅</span>
+                <button type="button" class="btn-pill btn-secondary-dark btn-sm-pill btn-action-verify" data-mission-title="Buang Sampah Pada Tempatnya" data-pts="20" data-impact="1 spot bersih">
+                  <span>selesai</span>
                 </button>
               </div>
 
               <!-- Misi 3 -->
-              <div class="mission-card-item" id="card-mission-3">
-                <div class="mission-item-header">
-                  <div class="mission-icon-large" aria-hidden="true">🔌</div>
-                  <div class="mission-text-col">
-                    <strong class="mission-title">Cabut Colokan Tak Terpakai</strong>
-                    <p class="mission-desc">Cabut charger laptop dan kipas angin sebelum meninggalkan kamar kos.</p>
-                    <div class="mission-meta">
-                      <span class="meta-tag">⚡ Hemat Energi</span>
-                      <span class="meta-tag">-50 HP Boss</span>
+              <div class="mission-item-card" id="mission-card-3">
+                <div class="mission-left-col">
+                  <div class="mission-icon-box" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="6" y1="18" x2="18" y2="6"/>
+                      <circle cx="12" cy="12" r="9"/>
+                    </svg>
+                  </div>
+                  <div class="mission-info-col">
+                    <strong>tolak sedotan plastik</strong>
+                    <div class="mission-meta-row">
+                      <span>1 menit</span>
+                      <span class="mission-tag-pts">+25 poin</span>
                     </div>
                   </div>
                 </div>
-                <button type="button" class="btn-secondary-sm btn-action-mission" data-mission-id="3">
-                  <span>Tandai Selesai ✅</span>
+                <button type="button" class="btn-pill btn-secondary-dark btn-sm-pill btn-action-verify" data-mission-title="Tolak Sedotan Plastik" data-pts="25" data-impact="1 sedotan ditolak">
+                  <span>selesai</span>
                 </button>
               </div>
-            </div>
 
-            <!-- BAGIAN 4: ITEM HARIAN ALA POKEMON (MONSTER SAMPAH) -->
-            <div class="app-card daily-items-card">
-              <div class="card-header-row">
-                <span class="icon-card" aria-hidden="true">📦</span>
+              <!-- Misi 4 -->
+              <div class="mission-item-card" id="mission-card-4">
+                <div class="mission-left-col">
+                  <div class="mission-icon-box" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 2l-6 6"/>
+                      <path d="M15 11l-3 3"/>
+                      <path d="M6 18l6-6"/>
+                      <circle cx="5" cy="19" r="2"/>
+                    </svg>
+                  </div>
+                  <div class="mission-info-col">
+                    <strong>tanpa alat makan plastik</strong>
+                    <div class="mission-meta-row">
+                      <span>2 menit</span>
+                      <span class="mission-tag-pts">+35 poin</span>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn-pill btn-secondary-dark btn-sm-pill btn-action-verify" data-mission-title="Tanpa Alat Makan Plastik" data-pts="35" data-impact="1 sendok plastik dicegah">
+                  <span>selesai</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- 4. LAYAR KARTU HASIL / BAGIKAN (STRAVA STORY)            -->
+        <!-- ======================================================== -->
+        <section id="screen-share" class="screen" aria-labelledby="title-share">
+          
+          <div class="celebration-header">
+            <span class="sticker-tag">hasil misi</span>
+            <h2 id="title-share" class="lowercase-title" style="font-size: 24px;">selesai. 1 botol plastik nggak jadi sampah.</h2>
+            <p class="card-caption">
+              +50 poin squad. streak naik jadi 8 hari.
+            </p>
+          </div>
+
+          <!-- KARTU HASIL ALA STRAVA (9:16) -->
+          <div class="strava-story-container">
+            <article class="strava-story-card theme-green" id="strava-share-card">
+              
+              <div class="story-top-row">
+                <div class="story-brand">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 21V11"/>
+                    <path d="M12 11C12 6 7 4 3 6C3 11 8 13 12 11Z"/>
+                  </svg>
+                  <span>greensteps</span>
+                </div>
+                <span style="font-size: 11px; font-weight: 800;">19 okt 2026</span>
+              </div>
+
+              <!-- Identitas -->
+              <div class="story-user-badge">
+                <div class="story-avatar-circle" aria-hidden="true">
+                  <svg width="26" height="26" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="16" fill="#EDE4B5"/>
+                    <path d="M14 18 L18 18 M22 18 L26 18" stroke="#18614D" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M16 26 Q20 30 24 26" stroke="#18614D" stroke-width="2" fill="none"/>
+                  </svg>
+                </div>
                 <div>
-                  <h3 class="card-title">Monster Sampah Sekitar Kosan</h3>
-                  <p class="card-caption">Item harian yang muncul di lingkungan bersama. Tangkap & bereskan!</p>
+                  <strong style="font-family: var(--font-heading); font-size: 16px;">rian</strong>
+                  <p style="font-size: 11px; font-weight: 700;">kosan barokah • kukusan</p>
                 </div>
               </div>
 
-              <div class="item-grid" id="daily-items-list">
-                <!-- Item 1 -->
-                <div class="trash-monster-card" id="item-trash-1">
-                  <div class="monster-avatar" aria-hidden="true">☕</div>
-                  <div class="monster-info">
-                    <strong class="monster-name">Gelas Boba Nyasar</strong>
-                    <span class="monster-loc">📍 Terdeteksi di tangga lantai 2</span>
-                    <span class="monster-reward">+1 Daur Ulang • -30 HP Boss</span>
-                  </div>
-                  <button type="button" class="btn-secondary-xs btn-capture-item" data-item-id="1">
-                    Bereskan! 🧹
-                  </button>
-                </div>
+              <!-- Headline -->
+              <div class="story-impact-headline" id="story-impact-text">
+                hari ini: 1 botol diselamatkan, 1 sedotan ditolak, kiki kresek -120 hp.
+              </div>
 
-                <!-- Item 2 -->
-                <div class="trash-monster-card" id="item-trash-2">
-                  <div class="monster-avatar" aria-hidden="true">📦</div>
-                  <div class="monster-info">
-                    <strong class="monster-name">Kardus Paket Menumpuk</strong>
-                    <span class="monster-loc">📍 Terdeteksi di depan pintu masuk</span>
-                    <span class="monster-reward">+1 Kardus Pilah • -30 HP Boss</span>
-                  </div>
-                  <button type="button" class="btn-secondary-xs btn-capture-item" data-item-id="2">
-                    Lipat & Simpan! 📦
-                  </button>
+              <!-- Grid Data -->
+              <div class="story-stats-grid">
+                <div class="story-stat-tile">
+                  <span class="story-stat-num" id="story-metric-bottles">1 botol</span>
+                  <span class="story-stat-lbl">diselamatkan</span>
                 </div>
+                <div class="story-stat-tile">
+                  <span class="story-stat-num" id="story-metric-streak">8 hari</span>
+                  <span class="story-stat-lbl">streak squad</span>
+                </div>
+                <div class="story-stat-tile">
+                  <span class="story-stat-num">250g</span>
+                  <span class="story-stat-lbl">co2 dicegah</span>
+                </div>
+                <div class="story-stat-tile">
+                  <span class="story-stat-num">-120 hp</span>
+                  <span class="story-stat-lbl">kiki kresek</span>
+                </div>
+              </div>
 
-                <!-- Item 3 -->
-                <div class="trash-monster-card" id="item-trash-3">
-                  <div class="monster-avatar" aria-hidden="true">🛍️</div>
-                  <div class="monster-info">
-                    <strong class="monster-name">Kresek Mini Belanjaan</strong>
-                    <span class="monster-loc">📍 Terdeteksi di meja makan bersama</span>
-                    <span class="monster-reward">+1 Guna Ulang • -30 HP Boss</span>
-                  </div>
-                  <button type="button" class="btn-secondary-xs btn-capture-item" data-item-id="3">
-                    Gunakan Ulang! ♻️
-                  </button>
+              <div class="story-badge-highlight">
+                badge: tumbler warrior
+              </div>
+
+              <!-- Footer -->
+              <div class="story-footer-row">
+                <span style="font-size: 11px; font-weight: 800;">#BAROKAH-ECO</span>
+                <span style="font-size: 11px; font-weight: 800;">greensteps.app</span>
+              </div>
+
+            </article>
+          </div>
+
+          <!-- KONTROL & AKSI -->
+          <div class="blob-card blob-4">
+            <span class="card-caption" style="font-weight: 800;">ganti warna kartu:</span>
+            <div style="display: flex; gap: 8px; margin: 8px 0 14px 0;">
+              <button type="button" class="btn-pill btn-sm-pill btn-theme-switch active" data-theme="theme-green" style="background: var(--c-dark-green); color: var(--c-cream);">hijau tua</button>
+              <button type="button" class="btn-pill btn-sm-pill btn-theme-switch" data-theme="theme-sunset" style="background: var(--c-orange); color: var(--c-white);">oranye</button>
+              <button type="button" class="btn-pill btn-sm-pill btn-theme-switch" data-theme="theme-cream" style="background: var(--c-cream-card); color: var(--c-dark-green);">krem</button>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button type="button" id="btn-share-story" class="btn-pill btn-primary-orange">
+                <span>bagikan</span>
+              </button>
+              <button type="button" id="btn-save-story" class="btn-pill btn-secondary-dark">
+                <span>simpan</span>
+              </button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- 5. LAYAR PROGRES DAMPAK & BADGE                          -->
+        <!-- ======================================================== -->
+        <section id="screen-impact" class="screen" aria-labelledby="title-impact">
+          
+          <div style="margin-bottom: 12px;">
+            <h2 id="title-impact" class="lowercase-title" style="font-size: 24px;">dampak nyata</h2>
+            <p class="card-caption">angka riil dari aksi kamu dan anak kosan.</p>
+          </div>
+
+          <!-- Tab Pilihan -->
+          <div class="tab-pill-group" role="tablist">
+            <button type="button" class="tab-pill-btn active" id="tab-impact-personal-btn" role="tab" aria-selected="true">pribadi</button>
+            <button type="button" class="tab-pill-btn" id="tab-impact-squad-btn" role="tab" aria-selected="false">squad</button>
+          </div>
+
+          <!-- PANEL PRIBADI -->
+          <div id="panel-impact-personal">
+            <div class="impact-grid-cards">
+              
+              <div class="impact-tile">
+                <div class="impact-tile-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5">
+                    <rect x="6" y="8" width="12" height="13" rx="3"/>
+                    <path d="M9 5h6"/>
+                  </svg>
+                </div>
+                <div class="impact-tile-num">42</div>
+                <span class="impact-tile-label">botol plastik</span>
+                <p class="impact-tile-analogy">setara 1 karung di tpa cipayung.</p>
+              </div>
+
+              <div class="impact-tile">
+                <div class="impact-tile-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5">
+                    <path d="M6 8l2 12h8l2-12"/>
+                    <path d="M9 8V5a3 3 0 0 1 6 0v3"/>
+                  </svg>
+                </div>
+                <div class="impact-tile-num">38</div>
+                <span class="impact-tile-label">kantong kresek</span>
+                <p class="impact-tile-analogy">got depan kosan nggak mampet.</p>
+              </div>
+
+              <div class="impact-tile">
+                <div class="impact-tile-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5">
+                    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+                  </svg>
+                </div>
+                <div class="impact-tile-num">26.5 kg</div>
+                <span class="impact-tile-label">co2 dicegah</span>
+                <p class="impact-tile-analogy">setara listrik kamar 1 minggu.</p>
+              </div>
+
+              <div class="impact-tile">
+                <div class="impact-tile-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                  </svg>
+                </div>
+                <div class="impact-tile-num">14.8 kg</div>
+                <span class="impact-tile-label">kardus terpilah</span>
+                <p class="impact-tile-analogy">siap disetor ke bank sampah kampus.</p>
+              </div>
+
+            </div>
+
+            <!-- Grafik Batang -->
+            <div class="chart-container-card">
+              <strong style="font-family: var(--font-heading); font-size: 14px;">botol dihemat minggu ini</strong>
+
+              <div class="bar-chart-row" aria-label="grafik botol hemat per hari">
+                <div class="chart-bar-col">
+                  <div class="chart-bar-fill" style="height: 55%;" title="senin: 5"></div>
+                  <span class="chart-day-label">sen</span>
+                </div>
+                <div class="chart-bar-col">
+                  <div class="chart-bar-fill" style="height: 40%;" title="selasa: 3"></div>
+                  <span class="chart-day-label">sel</span>
+                </div>
+                <div class="chart-bar-col">
+                  <div class="chart-bar-fill" style="height: 70%;" title="rabu: 7"></div>
+                  <span class="chart-day-label">rab</span>
+                </div>
+                <div class="chart-bar-col">
+                  <div class="chart-bar-fill" style="height: 60%;" title="kamis: 6"></div>
+                  <span class="chart-day-label">kam</span>
+                </div>
+                <div class="chart-bar-col">
+                  <div class="chart-bar-fill" style="height: 80%;" title="jumat: 8"></div>
+                  <span class="chart-day-label">jum</span>
+                </div>
+                <div class="chart-bar-col">
+                  <div class="chart-bar-fill" style="height: 75%;" title="sabtu: 7"></div>
+                  <span class="chart-day-label">sab</span>
+                </div>
+                <div class="chart-bar-col">
+                  <div class="chart-bar-fill active-day" style="height: 90%;" title="minggu: 9"></div>
+                  <span class="chart-day-label">min</span>
                 </div>
               </div>
             </div>
+          </div>
 
+          <!-- PANEL SQUAD -->
+          <div id="panel-impact-squad" style="display: none;">
+            <div class="blob-card blob-1">
+              <span class="sticker-tag sticker-tag-green">squad kosan</span>
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px;">
+                <div style="background: var(--c-white); border: var(--border-thin); padding: 10px; border-radius: 12px;">
+                  <strong style="font-family: var(--font-heading); font-size: 20px;">210</strong>
+                  <span style="font-size: 11px; display: block; font-weight: 700;">botol</span>
+                </div>
+                <div style="background: var(--c-white); border: var(--border-thin); padding: 10px; border-radius: 12px;">
+                  <strong style="font-family: var(--font-heading); font-size: 20px;">184</strong>
+                  <span style="font-size: 11px; display: block; font-weight: 700;">kresek</span>
+                </div>
+                <div style="background: var(--c-white); border: var(--border-thin); padding: 10px; border-radius: 12px;">
+                  <strong style="font-family: var(--font-heading); font-size: 20px;">132 kg</strong>
+                  <span style="font-size: 11px; display: block; font-weight: 700;">co2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BADGE LENGKAP -->
+          <div class="blob-card blob-5">
+            <h3 class="card-title">badge</h3>
+
+            <div class="badges-scroll-row" aria-label="daftar badge">
+              
+              <!-- 1. Eco-Rookie -->
+              <div class="badge-item-tile">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="#D9822B" stroke="#18614D" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+                <strong class="badge-name-lbl">eco-rookie</strong>
+                <span style="font-size: 10px; color: var(--c-green); font-weight: 800;">terbuka</span>
+              </div>
+
+              <!-- 2. Tumbler Warrior -->
+              <div class="badge-item-tile">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="#4A9A44" stroke="#18614D" stroke-width="2">
+                  <rect x="6" y="8" width="12" height="13" rx="3"/>
+                  <path d="M9 5h6"/>
+                </svg>
+                <strong class="badge-name-lbl">tumbler warrior</strong>
+                <span style="font-size: 10px; color: var(--c-green); font-weight: 800;">terbuka</span>
+              </div>
+
+              <!-- 3. Earth's Bestie -->
+              <div class="badge-item-tile">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="#EDE4B5" stroke="#18614D" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M2 12h20"/>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+                <strong class="badge-name-lbl">earth's bestie</strong>
+                <span style="font-size: 10px; color: var(--c-green); font-weight: 800;">terbuka</span>
+              </div>
+
+              <!-- 4. Zero-Waste Boss -->
+              <div class="badge-item-tile locked" title="80%">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2">
+                  <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/>
+                </svg>
+                <strong class="badge-name-lbl">zero-waste boss</strong>
+                <span style="font-size: 10px; font-weight: 800;">80%</span>
+              </div>
+
+              <!-- 5. Main Character Energy -->
+              <div class="badge-item-tile locked" title="60%">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+                <strong class="badge-name-lbl">main character</strong>
+                <span style="font-size: 10px; font-weight: 800;">60%</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- LEADERBOARD SQUAD (CIRCLE LEAGUE) -->
+          <div class="blob-card blob-2">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <h3 class="card-title">circle league</h3>
+              <span class="card-caption" style="font-weight: 800;">reset 2 hari lagi</span>
+            </div>
+
+            <div class="leaderboard-list">
+              <div class="leaderboard-row">
+                <span class="rank-col">1</span>
+                <div class="rank-user-info">
+                  <strong>dita</strong>
+                </div>
+                <span class="rank-pts">920</span>
+              </div>
+
+              <div class="leaderboard-row highlight-me">
+                <span class="rank-col">2</span>
+                <div class="rank-user-info">
+                  <strong>rian (kamu)</strong>
+                </div>
+                <span class="rank-pts">850</span>
+              </div>
+
+              <div class="leaderboard-row">
+                <span class="rank-col">3</span>
+                <div class="rank-user-info">
+                  <strong>fajar</strong>
+                </div>
+                <span class="rank-pts">780</span>
+              </div>
+
+              <div class="leaderboard-row">
+                <span class="rank-col">4</span>
+                <div class="rank-user-info">
+                  <strong>bima</strong>
+                </div>
+                <span class="rank-pts">640</span>
+              </div>
+
+              <div class="leaderboard-row">
+                <span class="rank-col">5</span>
+                <div class="rank-user-info">
+                  <strong>siti</strong>
+                </div>
+                <span class="rank-pts">590</span>
+              </div>
+
+              <div class="leaderboard-row">
+                <span class="rank-col">6</span>
+                <div class="rank-user-info">
+                  <strong>agus</strong>
+                </div>
+                <span class="rank-pts">410</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- SCREEN TAMBAHAN: SQUAD                                   -->
+        <!-- ======================================================== -->
+        <section id="screen-squad" class="screen" aria-labelledby="title-squad">
+          <div style="margin-bottom: 12px;">
+            <h2 id="title-squad" class="lowercase-title" style="font-size: 24px;">squad barokah</h2>
+            <p class="card-caption">6 anak kos kukusan.</p>
+          </div>
+
+          <div class="blob-card blob-1">
+            <span class="card-caption" style="font-weight: 800;">kode squad:</span>
+            <div style="display: flex; gap: 8px; margin-top: 6px;">
+              <input type="text" readonly value="KOS-BAROKAH-24" class="form-input-field" style="margin-top:0;">
+              <button type="button" id="btn-copy-code" class="btn-pill btn-primary-orange btn-sm-pill">salin</button>
+            </div>
+          </div>
+
+          <div class="blob-card blob-2">
+            <h3 class="card-title">anggota hari ini</h3>
+            <ul style="list-style: none; margin-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+              <li style="display: flex; justify-content: space-between; align-items: center; background: var(--c-white); border: var(--border-thin); padding: 8px 12px; border-radius: 12px;">
+                <span>rian (bawa tumbler)</span>
+                <span style="color: var(--c-green); font-weight: 800;">selesai</span>
+              </li>
+              <li style="display: flex; justify-content: space-between; align-items: center; background: var(--c-white); border: var(--border-thin); padding: 8px 12px; border-radius: 12px;">
+                <span>fajar (pilah kardus)</span>
+                <span style="color: var(--c-green); font-weight: 800;">selesai</span>
+              </li>
+              <li style="display: flex; justify-content: space-between; align-items: center; background: var(--c-white); border: var(--border-thin); padding: 8px 12px; border-radius: 12px;">
+                <span>dita (tolak sedotan)</span>
+                <span style="color: var(--c-green); font-weight: 800;">selesai</span>
+              </li>
+              <li style="display: flex; justify-content: space-between; align-items: center; background: var(--c-white); border: var(--border-thin); padding: 8px 12px; border-radius: 12px;">
+                <span>bima (gelas boba)</span>
+                <span style="color: var(--c-green); font-weight: 800;">selesai</span>
+              </li>
+              <li style="display: flex; justify-content: space-between; align-items: center; background: var(--c-white); border: var(--border-thin); padding: 8px 12px; border-radius: 12px;">
+                <span>siti (cabut colokan)</span>
+                <span style="color: var(--c-green); font-weight: 800;">selesai</span>
+              </li>
+              <li style="display: flex; justify-content: space-between; align-items: center; background: var(--c-white); border: var(--border-thin); padding: 8px 12px; border-radius: 12px;">
+                <span>agus (belum)</span>
+                <button type="button" class="btn-pill btn-secondary-dark btn-sm-pill" id="btn-nudge-squad">colek</button>
+              </li>
+            </ul>
           </div>
         </section>
 
-        <!-- ============================================== -->
-        <!-- 4. LAYAR KARTU HASIL / BAGIKAN (screen-share)  -->
-        <!-- ============================================== -->
-        <section id="screen-share" class="screen" aria-labelledby="title-share" hidden>
-          <div class="screen-content">
-
-            <!-- Section Title -->
-            <div class="section-title-box">
-              <h2 id="title-share" class="screen-title">Kartu Pencapaian Mabar</h2>
-              <p class="screen-desc">Bagikan aksimu ke Instagram Story atau WhatsApp untuk tularkan semangat hijau!</p>
-            </div>
-
-            <!-- Kartu Cerita Berformat Story (Rasio 9:16 Vertikal Estetik) -->
-            <div class="story-card-wrapper">
-              <article class="story-card theme-story-green" id="story-card-preview" aria-label="Pratinjau Kartu Hasil Aksi Hijau">
-                <!-- Header Kartu -->
-                <div class="story-header">
-                  <div class="story-brand">
-                    <span class="story-logo-icon" aria-hidden="true">🌱</span>
-                    <span class="story-brand-name">GreenSteps</span>
-                  </div>
-                  <span class="story-badge-today">Aksi Hari Ini</span>
-                </div>
-
-                <!-- Avatar & Identitas Pengguna -->
-                <div class="story-user-badge">
-                  <div class="story-avatar" aria-hidden="true">🧑‍🌾</div>
-                  <div>
-                    <h3 class="story-user-name" id="story-user-name">Rian</h3>
-                    <p class="story-squad-name" id="story-squad-tag">Kosan Barokah Squad • Kukusan</p>
-                  </div>
-                </div>
-
-                <!-- Pesan Aksi Utama -->
-                <div class="story-headline-box">
-                  <p class="story-kicker">MABAR HIJAU HARI INI</p>
-                  <h4 class="story-headline" id="story-headline-text">
-                    "Hari ini aku menyelamatkan 5 botol plastik & 3 kresek bareng anak kos!"
-                  </h4>
-                </div>
-
-                <!-- Metrik Nyata Story -->
-                <div class="story-stats-grid">
-                  <div class="story-stat-tile">
-                    <span class="stat-icon-sm" aria-hidden="true">🍾</span>
-                    <span class="stat-number-sm" id="story-stat-bottles">5 Botol</span>
-                    <span class="stat-label-sm">Diselamatkan</span>
-                  </div>
-                  <div class="story-stat-tile">
-                    <span class="stat-icon-sm" aria-hidden="true">🔥</span>
-                    <span class="stat-number-sm" id="story-stat-streak">7 Hari</span>
-                    <span class="stat-label-sm">Streak Mabar</span>
-                  </div>
-                  <div class="story-stat-tile">
-                    <span class="stat-icon-sm" aria-hidden="true">☁️</span>
-                    <span class="stat-number-sm" id="story-stat-co2">250g CO2</span>
-                    <span class="stat-label-sm">Dicegah</span>
-                  </div>
-                  <div class="story-stat-tile">
-                    <span class="stat-icon-sm" aria-hidden="true">👾</span>
-                    <span class="stat-number-sm" id="story-stat-damage">-380 HP</span>
-                    <span class="stat-label-sm">Boss Kresek</span>
-                  </div>
-                </div>
-
-                <!-- Footer Kartu: CTA Mabar -->
-                <div class="story-footer">
-                  <div class="story-footer-text">
-                    <small>Mau mabar hijau di kosanmu?</small>
-                    <strong>Gabung: #BAROKAH-ECO</strong>
-                  </div>
-                  <div class="story-qr-box" aria-hidden="true">
-                    <span>📱 SCAN</span>
-                  </div>
-                </div>
-              </article>
-            </div>
-
-            <!-- Kontrol Kustomisasi Kartu -->
-            <div class="app-card story-controls-card">
-              <h3 class="card-title">Pilih Tema Kartu Story:</h3>
-              <div class="story-theme-selector" role="radiogroup" aria-label="Pilihan tema warna kartu story">
-                <button type="button" class="btn-theme-swatch active" data-theme="theme-story-green" aria-label="Tema Daun Hijau Segar">
-                  <span class="swatch-circle swatch-green" aria-hidden="true"></span>
-                  <span>Daun Hijau</span>
-                </button>
-                <button type="button" class="btn-theme-swatch" data-theme="theme-story-sunset" aria-label="Tema Senja Sore">
-                  <span class="swatch-circle swatch-sunset" aria-hidden="true"></span>
-                  <span>Senja Hangat</span>
-                </button>
-                <button type="button" class="btn-theme-swatch" data-theme="theme-story-midnight" aria-label="Tema Malam Kosan">
-                  <span class="swatch-circle swatch-midnight" aria-hidden="true"></span>
-                  <span>Midnight Eco</span>
-                </button>
-              </div>
-
-              <!-- Tombol Aksi Bagikan -->
-              <div class="btn-group-vertical mt-3">
-                <button type="button" id="btn-share-instagram" class="btn-primary">
-                  <span aria-hidden="true">📸</span>
-                  <span>Bagikan ke Instagram Story / Status</span>
-                </button>
-                <button type="button" id="btn-copy-story-text" class="btn-secondary">
-                  <span aria-hidden="true">📋</span>
-                  <span>Salin Teks Ringkasan Aksi</span>
-                </button>
-                <button type="button" id="btn-download-story-mock" class="btn-ghost">
-                  <span aria-hidden="true">💾</span>
-                  <span>Simpan Kartu Gambar (Simulasi)</span>
-                </button>
-              </div>
-
-              <div id="share-feedback" class="success-banner" hidden>
-                ✅ Teks berhasil disalin ke clipboard! Siap diposting ke status WhatsApp atau Instagram.
-              </div>
-            </div>
-
+        <!-- ======================================================== -->
+        <!-- SCREEN TAMBAHAN: PROFIL                                  -->
+        <!-- ======================================================== -->
+        <section id="screen-profile" class="screen" aria-labelledby="title-profile">
+          <div style="margin-bottom: 12px;">
+            <h2 id="title-profile" class="lowercase-title" style="font-size: 24px;">profil</h2>
           </div>
-        </section>
 
-        <!-- ============================================== -->
-        <!-- 5. LAYAR PROGRES DAMPAK NYATA (screen-impact)  -->
-        <!-- ============================================== -->
-        <section id="screen-impact" class="screen" aria-labelledby="title-impact" hidden>
-          <div class="screen-content">
-
-            <!-- Section Title -->
-            <div class="section-title-box">
-              <h2 id="title-impact" class="screen-title">Laporan Dampak Nyata</h2>
-              <p class="screen-desc">Bukan cuma angka poin di game, ini hasil nyata aksi kamu & squad untuk bumi.</p>
+          <div class="blob-card blob-3">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--c-white); border: var(--border-thick); display: flex; align-items: center; justify-content: center;">
+                <svg width="34" height="34" viewBox="0 0 40 40">
+                  <circle cx="20" cy="20" r="16" fill="#EDE4B5"/>
+                  <path d="M14 18 L18 18 M22 18 L26 18" stroke="#18614D" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M16 26 Q20 30 24 26" stroke="#18614D" stroke-width="2" fill="none"/>
+                </svg>
+              </div>
+              <div>
+                <strong style="font-family: var(--font-heading); font-size: 18px;">rian</strong>
+                <p class="card-caption">kosan barokah asri</p>
+                <div style="display: flex; gap: 6px; margin-top: 4px;">
+                  <span class="sticker-tag" style="margin: 0;">7 hari streak</span>
+                  <span class="sticker-tag sticker-tag-green" style="margin: 0;">850 poin</span>
+                </div>
+              </div>
             </div>
+          </div>
 
-            <!-- Tab Switcher: Dampak Pribadiku vs Dampak Squad -->
-            <div class="tab-pill-group" role="tablist" aria-label="Pilihan Sudut Pandang Dampak">
-              <button type="button" class="tab-pill active" id="tab-impact-personal" role="tab" aria-selected="true" aria-controls="panel-impact-personal">
-                Dampak Pribadiku 🧑‍🌾
+          <div class="blob-card blob-4">
+            <h3 class="card-title">pengaturan</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+              <button type="button" class="btn-pill btn-secondary-dark btn-sm-pill" id="btn-profile-open-a11y" style="width: 100%;">
+                <span>buka menu aksesibilitas</span>
               </button>
-              <button type="button" class="tab-pill" id="tab-impact-squad" role="tab" aria-selected="false" aria-controls="panel-impact-squad">
-                Dampak Seluruh Squad 👥
-              </button>
-            </div>
-
-            <!-- Panel 1: Dampak Pribadiku -->
-            <div id="panel-impact-personal" class="tab-panel active" role="tabpanel" aria-labelledby="tab-impact-personal">
-              
-              <!-- Grid Metrik Nyata -->
-              <div class="impact-metrics-grid">
-                
-                <div class="impact-metric-card">
-                  <div class="metric-icon-bubble" aria-hidden="true">🍾</div>
-                  <strong class="metric-value">42 Botol</strong>
-                  <span class="metric-label">Plastik Diselamatkan</span>
-                  <p class="metric-analogy">
-                    💡 <em>Setara mencegah 1 karung plastik menumpuk di TPA Cipayung.</em>
-                  </p>
-                </div>
-
-                <div class="impact-metric-card">
-                  <div class="metric-icon-bubble" aria-hidden="true">🛍️</div>
-                  <strong class="metric-value">38 Kantong</strong>
-                  <span class="metric-label">Kresek Ditolak</span>
-                  <p class="metric-analogy">
-                    💡 <em>Setara mencegah 2 saluran got kosan tersumbat saat hujan lebat.</em>
-                  </p>
-                </div>
-
-                <div class="impact-metric-card">
-                  <div class="metric-icon-bubble" aria-hidden="true">☁️</div>
-                  <strong class="metric-value">26.5 kg</strong>
-                  <span class="metric-label">Emisi CO2 Dicegah</span>
-                  <p class="metric-analogy">
-                    💡 <em>Setara mematikan 6 lampu kamar kosan non-stop selama 1 minggu.</em>
-                  </p>
-                </div>
-
-                <div class="impact-metric-card">
-                  <div class="metric-icon-bubble" aria-hidden="true">📦</div>
-                  <strong class="metric-value">14.8 kg</strong>
-                  <span class="metric-label">Kardus & Kertas Terpilah</span>
-                  <p class="metric-analogy">
-                    💡 <em>Siap disetor ke Bank Sampah Kampus akhir bulan ini.</em>
-                  </p>
-                </div>
-
-              </div>
-
-              <!-- Streak & Konsistensi -->
-              <div class="app-card streak-summary-card">
-                <div class="card-header-row">
-                  <span class="icon-card" aria-hidden="true">🔥</span>
-                  <div>
-                    <h3 class="card-title">Streak & Konsistensi Kebiasaan</h3>
-                    <p class="card-caption">7 hari berturut-turut melakukan min. 1 aksi hijau.</p>
-                  </div>
-                </div>
-
-                <div class="week-streak-row" aria-label="Riwayat 7 hari terakhir">
-                  <div class="day-dot active" title="Senin: Selesai"><span>Sen</span><span class="check" aria-hidden="true">✓</span></div>
-                  <div class="day-dot active" title="Selasa: Selesai"><span>Sel</span><span class="check" aria-hidden="true">✓</span></div>
-                  <div class="day-dot active" title="Rabu: Selesai"><span>Rab</span><span class="check" aria-hidden="true">✓</span></div>
-                  <div class="day-dot active" title="Kamis: Selesai"><span>Kam</span><span class="check" aria-hidden="true">✓</span></div>
-                  <div class="day-dot active" title="Jumat: Selesai"><span>Jum</span><span class="check" aria-hidden="true">✓</span></div>
-                  <div class="day-dot active" title="Sabtu: Selesai"><span>Sab</span><span class="check" aria-hidden="true">✓</span></div>
-                  <div class="day-dot today-active" title="Minggu (Hari ini): Selesai"><span>Min</span><span class="check" aria-hidden="true">★</span></div>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Panel 2: Dampak Seluruh Squad -->
-            <div id="panel-impact-squad" class="tab-panel" role="tabpanel" aria-labelledby="tab-impact-squad" hidden>
-              
-              <!-- Squad Total Stats -->
-              <div class="app-card squad-total-card">
-                <div class="squad-total-header">
-                  <div class="squad-badge-large" aria-hidden="true">🏡</div>
-                  <div>
-                    <h3 class="card-title">Kosan Barokah Asri</h3>
-                    <p class="card-caption">Total gabungan aksi 6 anggota squad bulan ini.</p>
-                  </div>
-                </div>
-
-                <div class="squad-stats-tally">
-                  <div class="tally-item">
-                    <strong class="tally-num">210</strong>
-                    <span class="tally-lbl">Botol Plastik Dicegah</span>
-                  </div>
-                  <div class="tally-item">
-                    <strong class="tally-num">184</strong>
-                    <span class="tally-lbl">Kresek Ditolak</span>
-                  </div>
-                  <div class="tally-item">
-                    <strong class="tally-num">132 kg</strong>
-                    <span class="tally-lbl">CO2 Berhasil Dicegah</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Target Bersama: Setor ke Bank Sampah -->
-              <div class="app-card milestone-goal-card">
-                <div class="card-header-row">
-                  <span class="icon-card" aria-hidden="true">🎯</span>
-                  <div>
-                    <h3 class="card-title">Target Mabar: Setor ke Bank Sampah Kampus</h3>
-                    <p class="card-caption">Kumpulkan 250 botol & kardus untuk ditukar saldo e-wallet bareng-bareng.</p>
-                  </div>
-                </div>
-
-                <div class="progress-bar-container" role="progressbar" aria-valuenow="84" aria-valuemin="0" aria-valuemax="100" aria-label="Progres target bank sampah">
-                  <div class="progress-bar-fill fill-milestone" style="width: 84%;"></div>
-                </div>
-                <div class="progress-caption-row">
-                  <span class="text-caption">210 / 250 Item Terkumpul</span>
-                  <strong class="text-caption-bold">Kurang 40 Lagi!</strong>
-                </div>
-
-                <div class="milestone-reward-box">
-                  <span class="reward-icon" aria-hidden="true">🎁</span>
-                  <p class="reward-text">
-                    Reward Squad: Traktir es teh bareng satu kosan dari hasil tabungan bank sampah!
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Tombol Bagikan Dampak -->
-            <div class="btn-group-vertical mt-3">
-              <button type="button" class="btn-primary btn-goto-share" data-target="screen-share">
-                <span>Pamerkan Dampak di Story Instagram 🌟</span>
+              <button type="button" class="btn-pill btn-outline-pill btn-sm-pill" id="btn-reset-data" style="width: 100%;">
+                <span>reset data simulasi</span>
               </button>
             </div>
-
           </div>
         </section>
 
       </main>
 
-      <!-- Bilah Navigasi Bawah 5 Layar (Bottom Tab Bar Mobile) -->
-      <nav class="bottom-nav-bar" aria-label="Navigasi Utama Aplikasi GreenSteps">
-        <button type="button" class="nav-item active" data-screen="screen-onboarding" aria-label="Layar 1: Onboarding dan Squad">
-          <span class="nav-icon" aria-hidden="true">🚪</span>
-          <span class="nav-label">Onboarding</span>
+      <!-- ======================================================== -->
+      <!-- BILAH NAVIGASI BAWAH (BOTTOM NAVIGATION - 5 ITEM)        -->
+      <!-- ======================================================== -->
+      <nav class="bottom-nav-bar" aria-label="navigasi utama">
+        
+        <button type="button" class="nav-item active" data-screen="screen-home" aria-label="beranda">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span class="nav-label">beranda</span>
         </button>
-        <button type="button" class="nav-item" data-screen="screen-home" aria-label="Layar 2: Beranda">
-          <span class="nav-icon" aria-hidden="true">🏠</span>
-          <span class="nav-label">Beranda</span>
+
+        <button type="button" class="nav-item" data-screen="screen-missions" aria-label="misi">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="6"/>
+            <circle cx="12" cy="12" r="2"/>
+          </svg>
+          <span class="nav-label">misi</span>
         </button>
-        <button type="button" class="nav-item" data-screen="screen-missions" aria-label="Layar 3: Misi dan Item Harian">
-          <span class="nav-icon" aria-hidden="true">⚔️</span>
-          <span class="nav-label">Misi & Boss</span>
+
+        <button type="button" class="nav-item" data-screen="screen-squad" aria-label="squad">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span class="nav-label">squad</span>
         </button>
-        <button type="button" class="nav-item" data-screen="screen-share" aria-label="Layar 4: Kartu Hasil Cerita">
-          <span class="nav-icon" aria-hidden="true">🌟</span>
-          <span class="nav-label">Bagikan</span>
+
+        <button type="button" class="nav-item" data-screen="screen-impact" aria-label="dampak">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+          <span class="nav-label">dampak</span>
         </button>
-        <button type="button" class="nav-item" data-screen="screen-impact" aria-label="Layar 5: Progres Dampak Nyata">
-          <span class="nav-icon" aria-hidden="true">📊</span>
-          <span class="nav-label">Dampak</span>
+
+        <button type="button" class="nav-item" data-screen="screen-profile" aria-label="profil">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span class="nav-label">profil</span>
         </button>
+
       </nav>
 
     </div><!-- /mobile-frame -->
@@ -906,174 +1235,123 @@
   </div><!-- /device-viewport-shell -->
 
   <!-- ======================================================== -->
-  <!-- MODAL / DRAWER PENGATURAN AKSESIBILITAS UNIVERSAL        -->
-  <!-- Dapat dibuka kapan saja lewat ikon universal di pojok    -->
+  <!-- MODAL VERIFIKASI MISI                                    -->
   <!-- ======================================================== -->
-  <div id="modal-a11y-settings" class="a11y-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-a11y-title" hidden>
+  <div id="modal-verify" class="a11y-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-verify-title" hidden>
     <div class="a11y-modal-container">
-      
       <div class="modal-header">
-        <div class="modal-title-group">
-          <span class="modal-icon" aria-hidden="true">♿</span>
-          <div>
-            <h2 id="modal-a11y-title" class="modal-title">Pengaturan Aksesibilitas</h2>
-            <p class="modal-subtitle">Tampilan langsung berubah secara instan untuk kemudahan demonstrasi.</p>
-          </div>
+        <h3 id="modal-verify-title" class="modal-title">verifikasi aksi</h3>
+        <button type="button" id="btn-close-verify" class="btn-icon-header" aria-label="tutup verifikasi">✕</button>
+      </div>
+
+      <div class="modal-scroll-body">
+        <p class="card-caption">
+          misi: <strong id="verify-mission-name">bawa tumbler</strong>
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin: 12px 0;">
+          
+          <button type="button" class="a11y-toggle-card" id="btn-verify-photo">
+            <div class="a11y-card-icon-box" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+            </div>
+            <div class="a11y-card-content">
+              <strong class="a11y-card-title">foto bukti</strong>
+              <span class="a11y-card-desc">ambil foto tumbler atau sampah yang dibereskan.</span>
+            </div>
+          </button>
+
+          <button type="button" class="a11y-toggle-card selected" id="btn-verify-simple">
+            <div class="a11y-card-icon-box" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18614D" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <div class="a11y-card-content">
+              <strong class="a11y-card-title">konfirmasi langsung</strong>
+              <span class="a11y-card-desc">tanpa foto, langsung dicatat selesai.</span>
+            </div>
+          </button>
+
         </div>
-        <button type="button" id="btn-close-a11y" class="btn-close-modal" aria-label="Tutup Pengaturan Aksesibilitas">
-          <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-          </svg>
+
+        <button type="button" id="btn-confirm-completion" class="btn-pill btn-primary-orange">
+          <span>simpan</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL PENGATURAN AKSESIBILITAS                           -->
+  <!-- ======================================================== -->
+  <div id="modal-a11y" class="a11y-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-a11y-title" hidden>
+    <div class="a11y-modal-container">
+      <div class="modal-header">
+        <h2 id="modal-a11y-title" class="modal-title">aksesibilitas</h2>
+        <button type="button" id="btn-close-a11y" class="btn-icon-header" aria-label="tutup aksesibilitas">✕</button>
       </div>
 
       <div class="modal-scroll-body">
         
-        <!-- Live Preview Sample Card -->
-        <div class="sample-preview-box" aria-hidden="true">
-          <span class="sample-label">Pratinjau Langsung:</span>
-          <div class="sample-card">
-            <div class="sample-card-header">
-              <span class="sample-avatar">🌱</span>
-              <div>
-                <strong>Misi Mabar Kosan</strong>
-                <span class="status-pill status-pill-success">● 5 dari 6 Selesai</span>
-              </div>
-            </div>
-            <p class="sample-text">Contoh tulisan dan tombol di aplikasi GreenSteps.</p>
-            <button type="button" class="btn-primary-xs">Tombol Contoh</button>
+        <!-- Kontras Tinggi -->
+        <div class="setting-row-item">
+          <div>
+            <strong class="setting-title-text" id="lbl-contrast">kontras tinggi</strong>
+            <span class="setting-desc-text">latar putih, garis 3px hitam, teks pekat.</span>
           </div>
+          <label class="switch-control" for="toggle-high-contrast">
+            <input type="checkbox" id="toggle-high-contrast" aria-labelledby="lbl-contrast">
+            <span class="switch-slider" aria-hidden="true"></span>
+          </label>
         </div>
 
-        <!-- 1. PENGATURAN PENGLIHATAN / NETRA / BUTA WARNA -->
-        <div class="setting-category">
-          <h3 class="category-heading">👁️ Penglihatan & Warna</h3>
-
-          <!-- Ukuran Font -->
-          <div class="setting-item">
-            <div class="setting-label-col">
-              <label for="font-scale-slider" class="setting-title">Ukuran Teks / Huruf</label>
-              <span class="setting-desc">Perbesar teks hingga 150% tanpa merusak tata letak.</span>
-            </div>
-            <div class="font-scale-controls">
-              <button type="button" class="btn-scale-step" id="btn-font-normal" aria-label="Ukuran teks normal 100%">100%</button>
-              <button type="button" class="btn-scale-step" id="btn-font-large" aria-label="Ukuran teks besar 125%">125%</button>
-              <button type="button" class="btn-scale-step" id="btn-font-xlarge" aria-label="Ukuran teks sangat besar 150%">150%</button>
-            </div>
+        <!-- Teks Besar -->
+        <div class="setting-row-item">
+          <div>
+            <strong class="setting-title-text" id="lbl-large-text">teks besar</strong>
+            <span class="setting-desc-text">perbesar ukuran huruf 125%.</span>
           </div>
-
-          <!-- Mode Kontras Tinggi -->
-          <div class="setting-item">
-            <div class="setting-label-col">
-              <span class="setting-title" id="lbl-high-contrast">Kontras Tinggi (WCAG AAA)</span>
-              <span class="setting-desc">Garis tepi tebal hitam pekat, kontras teks maksimal.</span>
-            </div>
-            <label class="toggle-switch" for="toggle-high-contrast">
-              <input type="checkbox" id="toggle-high-contrast" aria-labelledby="lbl-high-contrast">
-              <span class="switch-slider" aria-hidden="true"></span>
-            </label>
-          </div>
-
-          <!-- Mode Ramah Buta Warna -->
-          <div class="setting-item">
-            <div class="setting-label-col">
-              <span class="setting-title" id="lbl-colorblind">Ramah Buta Warna (Pola & Ikon)</span>
-              <span class="setting-desc">Tidak hanya warna: tambahkan garis arsir & ikon pembeda.</span>
-            </div>
-            <label class="toggle-switch" for="toggle-colorblind">
-              <input type="checkbox" id="toggle-colorblind" aria-labelledby="lbl-colorblind">
-              <span class="switch-slider" aria-hidden="true"></span>
-            </label>
-          </div>
+          <label class="switch-control" for="toggle-large-text">
+            <input type="checkbox" id="toggle-large-text" aria-labelledby="lbl-large-text">
+            <span class="switch-slider" aria-hidden="true"></span>
+          </label>
         </div>
 
-        <!-- 2. PENGATURAN MOTORIK & SENTUHAN -->
-        <div class="setting-category">
-          <h3 class="category-heading">🖐️ Motorik & Sentuhan</h3>
-
-          <!-- Area Sentuh Ekstra Lega -->
-          <div class="setting-item">
-            <div class="setting-label-col">
-              <span class="setting-title" id="lbl-large-touch">Area Sentuh Ekstra Lega (56px)</span>
-              <span class="setting-desc">Tombol lebih besar dan jarak antar tombol lebih longgar.</span>
-            </div>
-            <label class="toggle-switch" for="toggle-large-touch">
-              <input type="checkbox" id="toggle-large-touch" aria-labelledby="lbl-large-touch">
-              <span class="switch-slider" aria-hidden="true"></span>
-            </label>
+        <!-- Mode Fokus -->
+        <div class="setting-row-item">
+          <div>
+            <strong class="setting-title-text" id="lbl-cognitive">mode fokus</strong>
+            <span class="setting-desc-text">satu langkah per layar, minim elemen.</span>
           </div>
+          <label class="switch-control" for="toggle-cognitive">
+            <input type="checkbox" id="toggle-cognitive" aria-labelledby="lbl-cognitive">
+            <span class="switch-slider" aria-hidden="true"></span>
+          </label>
         </div>
 
-        <!-- 3. PENGATURAN KOGNITIF & ADHD -->
-        <div class="setting-category">
-          <h3 class="category-heading">🧠 Kognitif, ADHD & Lansia</h3>
-
-          <!-- Mode Fokus -->
-          <div class="setting-item">
-            <div class="setting-label-col">
-              <span class="setting-title" id="lbl-focus-mode">Mode Fokus (Satu Langkah Utama)</span>
-              <span class="setting-desc">Sembunyikan elemen sekunder yang membuat pusing.</span>
-            </div>
-            <label class="toggle-switch" for="toggle-focus-mode">
-              <input type="checkbox" id="toggle-focus-mode" aria-labelledby="lbl-focus-mode">
-              <span class="switch-slider" aria-hidden="true"></span>
-            </label>
+        <!-- Area Sentuh Lega -->
+        <div class="setting-row-item">
+          <div>
+            <strong class="setting-title-text" id="lbl-spacious">area sentuh 56px</strong>
+            <span class="setting-desc-text">tombol lebih tinggi dan renggang.</span>
           </div>
-
-          <!-- Kurangi Gerakan -->
-          <div class="setting-item">
-            <div class="setting-label-col">
-              <span class="setting-title" id="lbl-reduced-motion">Kurangi Gerakan (Reduced Motion)</span>
-              <span class="setting-desc">Matikan animasi dan efek visual bergerak.</span>
-            </div>
-            <label class="toggle-switch" for="toggle-reduced-motion">
-              <input type="checkbox" id="toggle-reduced-motion" aria-labelledby="lbl-reduced-motion">
-              <span class="switch-slider" aria-hidden="true"></span>
-            </label>
-          </div>
-        </div>
-
-        <!-- 4. PENGATURAN PENDENGARAN & SUARA (RUNGU) -->
-        <div class="setting-category">
-          <h3 class="category-heading">👂 Pendengaran & Multi-Saluran</h3>
-
-          <!-- Pembaca Teks Suara (TTS) -->
-          <div class="setting-item">
-            <div class="setting-label-col">
-              <span class="setting-title" id="lbl-tts-auto">Bacakan Layar Otomatis (Suara Web)</span>
-              <span class="setting-desc">Bacakan informasi utama saat berpindah layar.</span>
-            </div>
-            <label class="toggle-switch" for="toggle-tts-auto">
-              <input type="checkbox" id="toggle-tts-auto" aria-labelledby="lbl-tts-auto">
-              <span class="switch-slider" aria-hidden="true"></span>
-            </label>
-          </div>
-
-          <!-- Notifikasi Getar & Visual Kedip Lembut -->
-          <div class="setting-item">
-            <div class="setting-label-col">
-              <span class="setting-title" id="lbl-haptic-visual">Notifikasi Getar & Indikator Visual</span>
-              <span class="setting-desc">Ramah teman tuli: umpan balik berupa getaran dan banner teks.</span>
-            </div>
-            <label class="toggle-switch" for="toggle-haptic-visual">
-              <input type="checkbox" id="toggle-haptic-visual" checked aria-labelledby="lbl-haptic-visual">
-              <span class="switch-slider" aria-hidden="true"></span>
-            </label>
-          </div>
+          <label class="switch-control" for="toggle-spacious">
+            <input type="checkbox" id="toggle-spacious" aria-labelledby="lbl-spacious">
+            <span class="switch-slider" aria-hidden="true"></span>
+          </label>
         </div>
 
       </div>
 
-      <!-- Footer Modal -->
       <div class="modal-footer">
-        <button type="button" id="btn-reset-a11y" class="btn-ghost">
-          Reset ke Standar
-        </button>
-        <button type="button" id="btn-save-a11y" class="btn-primary">
-          Simpan & Terapkan
+        <button type="button" id="btn-save-a11y" class="btn-pill btn-primary-orange" style="width: 100%;">
+          <span>terapkan</span>
         </button>
       </div>
-
     </div>
   </div>
 
